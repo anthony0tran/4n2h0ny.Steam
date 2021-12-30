@@ -6,7 +6,26 @@ namespace _4n2h0ny.Steam
 {
     public static class Comment
     {
-        public static bool CommentThreadFormAvailable(ChromeDriver driver, ProfileDataModel profileData)
+        public static void CommentAllPages(ChromeDriver driver, Profile profile, List<string> urlList, string commentTemplate)
+        {
+            foreach (var url in urlList)
+            {
+                driver.Navigate().GoToUrl(url);
+                Thread.Sleep(1000);
+
+                var currentProfileData = profile.GetCurrentProfileData();
+
+                if (CommentThreadFormAvailable(driver, currentProfileData))
+                {
+                    var commentString = String.Format(commentTemplate, currentProfileData.Personaname);
+
+                    PlaceCommentOnPage(driver, currentProfileData, commentString);
+                    Thread.Sleep(1000);
+                }
+            }
+        }
+
+        private static bool CommentThreadFormAvailable(ChromeDriver driver, ProfileDataModel profileData)
         {
             try
             {
@@ -18,12 +37,46 @@ namespace _4n2h0ny.Steam
                     return true;
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                ConsoleHelper.ConsoleWriteError("Could not find comment form\n" + ex.Message);
+                ConsoleHelper.ConsoleWriteError($"Could not find comment form: {profileData.Url}");
             }
 
             return false;
+        }
+
+        private static void PlaceCommentOnPage(ChromeDriver driver, ProfileDataModel currentProfileData, string commentString)
+        {
+            try
+            {
+                var commentThreadTextAreaElement = driver.FindElement(By.ClassName("commentthread_textarea"));
+
+                commentThreadTextAreaElement.SendKeys(commentString);
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("unknown error: ChromeDriver only supports characters in the BMP"))
+                {
+                    var commentThreadTextAreaElement = driver.FindElement(By.ClassName("commentthread_textarea"));
+                    commentThreadTextAreaElement.SendKeys(":heart:");
+                    ConsoleHelper.ConsoleWriteError($"Default comment set for: " + currentProfileData.Url);
+                }
+                else
+                {
+                    ConsoleHelper.ConsoleWriteError($"Can't find text area for {currentProfileData.Personaname}\n" + ex.Message);
+                }
+            }
+
+
+            try
+            {
+                var submitBtnElement = driver.FindElement(By.Id($"commentthread_Profile_{currentProfileData.Steamid}_submit"));
+                submitBtnElement.Click();
+            }
+            catch (Exception ex)
+            {
+                ConsoleHelper.ConsoleWriteError("Can't find submit button\n" + ex.Message);
+            }
         }
     }
 }

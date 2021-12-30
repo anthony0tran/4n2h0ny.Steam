@@ -8,12 +8,12 @@ namespace _4n2h0ny.Steam
     public class Profile
     {
         // List of all profile URLs.
-        private static List<string> ProfileUrls = new List<string>();
+        public static List<string> ProfileUrls = new();
 
         // ProfileData Retrieve of the first steam page.
-        private static ProfileDataModel mainProfileData = new ProfileDataModel();
+        private static ProfileDataModel mainProfileData = new();
 
-        public static ProfileDataModel? CurrentProfileData { get; set; }
+        public static ProfileDataModel CurrentProfileData = new();
 
         private readonly ChromeDriver driver;
 
@@ -49,7 +49,7 @@ namespace _4n2h0ny.Steam
             {
                 ConsoleHelper.ConsoleWriteError("Could not retrieve profile data\n" + ex.Message);
             }
-            
+
             return CurrentProfileData;
         }
 
@@ -82,13 +82,13 @@ namespace _4n2h0ny.Steam
             }
         }
 
-        private static string GetPersonaName()
+        private static string? GetPersonaName()
         {
             if (CurrentProfileData != null)
             {
                 return CurrentProfileData.Personaname;
             }
-            
+
             return String.Empty;
         }
 
@@ -112,12 +112,12 @@ namespace _4n2h0ny.Steam
             {
                 var activeCommentPageElement = driver.FindElements(By.XPath("//span[@class=\"commentthread_pagelink active\"]"));
                 return int.Parse(activeCommentPageElement[0].Text);
-            } 
+            }
             catch (Exception ex)
             {
                 ConsoleHelper.ConsoleWriteError("Can't find active comment page index\n" + ex.Message);
                 return default;
-            }            
+            }
         }
 
         private void ReturnToFirstCommentPage()
@@ -133,15 +133,16 @@ namespace _4n2h0ny.Steam
                         firstCommentPageElement.Click();
                     }
                 }
-                catch (Exception ex) 
+                catch (Exception ex)
                 {
                     ConsoleHelper.ConsoleWriteError("Can't find first comment page index\n" + ex.Message);
                 }
-                
+
             }
         }
 
-        public void GatherProfileUrls(int maxCommentPageIndex = 10)
+        // This function only adds profiles to the ProfileUrlsList if the profile is in the friendsList.
+        public void GatherProfileUrls(int maxCommentPageIndex = 20)
         {
             ReturnToFirstCommentPage();
             Thread.Sleep(1000);
@@ -152,17 +153,19 @@ namespace _4n2h0ny.Steam
                 {
                     string profileUrlsXPath = $"//div[@class=\"commentthread_comment_container\"]" +
                                               $"/div[@class=\"commentthread_comments\"]" +
-                                              $"/div[contains(@class,\"commentthread_comment\")]" +
-                                              $"/div[contains(@class,\"commentthread_comment_avatar\")]" +
-                                              $"/a";
+                                              $"/div[contains(@class,\"commentthread_comment\")]";
 
                     var commentElementList = driver.FindElements(By.XPath(profileUrlsXPath));
 
                     foreach (var commentElement in commentElementList)
                     {
-                        if (!ProfileUrls.Contains(commentElement.GetAttribute("href")))
+                        if (commentElement.FindElements(By.XPath("div[contains(@class,\"commentthread_comment_friendindicator\")]")).Count != 0)
                         {
-                            ProfileUrls.Add(commentElement.GetAttribute("href"));
+                            var commentLinkElement = commentElement.FindElement(By.XPath("div[contains(@class,\"commentthread_comment_avatar\")]/a"));
+                            if (!ProfileUrls.Contains(commentLinkElement.GetAttribute("href")))
+                            {
+                                ProfileUrls.Add(commentLinkElement.GetAttribute("href"));
+                            }
                         }
                     }
                 }
@@ -174,6 +177,8 @@ namespace _4n2h0ny.Steam
                 ClickPageBtnNext();
                 Thread.Sleep(1000);
             }
+
+            ConsoleHelper.ConsoleWriteSuccess($"Found {ProfileUrls.Count} profiles");
         }
 
         private bool IsFriend()

@@ -7,12 +7,14 @@ Profile profile = new(webDriverSingleton.Driver);
 #endregion
 
 // Retrieve the ProfileData of the first steam page that is opened in the browser session.
-//profile.GetMainProfileData();
+profile.GetMainProfileData();
 
 // Get the urls to the profiles that commented.
-//profile.GatherProfileUrls();
+profile.GatherProfileUrls(30);
 
-var currentProfileData = profile.GetCurrentProfileData();
+string commentTemplate = "Have a sparkling New Year {0}! :heart:";
+
+Comment.CommentAllPages(webDriverSingleton.Driver, profile, Profile.ProfileUrls, commentTemplate);
 
 #region Finish
 
