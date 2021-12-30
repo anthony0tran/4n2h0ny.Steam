@@ -8,9 +8,9 @@ namespace _4n2h0ny.Steam.Models
 {
     public class ProfileDataModel
     {
-        public string Url { get; set; }
-        public string Steamid { get; set; }
-        public string Personaname { get; set; }
-        public string Summary { get; set; }
+        public string? Url { get; set; }
+        public string? Steamid { get; set; }
+        public string? Personaname { get; set; }
+        public string? Summary { get; set; }
     }
 }

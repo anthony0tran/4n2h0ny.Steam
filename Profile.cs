@@ -8,13 +8,13 @@ namespace _4n2h0ny.Steam
     public class Profile
     {
         // List of all profile URLs.
-        public static List<string> ProfileUrls = new List<string>();
+        private static List<string> ProfileUrls = new List<string>();
 
         // ProfileData Retrieve of the first steam page.
         private static ProfileDataModel mainProfileData = new ProfileDataModel();
 
-        // List of profileData of the gathered profiles that commented.
-        private static List<ProfileDataModel> ProfileDataList = new List<ProfileDataModel>();       
+        public static ProfileDataModel? CurrentProfileData { get; set; }
+
         private readonly ChromeDriver driver;
 
         public Profile(ChromeDriver driver)
@@ -22,7 +22,7 @@ namespace _4n2h0ny.Steam
             this.driver = driver;
         }
 
-        private void GetProfileData()
+        public ProfileDataModel GetCurrentProfileData()
         {
             try
             {
@@ -41,7 +41,7 @@ namespace _4n2h0ny.Steam
                             profileDataString = profileDataString.Substring(startIndex, endIndex - startIndex + 1);
                         }
 
-                        ProfileDataList.Add(JsonConvert.DeserializeObject<ProfileDataModel>(profileDataString));
+                        CurrentProfileData = JsonConvert.DeserializeObject<ProfileDataModel>(profileDataString);
                     }
                 }
             }
@@ -49,6 +49,8 @@ namespace _4n2h0ny.Steam
             {
                 ConsoleHelper.ConsoleWriteError("Could not retrieve profile data\n" + ex.Message);
             }
+            
+            return CurrentProfileData;
         }
 
         public void GetMainProfileData()
@@ -80,23 +82,14 @@ namespace _4n2h0ny.Steam
             }
         }
 
-        private static string GetPersonaName(string steamId)
+        private static string GetPersonaName()
         {
-            var profileData = ProfileDataList.Where(x => x.Steamid.Equals(steamId));
-            if (profileData != null)
+            if (CurrentProfileData != null)
             {
-                foreach (var profile in profileData)
-                {
-                    return profile.Personaname;
-                }
-
-                return String.Empty;
+                return CurrentProfileData.Personaname;
             }
-            else
-            {
-                ConsoleHelper.ConsoleWriteError("Could not find persona name");
-                return String.Empty;
-            }
+            
+            return String.Empty;
         }
 
         private void ClickPageBtnNext()
@@ -181,6 +174,25 @@ namespace _4n2h0ny.Steam
                 ClickPageBtnNext();
                 Thread.Sleep(1000);
             }
+        }
+
+        private bool IsFriend()
+        {
+            try
+            {
+                var profileActionBtnElement = driver.FindElement(By.XPath("//a[@class=\"btn_profile_action btn_medium\"]/span"));
+
+                if (profileActionBtnElement.Text == "Message")
+                {
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                ConsoleHelper.ConsoleWriteError("Could not find profile action button\n" + ex.Message);
+            }
+
+            return false;
         }
     }
 }
