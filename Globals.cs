@@ -10,6 +10,8 @@ namespace _4n2h0ny.Steam
     {
         public static readonly string ChromeDriverPath = Path.Combine(Directory.GetCurrentDirectory(), "Drivers");
 
+        public static readonly string DefaultCommentString = ":heart:";
+
         public static readonly string DebuggingAddress = "localhost:0420";
     }
 }

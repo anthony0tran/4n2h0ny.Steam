@@ -6,15 +6,45 @@ WebDriverSingleton webDriverSingleton = new ();
 Profile profile = new(webDriverSingleton.Driver);
 #endregion
 
-// Retrieve the ProfileData of the first steam page that is opened in the browser session.
-profile.GetMainProfileData();
+GatherProfilesAndComment(profile, webDriverSingleton);
 
-// Get the urls to the profiles that commented.
-profile.GatherProfileUrls(30);
+//TestComment(profile, webDriverSingleton);
 
-string commentTemplate = "Have a sparkling New Year {0}! :heart:";
+static void GatherProfilesAndComment(Profile profile, WebDriverSingleton webDriverSingleton)
+{
+    // Retrieve the ProfileData of the first steam page that is opened in the browser session.
+    profile.GetMainProfileData();
 
-Comment.CommentAllPages(webDriverSingleton.Driver, profile, Profile.ProfileUrls, commentTemplate);
+    // Get the urls to the profiles that commented.
+    profile.GatherProfileUrls(50);
+
+    string commentTemplate = @"⠄⠄⣀⣤⣤⣤⣄⡀⠄⢀⣠⣤⣤⣄⡀⠄⢀⣠⣤⣤⣄⡀⢀⣠⣤⣤⣄⡀⠄⠄
+⢀⣾⣿⡿⠿⠿⣿⣿⣦⢻⡿⠟⠿⣿⣿⣦⡹⣿⠿⠿⣿⣿⣦⠹⠿⠿⣿⣿⣧⡀
+⠸⠿⠿⠄⠄⠄⢸⣿⣿⠄⠄⠄⠄⠈⢿⣿⣧⠄⠄⠄⠈⣿⣿⡇⠄⠄⠈⣿⣿⡇
+⠄⠄⠄⠄⠄⣠⣾⣿⡟⠄⠄⠄⠄⠄⢸⣿⣿⠄⠄⢀⣼⣿⡿⠁⠄⢀⣴⣿⡿⠁
+⠄⠄⢀⣠⣾⣿⠟⢋⣴⠄⠄⠄⠄⠄⢸⡿⠋⣠⣾⣿⠟⠋⠄⣠⣶⣿⠿⠋⠄⠄
+⠄⣰⣿⡿⠋⠄⠈⣿⣿⣦⠄⠄⠄⢀⡾⣡⣾⣿⠋⠁⠄⢠⣾⣿⠟⠁⠄⠄⠄⠄
+⢰⣿⣿⣿⣶⣶⣶⣌⠻⣿⣿⣶⣶⣿⢱⣿⣿⣿⣷⣶⠂⣿⣿⣿⣷⣶⣶⣶⣶⡆
+⠈⠉⠉⠉⠉⠉⠉⠉⠁⠈⠙⠛⠛⠉⠈⠉⠉⠉⠉⠉⠄⠉⠉⠉⠉⠉⠉⠉⠉⠁
+Have a great new year, {0}!";
+
+    Comment.CommentAllPages(webDriverSingleton.Driver, profile, Profile.ProfileUrls, commentTemplate);
+}
+
+static void TestComment(Profile profile, WebDriverSingleton webDriverSingleton)
+{
+    string testString = @"⠄⠄⣀⣤⣤⣤⣄⡀⠄⢀⣠⣤⣤⣄⡀⠄⢀⣠⣤⣤⣄⡀⢀⣠⣤⣤⣄⡀⠄⠄
+⢀⣾⣿⡿⠿⠿⣿⣿⣦⢻⡿⠟⠿⣿⣿⣦⡹⣿⠿⠿⣿⣿⣦⠹⠿⠿⣿⣿⣧⡀
+⠸⠿⠿⠄⠄⠄⢸⣿⣿⠄⠄⠄⠄⠈⢿⣿⣧⠄⠄⠄⠈⣿⣿⡇⠄⠄⠈⣿⣿⡇
+⠄⠄⠄⠄⠄⣠⣾⣿⡟⠄⠄⠄⠄⠄⢸⣿⣿⠄⠄⢀⣼⣿⡿⠁⠄⢀⣴⣿⡿⠁
+⠄⠄⢀⣠⣾⣿⠟⢋⣴⠄⠄⠄⠄⠄⢸⡿⠋⣠⣾⣿⠟⠋⠄⣠⣶⣿⠿⠋⠄⠄
+⠄⣰⣿⡿⠋⠄⠈⣿⣿⣦⠄⠄⠄⢀⡾⣡⣾⣿⠋⠁⠄⢠⣾⣿⠟⠁⠄⠄⠄⠄
+⢰⣿⣿⣿⣶⣶⣶⣌⠻⣿⣿⣶⣶⣿⢱⣿⣿⣿⣷⣶⠂⣿⣿⣿⣷⣶⣶⣶⣶⡆
+⠈⠉⠉⠉⠉⠉⠉⠉⠁⠈⠙⠛⠛⠉⠈⠉⠉⠉⠉⠉⠄⠉⠉⠉⠉⠉⠉⠉⠉⠁
+Have a great new year, {0}!";
+
+    Comment.TestComment(webDriverSingleton.Driver, profile, testString);
+}
 
 #region Finish
 

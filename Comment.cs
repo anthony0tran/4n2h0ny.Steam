@@ -51,14 +51,14 @@ namespace _4n2h0ny.Steam
             {
                 var commentThreadTextAreaElement = driver.FindElement(By.ClassName("commentthread_textarea"));
 
-                commentThreadTextAreaElement.SendKeys(commentString);
+                commentThreadTextAreaElement.SendKeys(String.Format(commentString, currentProfileData.Personaname));
             }
             catch (Exception ex)
             {
                 if (ex.Message.Contains("unknown error: ChromeDriver only supports characters in the BMP"))
                 {
                     var commentThreadTextAreaElement = driver.FindElement(By.ClassName("commentthread_textarea"));
-                    commentThreadTextAreaElement.SendKeys(":heart:");
+                    commentThreadTextAreaElement.SendKeys(Globals.DefaultCommentString);
                     ConsoleHelper.ConsoleWriteError($"Default comment set for: " + currentProfileData.Url);
                 }
                 else
@@ -76,6 +76,31 @@ namespace _4n2h0ny.Steam
             catch (Exception ex)
             {
                 ConsoleHelper.ConsoleWriteError("Can't find submit button\n" + ex.Message);
+            }
+        }
+
+        public static void TestComment(ChromeDriver driver, Profile profile, string commentString)
+        {
+            var currentProfileData = profile.GetCurrentProfileData();
+
+            try
+            {
+                var commentThreadTextAreaElement = driver.FindElement(By.ClassName("commentthread_textarea"));
+
+                commentThreadTextAreaElement.SendKeys(String.Format(commentString, currentProfileData.Personaname));
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("unknown error: ChromeDriver only supports characters in the BMP"))
+                {
+                    var commentThreadTextAreaElement = driver.FindElement(By.ClassName("commentthread_textarea"));
+                    commentThreadTextAreaElement.SendKeys(Globals.DefaultCommentString);
+                    ConsoleHelper.ConsoleWriteError($"Default comment set for: " + currentProfileData.Url);
+                }
+                else
+                {
+                    ConsoleHelper.ConsoleWriteError($"Can't find text area for {currentProfileData.Personaname}\n" + ex.Message);
+                }
             }
         }
     }
