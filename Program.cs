@@ -16,19 +16,9 @@ static void GatherProfilesAndComment(Profile profile, WebDriverSingleton webDriv
     profile.GetMainProfileData();
 
     // Get the urls to the profiles that commented.
-    profile.GatherProfileUrls(50);
+    profile.GatherProfileUrls(Globals.maxPageIndex);
 
-    string commentTemplate = @"⠄⠄⣀⣤⣤⣤⣄⡀⠄⢀⣠⣤⣤⣄⡀⠄⢀⣠⣤⣤⣄⡀⢀⣠⣤⣤⣄⡀⠄⠄
-⢀⣾⣿⡿⠿⠿⣿⣿⣦⢻⡿⠟⠿⣿⣿⣦⡹⣿⠿⠿⣿⣿⣦⠹⠿⠿⣿⣿⣧⡀
-⠸⠿⠿⠄⠄⠄⢸⣿⣿⠄⠄⠄⠄⠈⢿⣿⣧⠄⠄⠄⠈⣿⣿⡇⠄⠄⠈⣿⣿⡇
-⠄⠄⠄⠄⠄⣠⣾⣿⡟⠄⠄⠄⠄⠄⢸⣿⣿⠄⠄⢀⣼⣿⡿⠁⠄⢀⣴⣿⡿⠁
-⠄⠄⢀⣠⣾⣿⠟⢋⣴⠄⠄⠄⠄⠄⢸⡿⠋⣠⣾⣿⠟⠋⠄⣠⣶⣿⠿⠋⠄⠄
-⠄⣰⣿⡿⠋⠄⠈⣿⣿⣦⠄⠄⠄⢀⡾⣡⣾⣿⠋⠁⠄⢠⣾⣿⠟⠁⠄⠄⠄⠄
-⢰⣿⣿⣿⣶⣶⣶⣌⠻⣿⣿⣶⣶⣿⢱⣿⣿⣿⣷⣶⠂⣿⣿⣿⣷⣶⣶⣶⣶⡆
-⠈⠉⠉⠉⠉⠉⠉⠉⠁⠈⠙⠛⠛⠉⠈⠉⠉⠉⠉⠉⠄⠉⠉⠉⠉⠉⠉⠉⠉⠁
-Have a great new year, {0}!";
-
-    Comment.CommentAllPages(webDriverSingleton.Driver, profile, Profile.ProfileUrls, commentTemplate);
+    Comment.CommentAllPages(webDriverSingleton.Driver, profile, Profile.ProfileUrls, Globals.commentTemplate);
 }
 
 static void TestComment(Profile profile, WebDriverSingleton webDriverSingleton)
