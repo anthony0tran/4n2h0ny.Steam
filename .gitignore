@@ -11,6 +11,7 @@
 *.sln.docstates
 *.sln
 chromeProfile/
+START.bat
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
