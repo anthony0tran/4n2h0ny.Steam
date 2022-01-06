@@ -10,8 +10,10 @@
 *.userosscache
 *.sln.docstates
 *.sln
-chromeProfile/
-START.bat
+4n2h0ny.Steam.Console/chromeProfile/
+4n2h0ny.Steam.GUI/chromeProfile/
+4n2h0ny.Steam.Console/START.bat
+4n2h0ny.Steam.GUI/START.bat
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

@@ -147,7 +147,7 @@ namespace _4n2h0ny.Steam
             ReturnToFirstCommentPage();
             Thread.Sleep(1000);
 
-            for (int i = 0; i < maxCommentPageIndex - 1; i++)
+            for (int i = 0; i <= maxCommentPageIndex - 1; i++)
             {
                 try
                 {

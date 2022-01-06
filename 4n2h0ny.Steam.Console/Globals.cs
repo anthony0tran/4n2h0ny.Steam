@@ -10,11 +10,11 @@ namespace _4n2h0ny.Steam
     {
         public static readonly string ChromeDriverPath = Path.Combine(Directory.GetCurrentDirectory(), "Drivers");
 
-        public static readonly int maxPageIndex = 35;
+        public static readonly int MaxPageIndex = 50;
 
-        public static readonly string commentTemplate = "";
+        public static readonly string CommentTemplate = "It’s woohoo Wednesday. Today is going to be a good day. :heart:";
 
-        public static readonly string DefaultCommentString = ":heart:";
+        public static readonly string DefaultCommentString = "It’s woohoo Wednesday. Today is going to be a good day. :heart:";
 
         public static readonly string DebuggingAddress = "localhost:0420";
     }

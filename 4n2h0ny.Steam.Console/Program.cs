@@ -16,9 +16,9 @@ static void GatherProfilesAndComment(Profile profile, WebDriverSingleton webDriv
     profile.GetMainProfileData();
 
     // Get the urls to the profiles that commented.
-    profile.GatherProfileUrls(Globals.maxPageIndex);
+    profile.GatherProfileUrls(Globals.MaxPageIndex);
 
-    Comment.CommentAllPages(webDriverSingleton.Driver, profile, Profile.ProfileUrls, Globals.commentTemplate);
+    Comment.CommentAllPages(webDriverSingleton.Driver, profile, Profile.ProfileUrls, Globals.CommentTemplate);
 }
 
 static void TestComment(Profile profile, WebDriverSingleton webDriverSingleton)
