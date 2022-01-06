@@ -2,7 +2,7 @@
 Steam comment bot developed by 4n2h0ny
 
 ## Create the following directories and files
-### START.BAT
+### START.bat
 
 - Add "*install location*\Google\Chrome Dev\Application" to system variable: "Path"
 - Create a startup batch file
