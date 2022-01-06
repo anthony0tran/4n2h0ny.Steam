@@ -1,7 +1,7 @@
 # 4n2h0ny.Steam
 Steam comment bot developed by 4n2h0ny
 
-## 1. SETUP
+## 1. Setup
 Create the following directories and files
 ### 1.1 START.bat
 
