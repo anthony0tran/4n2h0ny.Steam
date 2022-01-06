@@ -1,7 +1,8 @@
 # 4n2h0ny.Steam
 Steam comment bot developed by 4n2h0ny
 
-## 1. Create the following directories and files
+## 1. SETUP
+Create the following directories and files
 ### 1.1 START.bat
 
 - Add "*install location*\Google\Chrome Dev\Application" to system variable: "Path"
