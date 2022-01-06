@@ -44,3 +44,7 @@ This fills the commentbox without submitting it.
 #### START
 This starts scraping for profiles and places comments on the gathered profiles.
 
+## 3. Prerequisites
+To run this software you need to install the following:
+- [.NET Runtime Desktop 6.0.1](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-6.0.1-windows-x64-installer].NET)
+- [Google Chrome](https://www.google.com/chrome/)
