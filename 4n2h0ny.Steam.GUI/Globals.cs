@@ -4,6 +4,8 @@ namespace _4n2h0ny.Steam.GUI
 {
     public static class Globals
     {
+        public static readonly double version = 1.1;
+
         public static readonly string ChromeDriverPath = Path.Combine(Directory.GetCurrentDirectory(), "Drivers");
 
         public static readonly int MaxPageIndex = 250;
@@ -12,6 +14,6 @@ namespace _4n2h0ny.Steam.GUI
 
         public static readonly string DefaultCommentString = "Have a great day! :heart:";
 
-        public static readonly string DebuggingAddress = "localhost:0420";
+        public static readonly string DebuggingAddress = "localhost:0420";        
     }
 }

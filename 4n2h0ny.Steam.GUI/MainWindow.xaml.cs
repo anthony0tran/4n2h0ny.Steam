@@ -29,6 +29,8 @@ namespace _4n2h0ny.Steam.GUI
         {
             InitializeComponent();
 
+            this.Title = "4n2h0ny.Steam v" + Globals.version.ToString();
+
             profile = SetProfile();
         }
 
