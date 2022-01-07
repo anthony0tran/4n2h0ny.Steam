@@ -40,17 +40,12 @@ namespace _4n2h0ny.Steam.GUI
             OutputDialogClosed?.Invoke(this, e);
         }
 
-        public event EventHandler<OutputDialogClosedEventArgs> OutputDialogClosed;
+        public event EventHandler<OutputDialogClosedEventArgs>? OutputDialogClosed;
 
         public void AppendLogTxtBox(string appendString)
         {
             logTxtBox.Text += appendString + "\n";
         }
-    }
-
-    public class OutputLog
-    {
-        public string OutputLogString { get; set; }
     }
 
     public class OutputDialogClosedEventArgs : EventArgs

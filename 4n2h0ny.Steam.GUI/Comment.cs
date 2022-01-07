@@ -10,6 +10,7 @@ namespace _4n2h0ny.Steam.GUI
 {
     public static class Comment
     {
+        public static int NoFormCounter { get; set; }
         public static async Task CommentAllPages(ChromeDriver driver, Profile profile, string commentTemplate, string defaultComment, OutputDialog outputDialog)
         {
             foreach (var url in profile.ProfileUrls)
@@ -21,7 +22,7 @@ namespace _4n2h0ny.Steam.GUI
 
                 if (CommentThreadFormAvailable(driver, currentProfileData, outputDialog))
                 {
-                    var commentString = String.Format(commentTemplate, currentProfileData.Personaname);
+                    var commentString = String.Format(commentTemplate, currentProfileData.PersonaName);
 
                     PlaceCommentOnPage(driver, currentProfileData, commentString, defaultComment, outputDialog);
                     await Task.Delay(1000);
@@ -33,7 +34,7 @@ namespace _4n2h0ny.Steam.GUI
         {
             try
             {
-                string commentThreadFormId = $"commentthread_Profile_{profileData.Steamid}_form";
+                string commentThreadFormId = $"commentthread_Profile_{profileData.SteamId}_form";
                 var commentNextBtn = driver.FindElement(By.Id(commentThreadFormId));
 
                 if (commentNextBtn != null)
@@ -43,7 +44,8 @@ namespace _4n2h0ny.Steam.GUI
             }
             catch
             {
-                outputDialog.AppendLogTxtBox($"Could not find comment form: {profileData.Url}");
+                NoFormCounter++;
+                outputDialog.AppendLogTxtBox($"\n{NoFormCounter}: Could not find comment form: {profileData.Url}\n");
             }
 
             return false;
@@ -55,7 +57,7 @@ namespace _4n2h0ny.Steam.GUI
             {
                 var commentThreadTextAreaElement = driver.FindElement(By.ClassName("commentthread_textarea"));
 
-                commentThreadTextAreaElement.SendKeys(String.Format(commentString, currentProfileData.Personaname));
+                commentThreadTextAreaElement.SendKeys(String.Format(commentString, currentProfileData.PersonaName));
             }
             catch (Exception ex)
             {
@@ -67,19 +69,19 @@ namespace _4n2h0ny.Steam.GUI
                 }
                 else
                 {
-                    outputDialog.AppendLogTxtBox($"Can't find text area for {currentProfileData.Personaname}\n" + ex.Message);
+                    outputDialog.AppendLogTxtBox($"Can't find text area for {currentProfileData.PersonaName}\n" + ex.Message);
                 }
             }
 
             // SUBMITTING COMMENTS  
-            ClickCommentSubmitBtn(driver, currentProfileData, outputDialog);
+            //ClickCommentSubmitBtn(driver, currentProfileData, outputDialog);
         }
 
         private static void ClickCommentSubmitBtn(ChromeDriver driver, ProfileDataModel currentProfileData, OutputDialog outputDialog)
         {
             try
             {
-                var submitBtnElement = driver.FindElement(By.Id($"commentthread_Profile_{currentProfileData.Steamid}_submit"));
+                var submitBtnElement = driver.FindElement(By.Id($"commentthread_Profile_{currentProfileData.SteamId}_submit"));
                 submitBtnElement.Click();
             }
             catch (Exception ex)
@@ -96,7 +98,7 @@ namespace _4n2h0ny.Steam.GUI
             {
                 var commentThreadTextAreaElement = driver.FindElement(By.ClassName("commentthread_textarea"));
 
-                commentThreadTextAreaElement.SendKeys(String.Format(commentString, currentProfileData.Personaname));
+                commentThreadTextAreaElement.SendKeys(String.Format(commentString, currentProfileData.PersonaName));
             }
             catch (Exception ex)
             {
@@ -108,7 +110,7 @@ namespace _4n2h0ny.Steam.GUI
                 }
                 else
                 {
-                    outputDialog.AppendLogTxtBox($"Can't find text area for {currentProfileData.Personaname}\n" + ex.Message);
+                    outputDialog.AppendLogTxtBox($"Can't find text area for {currentProfileData.PersonaName}\n" + ex.Message);
                 }
             }
         }

@@ -19,9 +19,10 @@ namespace _4n2h0ny.Steam.GUI
             Driver = new(chromeDriverService, options);
         }
 
-        public void DisposeDriver()
+        public void DisposeDriver(OutputDialog outputDialog)
         {
             Driver.Dispose();
+            outputDialog.AppendLogTxtBox("Chrome driver disposed");
         }
     }
 }

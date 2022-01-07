@@ -4,7 +4,7 @@ namespace _4n2h0ny.Steam.GUI
 {
     public static class Globals
     {
-        public static readonly double version = 1.1;
+        public static readonly double version = 1.2;
 
         public static readonly string ChromeDriverPath = Path.Combine(Directory.GetCurrentDirectory(), "Drivers");
 

@@ -21,36 +21,42 @@ namespace _4n2h0ny.Steam.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        readonly WebDriverSingleton webDriverSingleton = new();
-        readonly Profile profile;
         Boolean outputWindowClosed = true;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            this.Title = "4n2h0ny.Steam v" + Globals.version.ToString();
+            Title = "4n2h0ny.Steam v" + Globals.version.ToString();
 
-            profile = SetProfile();
+            SetDefaultTxtBoxValues();
         }
 
         private void TestBtn_Click(object sender, RoutedEventArgs e)
         {
             if (TextBoxValidator() && outputWindowClosed)
             {
+                WebDriverSingleton webDriverSingleton = new();
+                Profile profile = new(webDriverSingleton.Driver);
+
                 OutputDialog outputDialog = new();
                 outputDialog.OutputDialogClosed += O_OutputDialogClosed;
                 outputDialog.Show();
                 outputWindowClosed = false;
 
                 Comment.TestComment(webDriverSingleton.Driver, profile, commentTemplateTxtBox.Text, defaultCommentTxtBox.Text, outputDialog);
-            }
+
+                webDriverSingleton.DisposeDriver(outputDialog);
+            }            
         }
 
         private async void StartBtn_Click(object sender, RoutedEventArgs e)
         {
             if (TextBoxValidator() && outputWindowClosed)
             {
+                WebDriverSingleton webDriverSingleton = new();
+                Profile profile = new(webDriverSingleton.Driver);
+
                 OutputDialog outputDialog = new();
                 outputDialog.OutputDialogClosed += O_OutputDialogClosed;
                 outputDialog.Show();
@@ -63,10 +69,17 @@ namespace _4n2h0ny.Steam.GUI
                 await profile.GatherProfileUrls(outputDialog, int.Parse(maxPageIndexTxtBox.Text));
 
                 await Comment.CommentAllPages(webDriverSingleton.Driver, profile, commentTemplateTxtBox.Text, defaultCommentTxtBox.Text, outputDialog);
+
+                if (Comment.NoFormCounter > 0)
+                {
+                    Comment.NoFormCounter = 0;
+                }
+
+                webDriverSingleton.DisposeDriver(outputDialog);
             }
         }
 
-        private void O_OutputDialogClosed(object sender, OutputDialogClosedEventArgs e)
+        private void O_OutputDialogClosed(object? sender, OutputDialogClosedEventArgs e)
         {
             outputWindowClosed = e.Closed;
         }
@@ -77,13 +90,11 @@ namespace _4n2h0ny.Steam.GUI
             commentTemplateTxtBox.Text = "";
         }
 
-        private Profile SetProfile()
+        private void SetDefaultTxtBoxValues()
         {
             maxPageIndexTxtBox.Text = Globals.MaxPageIndex.ToString();
             defaultCommentTxtBox.Text = Globals.DefaultCommentString.ToString();
             commentTemplateTxtBox.Text = Globals.CommentTemplate.ToString();
-
-            return new(webDriverSingleton.Driver);
         }
 
         private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)

@@ -92,7 +92,7 @@ namespace _4n2h0ny.Steam.GUI
         {
             try
             {
-                string commentNextBtnId = $"commentthread_Profile_{mainProfileData.Steamid}_pagebtn_next";
+                string commentNextBtnId = $"commentthread_Profile_{mainProfileData.SteamId}_pagebtn_next";
                 var commentNextBtn = driver.FindElement(By.Id(commentNextBtnId));
                 commentNextBtn.Click();
             }
@@ -143,7 +143,7 @@ namespace _4n2h0ny.Steam.GUI
             ReturnToFirstCommentPage(outputDialog);
             await Task.Delay(1000);
 
-            for (int i = 0; i <= maxCommentPageIndex - 1; i++)
+            for (int i = 0; i < maxCommentPageIndex; i++)
             {
                 try
                 {
@@ -170,7 +170,11 @@ namespace _4n2h0ny.Steam.GUI
                     outputDialog.AppendLogTxtBox("Could not find profile url\n" + ex.Message);
                 }
 
-                ClickPageBtnNext(outputDialog);
+                if (i < maxCommentPageIndex - 1)
+                {
+                    ClickPageBtnNext(outputDialog);
+                }                
+
                 await Task.Delay(1000);
             }
 
