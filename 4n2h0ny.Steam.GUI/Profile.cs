@@ -6,13 +6,14 @@ using System.Collections.Generic;
 using System;
 using System.Threading;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace _4n2h0ny.Steam.GUI
 {
     public class Profile
     {
         // List of all profile URLs.
-        public static List<string> ProfileUrls = new();
+        public static List<string> ProfileUrls { get; set; } = new();
 
         // ProfileData Retrieve of the first steam page.
         private static ProfileDataModel mainProfileData = new();
@@ -137,10 +138,10 @@ namespace _4n2h0ny.Steam.GUI
         }
 
         // This function only adds profiles to the ProfileUrlsList if the profile is in the friendsList.
-        public void GatherProfileUrls(OutputDialog outputDialog, int maxCommentPageIndex = 20)
+        public async Task GatherProfileUrls(OutputDialog outputDialog, int maxCommentPageIndex = 20)
         {
             ReturnToFirstCommentPage(outputDialog);
-            Thread.Sleep(1000);
+            await Task.Delay(1000);
 
             for (int i = 0; i <= maxCommentPageIndex - 1; i++)
             {
@@ -170,7 +171,7 @@ namespace _4n2h0ny.Steam.GUI
                 }
 
                 ClickPageBtnNext(outputDialog);
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
             }
 
             outputDialog.AppendLogTxtBox($"Found {ProfileUrls.Count} profiles");

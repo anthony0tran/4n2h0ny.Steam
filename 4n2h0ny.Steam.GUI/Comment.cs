@@ -4,17 +4,18 @@ using _4n2h0ny.Steam.GUI.Models;
 using System.Collections.Generic;
 using System.Threading;
 using System;
+using System.Threading.Tasks;
 
 namespace _4n2h0ny.Steam.GUI
 {
     public static class Comment
     {
-        public static void CommentAllPages(ChromeDriver driver, Profile profile, List<string> urlList, string commentTemplate, string defaultComment, OutputDialog outputDialog)
+        public static async Task CommentAllPages(ChromeDriver driver, Profile profile, List<string> urlList, string commentTemplate, string defaultComment, OutputDialog outputDialog)
         {
             foreach (var url in urlList)
             {
                 driver.Navigate().GoToUrl(url);
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 var currentProfileData = profile.GetCurrentProfileData(outputDialog);
 
@@ -23,7 +24,7 @@ namespace _4n2h0ny.Steam.GUI
                     var commentString = String.Format(commentTemplate, currentProfileData.Personaname);
 
                     PlaceCommentOnPage(driver, currentProfileData, commentString, defaultComment, outputDialog);
-                    Thread.Sleep(1000);
+                    await Task.Delay(1000);
                 }
             }
         }
