@@ -22,14 +22,14 @@ namespace _4n2h0ny.Steam.GUI
     public partial class MainWindow : Window
     {
         readonly WebDriverSingleton webDriverSingleton = new();
-        Profile profile;
+        readonly Profile profile;
         Boolean outputWindowClosed = true;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            InitializeProgram();
+            profile = SetProfile();
         }
 
         private void TestBtn_Click(object sender, RoutedEventArgs e)
@@ -45,7 +45,7 @@ namespace _4n2h0ny.Steam.GUI
             }
         }
 
-        private void StartBtn_Click(object sender, RoutedEventArgs e)
+        private async void StartBtn_Click(object sender, RoutedEventArgs e)
         {
             if (TextBoxValidator() && outputWindowClosed)
             {
@@ -58,9 +58,9 @@ namespace _4n2h0ny.Steam.GUI
                 profile.GetMainProfileData(outputDialog);
 
                 // Get the urls to the profiles that commented.
-                profile.GatherProfileUrls(outputDialog, int.Parse(maxPageIndexTxtBox.Text));
+                await profile.GatherProfileUrls(outputDialog, int.Parse(maxPageIndexTxtBox.Text));
 
-                Comment.CommentAllPages(webDriverSingleton.Driver, profile, Profile.ProfileUrls, commentTemplateTxtBox.Text, defaultCommentTxtBox.Text, outputDialog);
+                await Comment.CommentAllPages(webDriverSingleton.Driver, profile, commentTemplateTxtBox.Text, defaultCommentTxtBox.Text, outputDialog);
             }
         }
 
@@ -75,13 +75,13 @@ namespace _4n2h0ny.Steam.GUI
             commentTemplateTxtBox.Text = "";
         }
 
-        private void InitializeProgram()
+        private Profile SetProfile()
         {
-            profile = new(webDriverSingleton.Driver);
-
             maxPageIndexTxtBox.Text = Globals.MaxPageIndex.ToString();
             defaultCommentTxtBox.Text = Globals.DefaultCommentString.ToString();
             commentTemplateTxtBox.Text = Globals.CommentTemplate.ToString();
+
+            return new(webDriverSingleton.Driver);
         }
 
         private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)

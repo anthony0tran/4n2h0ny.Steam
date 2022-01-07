@@ -10,9 +10,9 @@ namespace _4n2h0ny.Steam.GUI
 {
     public static class Comment
     {
-        public static async Task CommentAllPages(ChromeDriver driver, Profile profile, List<string> urlList, string commentTemplate, string defaultComment, OutputDialog outputDialog)
+        public static async Task CommentAllPages(ChromeDriver driver, Profile profile, string commentTemplate, string defaultComment, OutputDialog outputDialog)
         {
-            foreach (var url in urlList)
+            foreach (var url in profile.ProfileUrls)
             {
                 driver.Navigate().GoToUrl(url);
                 await Task.Delay(1000);
@@ -72,6 +72,11 @@ namespace _4n2h0ny.Steam.GUI
             }
 
             // SUBMITTING COMMENTS  
+            ClickCommentSubmitBtn(driver, currentProfileData, outputDialog);
+        }
+
+        private static void ClickCommentSubmitBtn(ChromeDriver driver, ProfileDataModel currentProfileData, OutputDialog outputDialog)
+        {
             try
             {
                 var submitBtnElement = driver.FindElement(By.Id($"commentthread_Profile_{currentProfileData.Steamid}_submit"));

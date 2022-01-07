@@ -13,12 +13,12 @@ namespace _4n2h0ny.Steam.GUI
     public class Profile
     {
         // List of all profile URLs.
-        public static List<string> ProfileUrls { get; set; } = new();
+        public List<string> ProfileUrls { get; set; } = new();
 
         // ProfileData Retrieve of the first steam page.
-        private static ProfileDataModel mainProfileData = new();
+        private ProfileDataModel mainProfileData = new();
 
-        public static ProfileDataModel CurrentProfileData = new();
+        public ProfileDataModel CurrentProfileData = new();
 
         private readonly ChromeDriver driver;
 
