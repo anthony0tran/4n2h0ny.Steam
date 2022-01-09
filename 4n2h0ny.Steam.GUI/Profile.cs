@@ -7,6 +7,8 @@ using System;
 using System.Threading;
 using System.Linq;
 using System.Threading.Tasks;
+using _4n2h0ny.Steam.GUI.EventArguments;
+using System.Windows.Shell;
 
 namespace _4n2h0ny.Steam.GUI
 {
@@ -138,10 +140,15 @@ namespace _4n2h0ny.Steam.GUI
         }
 
         // This function only adds profiles to the ProfileUrlsList if the profile is in the friendsList.
-        public async Task GatherProfileUrls(OutputDialog outputDialog, int maxCommentPageIndex = 20)
+        public async Task GatherProfileUrls(MainWindow mainWindow, OutputDialog outputDialog, int maxCommentPageIndex = 20)
         {
             ReturnToFirstCommentPage(outputDialog);
             await Task.Delay(1000);
+
+            TaskBarProgressEventArgs taskBarProgressEventArgs = new() { 
+                ProgressValue = 0,
+                TaskbarItemProgressState = TaskbarItemProgressState.Normal
+            };
 
             for (int i = 0; i < maxCommentPageIndex; i++)
             {
@@ -174,6 +181,9 @@ namespace _4n2h0ny.Steam.GUI
                 {
                     ClickPageBtnNext(outputDialog);
                 }                
+
+                taskBarProgressEventArgs.ProgressValue = ((double)i + 1) / (double)maxCommentPageIndex;
+                mainWindow.OnTaskbarProgressUpdated(taskBarProgressEventArgs);
 
                 await Task.Delay(1000);
             }

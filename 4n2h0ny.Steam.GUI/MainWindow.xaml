@@ -8,6 +8,9 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         Title="4n2h0ny bot" Height="280" Width="420">
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo/>
+    </Window.TaskbarItemInfo>
     <Grid VerticalAlignment="Top" HorizontalAlignment="Center" ShowGridLines="False" Height="265" Width="420" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition  Width="125"/>

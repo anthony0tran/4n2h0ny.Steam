@@ -1,28 +1,40 @@
 ﻿using OpenQA.Selenium.Chrome;
+using System;
+using System.Windows;
 
 namespace _4n2h0ny.Steam.GUI
 {
     public sealed class WebDriverSingleton
     {
-        public ChromeDriver Driver { get; set; }
-        
+        public ChromeDriver? Driver { get; set; }
+
         public WebDriverSingleton()
         {
-            var chromeDriverService = ChromeDriverService.CreateDefaultService(Globals.ChromeDriverPath);
-            chromeDriverService.HideCommandPromptWindow = true;
-
-            ChromeOptions options = new()
+            try
             {
-                DebuggerAddress = Globals.DebuggingAddress
-            };
+                var chromeDriverService = ChromeDriverService.CreateDefaultService(Globals.ChromeDriverPath);
+                chromeDriverService.HideCommandPromptWindow = true;
 
-            Driver = new(chromeDriverService, options);
+                ChromeOptions options = new()
+                {
+                    DebuggerAddress = Globals.DebuggingAddress
+                };
+
+                Driver = new(chromeDriverService, options);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
 
         public void DisposeDriver(OutputDialog outputDialog)
         {
-            Driver.Dispose();
-            outputDialog.AppendLogTxtBox("Chrome driver disposed");
+            if(Driver != null)
+            {
+                Driver.Dispose();
+                outputDialog.AppendLogTxtBox("Chrome driver disposed");
+            }
         }
     }
 }

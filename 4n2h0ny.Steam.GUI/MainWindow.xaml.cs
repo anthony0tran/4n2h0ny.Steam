@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Shell;
+using _4n2h0ny.Steam.GUI.EventArguments;
 
 namespace _4n2h0ny.Steam.GUI
 {
@@ -22,6 +15,8 @@ namespace _4n2h0ny.Steam.GUI
     public partial class MainWindow : Window
     {
         Boolean outputWindowClosed = true;
+
+        public event EventHandler<TaskBarProgressEventArgs>? TaskBarProgressUpdated;
 
         public MainWindow()
         {
@@ -37,17 +32,30 @@ namespace _4n2h0ny.Steam.GUI
             if (TextBoxValidator() && outputWindowClosed)
             {
                 WebDriverSingleton webDriverSingleton = new();
-                Profile profile = new(webDriverSingleton.Driver);
+                if (webDriverSingleton.Driver != null)
+                {
+                    Profile profile = new(webDriverSingleton.Driver);
+                    OutputDialog outputDialog = new();
+                    outputDialog.OutputDialogClosed += OutputDialog_OutputDialogClosed;
+                    outputDialog.Show();
+                    outputWindowClosed = false;
 
-                OutputDialog outputDialog = new();
-                outputDialog.OutputDialogClosed += O_OutputDialogClosed;
-                outputDialog.Show();
-                outputWindowClosed = false;
+                    Comment.TestComment(webDriverSingleton.Driver, profile, commentTemplateTxtBox.Text, defaultCommentTxtBox.Text, outputDialog);
 
-                Comment.TestComment(webDriverSingleton.Driver, profile, commentTemplateTxtBox.Text, defaultCommentTxtBox.Text, outputDialog);
+                    webDriverSingleton.DisposeDriver(outputDialog);
+                }
+            }
+        }
 
-                webDriverSingleton.DisposeDriver(outputDialog);
-            }            
+        private void Profile_TaskBarProgressUpdated(object? sender, TaskBarProgressEventArgs e)
+        {
+            TaskbarItemInfo.ProgressState = e.TaskbarItemProgressState;
+            TaskbarItemInfo.ProgressValue = e.ProgressValue;
+        }
+
+        public virtual void OnTaskbarProgressUpdated(TaskBarProgressEventArgs e)
+        {
+            TaskBarProgressUpdated?.Invoke(this, e);
         }
 
         private async void StartBtn_Click(object sender, RoutedEventArgs e)
@@ -55,31 +63,40 @@ namespace _4n2h0ny.Steam.GUI
             if (TextBoxValidator() && outputWindowClosed)
             {
                 WebDriverSingleton webDriverSingleton = new();
-                Profile profile = new(webDriverSingleton.Driver);
-
-                OutputDialog outputDialog = new();
-                outputDialog.OutputDialogClosed += O_OutputDialogClosed;
-                outputDialog.Show();
-                outputWindowClosed = false;
-
-                // Retrieve the ProfileData of the first steam page that is opened in the browser session.
-                profile.GetMainProfileData(outputDialog);
-
-                // Get the urls to the profiles that commented.
-                await profile.GatherProfileUrls(outputDialog, int.Parse(maxPageIndexTxtBox.Text));
-
-                await Comment.CommentAllPages(webDriverSingleton.Driver, profile, commentTemplateTxtBox.Text, defaultCommentTxtBox.Text, outputDialog);
-
-                if (Comment.NoFormCounter > 0)
+                if (webDriverSingleton.Driver != null)
                 {
-                    Comment.NoFormCounter = 0;
+                    Profile profile = new(webDriverSingleton.Driver);
+                    TaskBarProgressUpdated += Profile_TaskBarProgressUpdated;
+
+                    OutputDialog outputDialog = new();
+                    outputDialog.OutputDialogClosed += OutputDialog_OutputDialogClosed;
+                    outputDialog.Show();
+                    outputWindowClosed = false;
+
+                    // Retrieve the ProfileData of the first steam page that is opened in the browser session.
+                    profile.GetMainProfileData(outputDialog);
+
+                    // Get the urls to the profiles that commented.
+                    await profile.GatherProfileUrls(this, outputDialog, int.Parse(maxPageIndexTxtBox.Text));
+
+                    TaskbarItemInfo.ProgressState = TaskbarItemProgressState.None;
+
+                    await Comment.CommentAllPages(this, webDriverSingleton.Driver, profile, commentTemplateTxtBox.Text, defaultCommentTxtBox.Text, outputDialog);
+
+                    TaskbarItemInfo.ProgressState = TaskbarItemProgressState.None;
+
+                    if (Comment.NoFormCounter > 0)
+                    {
+                        Comment.NoFormCounter = 0;
+                    }
+
+                    webDriverSingleton.DisposeDriver(outputDialog);
                 }
 
-                webDriverSingleton.DisposeDriver(outputDialog);
             }
         }
 
-        private void O_OutputDialogClosed(object? sender, OutputDialogClosedEventArgs e)
+        private void OutputDialog_OutputDialogClosed(object? sender, OutputDialogClosedEventArgs e)
         {
             outputWindowClosed = e.Closed;
         }
@@ -137,7 +154,7 @@ namespace _4n2h0ny.Steam.GUI
                 }
 
                 if (String.IsNullOrEmpty(maxPageIndexTxtBox.Text) || int.Parse(maxPageIndexTxtBox.Text) <= 0)
-                {                   
+                {
                     if (int.Parse(maxPageIndexTxtBox.Text) <= 0)
                     {
                         MessageBox.Show("Invalid value for maxPageIndexTxtBox");

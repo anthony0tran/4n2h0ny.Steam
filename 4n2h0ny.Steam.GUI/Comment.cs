@@ -1,21 +1,27 @@
 ﻿using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
 using _4n2h0ny.Steam.GUI.Models;
-using System.Collections.Generic;
-using System.Threading;
 using System;
 using System.Threading.Tasks;
+using _4n2h0ny.Steam.GUI.EventArguments;
+using System.Windows.Shell;
 
 namespace _4n2h0ny.Steam.GUI
 {
     public static class Comment
     {
         public static int NoFormCounter { get; set; }
-        public static async Task CommentAllPages(ChromeDriver driver, Profile profile, string commentTemplate, string defaultComment, OutputDialog outputDialog)
+        public static async Task CommentAllPages(MainWindow mainWindow, ChromeDriver driver, Profile profile, string commentTemplate, string defaultComment, OutputDialog outputDialog)
         {
-            foreach (var url in profile.ProfileUrls)
+            TaskBarProgressEventArgs taskBarProgressEventArgs = new()
             {
-                driver.Navigate().GoToUrl(url);
+                ProgressValue = 0,
+                TaskbarItemProgressState = TaskbarItemProgressState.Normal
+            };
+
+            for(int i = 0; i < profile.ProfileUrls.Count; i++)
+            {
+                driver.Navigate().GoToUrl(profile.ProfileUrls[i]);
                 await Task.Delay(1000);
 
                 var currentProfileData = profile.GetCurrentProfileData(outputDialog);
@@ -27,6 +33,9 @@ namespace _4n2h0ny.Steam.GUI
                     PlaceCommentOnPage(driver, currentProfileData, commentString, defaultComment, outputDialog);
                     await Task.Delay(1000);
                 }
+
+                taskBarProgressEventArgs.ProgressValue = ((double)i + 1) / (double)profile.ProfileUrls.Count;
+                mainWindow.OnTaskbarProgressUpdated(taskBarProgressEventArgs);
             }
         }
 
