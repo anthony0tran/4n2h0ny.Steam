@@ -33,6 +33,7 @@
 
         <Button x:Name="testBtn" Grid.Column="0" Content="TEST" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Height="30" Width="75" Margin="100,0,0,0" Click="TestBtn_Click" Grid.ColumnSpan="2"/>
         <Button x:Name="clearBtn" Grid.Column="0" Content="CLEAR" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Height="30" Width="75" Margin="20,0,0,0" Click="ClearBtn_Click"/>
+        <Button x:Name="resetDbBtn" Grid.Column="1" Content="RESET DB" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Height="30" Width="75" Margin="55,0,0,0" Click="ResetDbBtn_Click"/>
         <Button x:Name="startBtn" Grid.Column="1" Content="START" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="3" Height="30" Width="75" Margin="0,0,20,0" Click="StartBtn_Click" Background="#FF37EF5C" BorderBrush="#FF707070" FontWeight="Bold"/>
     </Grid>
 </Window>

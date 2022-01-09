@@ -21,7 +21,7 @@ namespace _4n2h0ny.Steam.GUI
 
             for(int i = 0; i < profile.ProfileUrls.Count; i++)
             {
-                driver.Navigate().GoToUrl(profile.ProfileUrls[i]);
+                driver.Navigate().GoToUrl(profile.ProfileUrls[i].Url);
                 await Task.Delay(1000);
 
                 var currentProfileData = profile.GetCurrentProfileData(outputDialog);
@@ -33,6 +33,9 @@ namespace _4n2h0ny.Steam.GUI
                     PlaceCommentOnPage(driver, currentProfileData, commentString, defaultComment, outputDialog);
                     await Task.Delay(1000);
                 }
+
+                SqliteDataAccess.DeleteUrl(profile.ProfileUrls[i]);
+                profile.ProfileUrls = SqliteDataAccess.GetAllUrls();
 
                 taskBarProgressEventArgs.ProgressValue = ((double)i + 1) / (double)profile.ProfileUrls.Count;
                 mainWindow.OnTaskbarProgressUpdated(taskBarProgressEventArgs);

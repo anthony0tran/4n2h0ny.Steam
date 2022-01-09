@@ -15,7 +15,7 @@ namespace _4n2h0ny.Steam.GUI
     public class Profile
     {
         // List of all profile URLs.
-        public List<string> ProfileUrls { get; set; } = new();
+        public List<SteamUrlModel> ProfileUrls { get; set; } = new();
 
         // ProfileData Retrieve of the first steam page.
         private ProfileDataModel mainProfileData = new();
@@ -27,6 +27,8 @@ namespace _4n2h0ny.Steam.GUI
         public Profile(ChromeDriver driver)
         {
             this.driver = driver;
+
+            ProfileUrls = SqliteDataAccess.GetAllUrls();
         }
 
         public ProfileDataModel GetCurrentProfileData(OutputDialog outputDialog)
@@ -165,9 +167,23 @@ namespace _4n2h0ny.Steam.GUI
                         if (commentElement.FindElements(By.XPath("div[contains(@class,\"commentthread_comment_friendindicator\")]")).Count != 0)
                         {
                             var commentLinkElement = commentElement.FindElement(By.XPath("div[contains(@class,\"commentthread_comment_avatar\")]/a"));
-                            if (!ProfileUrls.Contains(commentLinkElement.GetAttribute("href")))
+
+                            List<SteamUrlModel> foundSteamUrl = GetSteamUrlByUrl(commentLinkElement.GetAttribute("href"));
+
+                            if (foundSteamUrl.Count == 0)
                             {
-                                ProfileUrls.Add(commentLinkElement.GetAttribute("href"));
+                                SteamUrlModel steamUrl = new()
+                                {
+                                    Url = commentLinkElement.GetAttribute("href")
+                                };
+
+                                List<SteamUrlModel> foundSteamUrls = GetSteamUrlByUrl(steamUrl.Url);
+                                
+                                if (foundSteamUrls.Count == 0)
+                                {
+                                    SqliteDataAccess.SaveUrl(steamUrl);
+                                    ProfileUrls = SqliteDataAccess.GetAllUrls();
+                                }                                
                             }
                         }
                     }
@@ -188,7 +204,13 @@ namespace _4n2h0ny.Steam.GUI
                 await Task.Delay(1000);
             }
 
+            ProfileUrls = SqliteDataAccess.GetAllUrls();
             outputDialog.AppendLogTxtBox($"Found {ProfileUrls.Count} profiles");
+        }
+
+        private List<SteamUrlModel> GetSteamUrlByUrl(string url)
+        {
+            return ProfileUrls.Where(x => x.Url == url).ToList();
         }
 
         private bool IsFriend(OutputDialog outputDialog)

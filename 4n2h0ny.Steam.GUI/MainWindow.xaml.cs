@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -6,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shell;
 using _4n2h0ny.Steam.GUI.EventArguments;
+using _4n2h0ny.Steam.GUI.Models;
 
 namespace _4n2h0ny.Steam.GUI
 {
@@ -47,7 +49,7 @@ namespace _4n2h0ny.Steam.GUI
             }
         }
 
-        private void Profile_TaskBarProgressUpdated(object? sender, TaskBarProgressEventArgs e)
+        private void MainWindow_TaskBarProgressUpdated(object? sender, TaskBarProgressEventArgs e)
         {
             TaskbarItemInfo.ProgressState = e.TaskbarItemProgressState;
             TaskbarItemInfo.ProgressValue = e.ProgressValue;
@@ -66,7 +68,7 @@ namespace _4n2h0ny.Steam.GUI
                 if (webDriverSingleton.Driver != null)
                 {
                     Profile profile = new(webDriverSingleton.Driver);
-                    TaskBarProgressUpdated += Profile_TaskBarProgressUpdated;
+                    TaskBarProgressUpdated += MainWindow_TaskBarProgressUpdated;
 
                     OutputDialog outputDialog = new();
                     outputDialog.OutputDialogClosed += OutputDialog_OutputDialogClosed;
@@ -76,10 +78,17 @@ namespace _4n2h0ny.Steam.GUI
                     // Retrieve the ProfileData of the first steam page that is opened in the browser session.
                     profile.GetMainProfileData(outputDialog);
 
-                    // Get the urls to the profiles that commented.
-                    await profile.GatherProfileUrls(this, outputDialog, int.Parse(maxPageIndexTxtBox.Text));
+                    if (profile.ProfileUrls.Count == 0)
+                    {
+                        // Get the urls to the profiles that commented.
+                        await profile.GatherProfileUrls(this, outputDialog, int.Parse(maxPageIndexTxtBox.Text));
 
-                    TaskbarItemInfo.ProgressState = TaskbarItemProgressState.None;
+                        TaskbarItemInfo.ProgressState = TaskbarItemProgressState.None;
+                    }
+                    else
+                    {
+                        outputDialog.AppendLogTxtBox($"Skipped profile scraping. {profile.ProfileUrls.Count} profiles found.");
+                    }
 
                     await Comment.CommentAllPages(this, webDriverSingleton.Driver, profile, commentTemplateTxtBox.Text, defaultCommentTxtBox.Text, outputDialog);
 
@@ -93,6 +102,24 @@ namespace _4n2h0ny.Steam.GUI
                     webDriverSingleton.DisposeDriver(outputDialog);
                 }
 
+            }
+        }
+
+        private static void ResetDb()
+        {
+            List<SteamUrlModel> steamUrlList = SqliteDataAccess.GetAllUrls();
+
+            if (steamUrlList.Count > 0)
+            {
+                MessageBoxResult ResetDb = MessageBox.Show($"Delete {steamUrlList.Count} profiles from the database?", "Reset database", MessageBoxButton.YesNo);
+                if (ResetDb == MessageBoxResult.Yes)
+                {
+                    SqliteDataAccess.ResetProfileTable();
+                }
+            } 
+            else
+            {
+                MessageBox.Show("steamUrlList is empty");
             }
         }
 
@@ -169,6 +196,11 @@ namespace _4n2h0ny.Steam.GUI
 
                 return false;
             }
+        }
+
+        private void ResetDbBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ResetDb();
         }
     }
 }
