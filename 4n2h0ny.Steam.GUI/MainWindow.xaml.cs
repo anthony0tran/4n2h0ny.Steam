@@ -92,6 +92,8 @@ namespace _4n2h0ny.Steam.GUI
 
                     await Comment.CommentAllPages(this, webDriverSingleton.Driver, profile, commentTemplateTxtBox.Text, defaultCommentTxtBox.Text, outputDialog);
 
+                    profile.ProfileUrls = SqliteDataAccess.GetAllUrls();
+
                     TaskbarItemInfo.ProgressState = TaskbarItemProgressState.None;
 
                     if (Comment.NoFormCounter > 0)

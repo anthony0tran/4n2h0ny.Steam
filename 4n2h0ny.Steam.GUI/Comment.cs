@@ -28,7 +28,7 @@ namespace _4n2h0ny.Steam.GUI
 
                 var currentProfileData = profile.GetCurrentProfileData(outputDialog);
 
-                if (CommentThreadFormAvailable(driver, currentProfileData, outputDialog))
+                if (CommentThreadFormAvailable(driver, profile, currentProfileData, outputDialog))
                 {
                     var commentString = String.Format(commentTemplate, currentProfileData.PersonaName);
 
@@ -37,14 +37,13 @@ namespace _4n2h0ny.Steam.GUI
                 }
 
                 SqliteDataAccess.DeleteUrl(profile.ProfileUrls[i]);
-                profile.ProfileUrls = SqliteDataAccess.GetAllUrls();
 
                 taskBarProgressEventArgs.ProgressValue = ((double)i + 1) / (double)profile.ProfileUrls.Count;
                 mainWindow.OnTaskbarProgressUpdated(taskBarProgressEventArgs);
             }
         }
 
-        private static bool CommentThreadFormAvailable(ChromeDriver driver, ProfileDataModel profileData, OutputDialog outputDialog)
+        private static bool CommentThreadFormAvailable(ChromeDriver driver, Profile profile, ProfileDataModel profileData, OutputDialog outputDialog)
         {
             try
             {
@@ -58,6 +57,14 @@ namespace _4n2h0ny.Steam.GUI
             }
             catch
             {
+                SteamUrlModel manualUrls = new()
+                {
+                    Url = profileData.Url
+                };
+
+                SqliteDataAccess.SaveManualUrl(manualUrls);
+                profile.ManualProfileUrls = SqliteDataAccess.GetAllManualUrls();
+
                 NoFormCounter++;
                 outputDialog.AppendLogTxtBox($"\n{NoFormCounter}: Could not find comment form: {profileData.Url}\n");
             }
@@ -88,7 +95,7 @@ namespace _4n2h0ny.Steam.GUI
             }
 
             // SUBMITTING COMMENTS  
-            ClickCommentSubmitBtn(driver, currentProfileData, outputDialog);
+            //ClickCommentSubmitBtn(driver, currentProfileData, outputDialog);
         }
 
         private static void ClickCommentSubmitBtn(ChromeDriver driver, ProfileDataModel currentProfileData, OutputDialog outputDialog)

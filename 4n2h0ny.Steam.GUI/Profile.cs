@@ -17,6 +17,8 @@ namespace _4n2h0ny.Steam.GUI
         // List of all profile URLs.
         public List<SteamUrlModel> ProfileUrls { get; set; } = new();
 
+        public List<SteamUrlModel> ManualProfileUrls { get; set; } = new();
+
         // ProfileData Retrieve of the first steam page.
         private ProfileDataModel mainProfileData = new();
 
