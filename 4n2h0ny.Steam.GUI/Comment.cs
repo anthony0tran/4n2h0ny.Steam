@@ -13,13 +13,15 @@ namespace _4n2h0ny.Steam.GUI
         public static int NoFormCounter { get; set; }
         public static async Task CommentAllPages(MainWindow mainWindow, ChromeDriver driver, Profile profile, string commentTemplate, string defaultComment, OutputDialog outputDialog)
         {
+            int profileUrlCounter = profile.ProfileUrls.Count;
+
             TaskBarProgressEventArgs taskBarProgressEventArgs = new()
             {
                 ProgressValue = 0,
                 TaskbarItemProgressState = TaskbarItemProgressState.Normal
             };
 
-            for(int i = 0; i < profile.ProfileUrls.Count; i++)
+            for (int i = 0; i < profileUrlCounter; i++)
             {
                 driver.Navigate().GoToUrl(profile.ProfileUrls[i].Url);
                 await Task.Delay(1000);
