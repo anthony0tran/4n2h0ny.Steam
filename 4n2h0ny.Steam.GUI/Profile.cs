@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using _4n2h0ny.Steam.GUI.EventArguments;
 using System.Windows.Shell;
+using System.Collections.ObjectModel;
 
 namespace _4n2h0ny.Steam.GUI
 {
@@ -17,7 +18,7 @@ namespace _4n2h0ny.Steam.GUI
         // List of all profile URLs.
         public List<SteamUrlModel> ProfileUrls { get; set; } = new();
 
-        public List<SteamUrlModel> ManualProfileUrls { get; set; } = new();
+        public ObservableCollection<SteamUrlModel> ManualProfileUrls { get; set; } = new();
 
         // ProfileData Retrieve of the first steam page.
         private ProfileDataModel mainProfileData = new();

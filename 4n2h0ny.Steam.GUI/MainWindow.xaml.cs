@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,6 +21,8 @@ namespace _4n2h0ny.Steam.GUI
 
         public event EventHandler<TaskBarProgressEventArgs>? TaskBarProgressUpdated;
 
+        public event EventHandler<AutomationRunningEventArgs>? AutomationRunning;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -33,18 +36,30 @@ namespace _4n2h0ny.Steam.GUI
         {
             if (TextBoxValidator() && outputWindowClosed)
             {
-                WebDriverSingleton webDriverSingleton = new();
+                WebDriverSingleton webDriverSingleton = new();                
+
                 if (webDriverSingleton.Driver != null)
                 {
                     Profile profile = new(webDriverSingleton.Driver);
-                    OutputDialog outputDialog = new();
+                    OutputDialog outputDialog = new(profile, this);
                     outputDialog.OutputDialogClosed += OutputDialog_OutputDialogClosed;
                     outputDialog.Show();
+
+                    AutomationRunningEventArgs automationRunningEventArgs = new()
+                    {
+                        Running = true
+                    };
+
+                    OnAutomationRunning(automationRunningEventArgs);
+
                     outputWindowClosed = false;
 
                     Comment.TestComment(webDriverSingleton.Driver, profile, commentTemplateTxtBox.Text, defaultCommentTxtBox.Text, outputDialog);
 
                     webDriverSingleton.DisposeDriver(outputDialog);
+
+                    automationRunningEventArgs.Running = false;
+                    OnAutomationRunning(automationRunningEventArgs);
                 }
             }
         }
@@ -60,19 +75,33 @@ namespace _4n2h0ny.Steam.GUI
             TaskBarProgressUpdated?.Invoke(this, e);
         }
 
+        public virtual void OnAutomationRunning(AutomationRunningEventArgs e)
+        {
+            AutomationRunning?.Invoke(this, e);
+        }
+
         private async void StartBtn_Click(object sender, RoutedEventArgs e)
         {
             if (TextBoxValidator() && outputWindowClosed)
             {
                 WebDriverSingleton webDriverSingleton = new();
+                
                 if (webDriverSingleton.Driver != null)
                 {
                     Profile profile = new(webDriverSingleton.Driver);
                     TaskBarProgressUpdated += MainWindow_TaskBarProgressUpdated;
 
-                    OutputDialog outputDialog = new();
+                    OutputDialog outputDialog = new(profile, this);
                     outputDialog.OutputDialogClosed += OutputDialog_OutputDialogClosed;
                     outputDialog.Show();
+
+                    AutomationRunningEventArgs automationRunningEventArgs = new()
+                    {
+                        Running = true
+                    };
+
+                    OnAutomationRunning(automationRunningEventArgs);
+
                     outputWindowClosed = false;
 
                     // Retrieve the ProfileData of the first steam page that is opened in the browser session.
@@ -102,6 +131,8 @@ namespace _4n2h0ny.Steam.GUI
                     }
 
                     webDriverSingleton.DisposeDriver(outputDialog);
+                    automationRunningEventArgs.Running = false;
+                    OnAutomationRunning(automationRunningEventArgs);
                 }
 
             }
@@ -110,18 +141,20 @@ namespace _4n2h0ny.Steam.GUI
         private static void ResetDb()
         {
             List<SteamUrlModel> steamUrlList = SqliteDataAccess.GetAllUrls();
+            ObservableCollection<SteamUrlModel> manualProfileList = SqliteDataAccess.GetAllManualUrls();
 
-            if (steamUrlList.Count > 0)
+            if (steamUrlList.Count > 0 || manualProfileList.Count > 0)
             {
-                MessageBoxResult ResetDb = MessageBox.Show($"Delete {steamUrlList.Count} profiles from the database?", "Reset database", MessageBoxButton.YesNo);
+                MessageBoxResult ResetDb = MessageBox.Show($"Delete {steamUrlList.Count} profile(s) and {manualProfileList.Count} manualProfile(s) from the database?", "Reset database", MessageBoxButton.YesNo);
                 if (ResetDb == MessageBoxResult.Yes)
                 {
                     SqliteDataAccess.ResetProfileTable();
+                    SqliteDataAccess.ResetManualProfileTable();
                 }
-            } 
+            }
             else
             {
-                MessageBox.Show("steamUrlList is empty");
+                MessageBox.Show("steamUrlList and manualProfileList are empty");
             }
         }
 

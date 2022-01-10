@@ -7,16 +7,25 @@
         mc:Ignorable="d"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
-        Title="4n2h0ny logs" Height="280" Width="420"
+        Title="4n2h0ny logs" Height="400" Width="900"
         Closed="WindowClosed">
+    <Window.DataContext>
+        <Binding RelativeSource="{RelativeSource Self}" />
+    </Window.DataContext>
     <Grid x:Name="logGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition  Width="0.45*"/>
+            <ColumnDefinition  Width="0.55*"/>
+        </Grid.ColumnDefinitions>
         <TextBox x:Name="logTxtBox" 
-                 HorizontalAlignment="Center" 
                  TextWrapping="Wrap" 
-                 VerticalAlignment="Center" 
-                 Width="390" 
-                 Height="230" 
-                 IsReadOnly="True"/>
-
+                 Grid.Column="1"
+                 IsReadOnly="True"
+                 Margin="10,10,10,10"/>
+        <ListBox x:Name="manualProfileListBox" Margin="10,10,10,10" />
+        <StackPanel VerticalAlignment="Bottom" Height="72">
+            <Button x:Name="navigateToBtn" Content="NAVIGATE TO" Height="30" Margin="10,0,10,1" Background="#FF37EF5C" Click="NavigateToBtn_Click"/>
+            <Button x:Name="deleteBtn" Content="DELETE" Height="30" Margin="10,1,10,0" Background="#FFFF4C4C" Click="DeleteBtn_Click"/>
+        </StackPanel>
     </Grid>
 </Window>

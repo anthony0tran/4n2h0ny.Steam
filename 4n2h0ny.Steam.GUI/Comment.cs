@@ -5,6 +5,8 @@ using System;
 using System.Threading.Tasks;
 using _4n2h0ny.Steam.GUI.EventArguments;
 using System.Windows.Shell;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace _4n2h0ny.Steam.GUI
 {
@@ -62,7 +64,16 @@ namespace _4n2h0ny.Steam.GUI
                     Url = profileData.Url
                 };
 
-                SqliteDataAccess.SaveManualUrl(manualUrls);
+                List<SteamUrlModel> existingManualProfile = profile.ManualProfileUrls.Where(
+                    manualProfile => manualProfile.Url == profileData.Url
+                    ).ToList();
+
+                if (existingManualProfile.Count == 0)
+                {
+                    SqliteDataAccess.SaveManualUrl(manualUrls);
+                    outputDialog.UpdateManualProfileListBox(profile);
+                }
+
                 profile.ManualProfileUrls = SqliteDataAccess.GetAllManualUrls();
 
                 NoFormCounter++;

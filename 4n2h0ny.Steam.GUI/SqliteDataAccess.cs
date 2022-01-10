@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SQLite;
 using Dapper;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace _4n2h0ny.Steam.GUI
 {
@@ -47,12 +48,13 @@ namespace _4n2h0ny.Steam.GUI
         #endregion Profile
 
         #region ManualProfile
-        public static List<SteamUrlModel> GetAllManualUrls()
+        public static ObservableCollection<SteamUrlModel> GetAllManualUrls()
         {
             using (IDbConnection dbConnection = new SQLiteConnection(LoadConnectionnString()))
             {
                 var output = dbConnection.Query<SteamUrlModel>("SELECT * FROM ManualProfile", new DynamicParameters());
-                return output.ToList();
+                ObservableCollection<SteamUrlModel> manualUrlObservableCollection = new(output);
+                return manualUrlObservableCollection;
             }
         }
 
