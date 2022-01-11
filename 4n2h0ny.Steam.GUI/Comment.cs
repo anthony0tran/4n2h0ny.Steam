@@ -105,7 +105,7 @@ namespace _4n2h0ny.Steam.GUI
             }
 
             // SUBMITTING COMMENTS  
-            //ClickCommentSubmitBtn(driver, currentProfileData, outputDialog);
+            ClickCommentSubmitBtn(driver, currentProfileData, outputDialog);
         }
 
         private static void ClickCommentSubmitBtn(ChromeDriver driver, ProfileDataModel currentProfileData, OutputDialog outputDialog)
