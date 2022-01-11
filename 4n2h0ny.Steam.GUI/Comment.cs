@@ -76,7 +76,7 @@ namespace _4n2h0ny.Steam.GUI
 
                 profile.ManualProfileUrls = SqliteDataAccess.GetAllManualUrls();
 
-                outputDialog.AppendLogTxtBox($"\n{profile.ManualProfileUrls.Count}: Could not find comment form: {profileData.Url}\n");
+                outputDialog.AppendLogTxtBox($"{profile.ManualProfileUrls.Count}: Could not find comment form: {profileData.Url}");
             }
 
             return false;
@@ -105,7 +105,7 @@ namespace _4n2h0ny.Steam.GUI
             }
 
             // SUBMITTING COMMENTS  
-            ClickCommentSubmitBtn(driver, currentProfileData, outputDialog);
+            //ClickCommentSubmitBtn(driver, currentProfileData, outputDialog);
         }
 
         private static void ClickCommentSubmitBtn(ChromeDriver driver, ProfileDataModel currentProfileData, OutputDialog outputDialog)

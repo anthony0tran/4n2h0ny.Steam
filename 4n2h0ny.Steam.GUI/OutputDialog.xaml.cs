@@ -83,7 +83,9 @@ namespace _4n2h0ny.Steam.GUI
 
         public void AppendLogTxtBox(string appendString)
         {
-            logTxtBox.Text += appendString + "\n";
+            string currentTime = String.Format("{0:HH:mm:ss tt}", DateTime.Now);
+            logTxtBox.Text += $"{currentTime}     {appendString}\n";
+            //logTxtBox.Text += appendString + "\n";
         }
 
         public void UpdateManualProfileListBox(Profile profile)

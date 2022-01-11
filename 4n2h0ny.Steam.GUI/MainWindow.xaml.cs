@@ -47,6 +47,8 @@ namespace _4n2h0ny.Steam.GUI
                     outputDialog.OutputDialogClosed += OutputDialog_OutputDialogClosed;
                     outputDialog.Show();
 
+                    outputDialog.AppendLogTxtBox("Chrome driver initialized");
+
                     AutomationRunningEventArgs automationRunningEventArgs = new()
                     {
                         Running = true
@@ -80,6 +82,8 @@ namespace _4n2h0ny.Steam.GUI
                     OutputDialog outputDialog = new(profile, this);
                     outputDialog.OutputDialogClosed += OutputDialog_OutputDialogClosed;
                     outputDialog.Show();
+
+                    outputDialog.AppendLogTxtBox("Chrome driver initialized");
 
                     AutomationRunningEventArgs automationRunningEventArgs = new()
                     {
