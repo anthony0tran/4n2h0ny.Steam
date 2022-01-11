@@ -107,7 +107,7 @@ namespace _4n2h0ny.Steam.GUI
                     // Retrieve the ProfileData of the first steam page that is opened in the browser session.
                     profile.GetMainProfileData(outputDialog);
 
-                    if (profile.ProfileUrls.Count == 0)
+                    if (profile.ProfileUrls.Count == 0 && profile.ManualProfileUrls.Count == 0)
                     {
                         // Get the urls to the profiles that commented.
                         await profile.GatherProfileUrls(this, outputDialog, int.Parse(maxPageIndexTxtBox.Text));
@@ -116,7 +116,7 @@ namespace _4n2h0ny.Steam.GUI
                     }
                     else
                     {
-                        outputDialog.AppendLogTxtBox($"Skipped profile scraping. {profile.ProfileUrls.Count} profiles found.");
+                        outputDialog.AppendLogTxtBox($"Skipped profile scraping. {profile.ProfileUrls.Count} profiles and {profile.ManualProfileUrls.Count} manualProfiles found.");
                     }
 
                     await Comment.CommentAllPages(this, webDriverSingleton.Driver, profile, commentTemplateTxtBox.Text, defaultCommentTxtBox.Text, outputDialog);
