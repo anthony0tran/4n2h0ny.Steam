@@ -32,11 +32,13 @@ namespace _4n2h0ny.Steam.GUI
             SetDefaultTxtBoxValues();
         }
 
+        #region ButtonFunctions
+
         private void TestBtn_Click(object sender, RoutedEventArgs e)
         {
             if (TextBoxValidator() && outputWindowClosed)
             {
-                WebDriverSingleton webDriverSingleton = new();                
+                WebDriverSingleton webDriverSingleton = new();
 
                 if (webDriverSingleton.Driver != null)
                 {
@@ -64,28 +66,12 @@ namespace _4n2h0ny.Steam.GUI
             }
         }
 
-        private void MainWindow_TaskBarProgressUpdated(object? sender, TaskBarProgressEventArgs e)
-        {
-            TaskbarItemInfo.ProgressState = e.TaskbarItemProgressState;
-            TaskbarItemInfo.ProgressValue = e.ProgressValue;
-        }
-
-        public virtual void OnTaskbarProgressUpdated(TaskBarProgressEventArgs e)
-        {
-            TaskBarProgressUpdated?.Invoke(this, e);
-        }
-
-        public virtual void OnAutomationRunning(AutomationRunningEventArgs e)
-        {
-            AutomationRunning?.Invoke(this, e);
-        }
-
         private async void StartBtn_Click(object sender, RoutedEventArgs e)
         {
             if (TextBoxValidator() && outputWindowClosed)
             {
                 WebDriverSingleton webDriverSingleton = new();
-                
+
                 if (webDriverSingleton.Driver != null)
                 {
                     Profile profile = new(webDriverSingleton.Driver);
@@ -133,24 +119,34 @@ namespace _4n2h0ny.Steam.GUI
             }
         }
 
-        private static void ResetDb()
+        private void ClearBtn_Click(object sender, RoutedEventArgs e)
         {
-            List<SteamUrlModel> steamUrlList = SqliteDataAccess.GetAllUrls();
-            ObservableCollection<SteamUrlModel> manualProfileList = SqliteDataAccess.GetAllManualUrls();
+            defaultCommentTxtBox.Text = "";
+            commentTemplateTxtBox.Text = "";
+        }
 
-            if (steamUrlList.Count > 0 || manualProfileList.Count > 0)
-            {
-                MessageBoxResult ResetDb = MessageBox.Show($"Delete {steamUrlList.Count} profile(s) and {manualProfileList.Count} manualProfile(s) from the database?", "Reset database", MessageBoxButton.YesNo);
-                if (ResetDb == MessageBoxResult.Yes)
-                {
-                    SqliteDataAccess.ResetProfileTable();
-                    SqliteDataAccess.ResetManualProfileTable();
-                }
-            }
-            else
-            {
-                MessageBox.Show("steamUrlList and manualProfileList are empty");
-            }
+        private void ResetDbBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ResetDb();
+        }
+
+        #endregion ButtonFunctions
+
+        #region EventHandlerFunctions
+        private void MainWindow_TaskBarProgressUpdated(object? sender, TaskBarProgressEventArgs e)
+        {
+            TaskbarItemInfo.ProgressState = e.TaskbarItemProgressState;
+            TaskbarItemInfo.ProgressValue = e.ProgressValue;
+        }
+
+        public virtual void OnTaskbarProgressUpdated(TaskBarProgressEventArgs e)
+        {
+            TaskBarProgressUpdated?.Invoke(this, e);
+        }
+
+        public virtual void OnAutomationRunning(AutomationRunningEventArgs e)
+        {
+            AutomationRunning?.Invoke(this, e);
         }
 
         private void OutputDialog_OutputDialogClosed(object? sender, OutputDialogClosedEventArgs e)
@@ -158,24 +154,9 @@ namespace _4n2h0ny.Steam.GUI
             outputWindowClosed = e.Closed;
         }
 
-        private void ClearBtn_Click(object sender, RoutedEventArgs e)
-        {
-            defaultCommentTxtBox.Text = "";
-            commentTemplateTxtBox.Text = "";
-        }
+        #endregion EventHandlerFunctions
 
-        private void SetDefaultTxtBoxValues()
-        {
-            maxPageIndexTxtBox.Text = Globals.MaxPageIndex.ToString();
-            defaultCommentTxtBox.Text = Globals.DefaultCommentString.ToString();
-            commentTemplateTxtBox.Text = Globals.CommentTemplate.ToString();
-        }
-
-        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
-        {
-            Regex regex = new("[^0-9]+");
-            e.Handled = regex.IsMatch(e.Text);
-        }
+        #region TxtBoxValidators
 
         private bool TextBoxValidator()
         {
@@ -228,9 +209,39 @@ namespace _4n2h0ny.Steam.GUI
             }
         }
 
-        private void ResetDbBtn_Click(object sender, RoutedEventArgs e)
+        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
         {
-            ResetDb();
+            Regex regex = new("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+
+        #endregion TxtBoxValidators
+
+        private static void ResetDb()
+        {
+            List<SteamUrlModel> steamUrlList = SqliteDataAccess.GetAllUrls();
+            ObservableCollection<SteamUrlModel> manualProfileList = SqliteDataAccess.GetAllManualUrls();
+
+            if (steamUrlList.Count > 0 || manualProfileList.Count > 0)
+            {
+                MessageBoxResult ResetDb = MessageBox.Show($"Delete {steamUrlList.Count} profile(s) and {manualProfileList.Count} manualProfile(s) from the database?", "Reset database", MessageBoxButton.YesNo);
+                if (ResetDb == MessageBoxResult.Yes)
+                {
+                    SqliteDataAccess.ResetProfileTable();
+                    SqliteDataAccess.ResetManualProfileTable();
+                }
+            }
+            else
+            {
+                MessageBox.Show("steamUrlList and manualProfileList are empty");
+            }
+        }
+
+        private void SetDefaultTxtBoxValues()
+        {
+            maxPageIndexTxtBox.Text = Globals.MaxPageIndex.ToString();
+            defaultCommentTxtBox.Text = Globals.DefaultCommentString.ToString();
+            commentTemplateTxtBox.Text = Globals.CommentTemplate.ToString();
         }
     }
 }

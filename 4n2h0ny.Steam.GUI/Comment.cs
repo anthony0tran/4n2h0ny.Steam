@@ -12,7 +12,6 @@ namespace _4n2h0ny.Steam.GUI
 {
     public static class Comment
     {
-        //public static int ManualProfileCounter { get; set; }
         public static async Task CommentAllPages(MainWindow mainWindow, ChromeDriver driver, Profile profile, string commentTemplate, string defaultComment, OutputDialog outputDialog)
         {
             int profileUrlCounter = profile.ProfileUrls.Count;

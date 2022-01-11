@@ -13,7 +13,7 @@ namespace _4n2h0ny.Steam.GUI
     {
         public event EventHandler<OutputDialogClosedEventArgs>? OutputDialogClosed;
         private bool AutomationRunning;
-        private Profile profile;
+        private readonly Profile profile;
 
         public OutputDialog(Profile profile, MainWindow mainWindow)
         {
@@ -23,36 +23,7 @@ namespace _4n2h0ny.Steam.GUI
             UpdateManualProfileListBox(profile);
         }
 
-        private void MainWindow_AutomationRunning(object? sender, AutomationRunningEventArgs e)
-        {
-            AutomationRunning = e.Running;
-        }
-
-        private void WindowClosed(object sender, EventArgs e)
-        {
-            OutputDialogClosedEventArgs outputDialogClosedEventArgs = new()
-            {
-                Closed = true
-            };
-
-            OnOutputDialogClosed(outputDialogClosedEventArgs);
-        }
-
-        protected virtual void OnOutputDialogClosed(OutputDialogClosedEventArgs e)
-        {
-            OutputDialogClosed?.Invoke(this, e);
-        }
-
-        public void AppendLogTxtBox(string appendString)
-        {
-            logTxtBox.Text += appendString + "\n";
-        }
-
-        public void UpdateManualProfileListBox(Profile profile)
-        {
-            profile.ManualProfileUrls = SqliteDataAccess.GetAllManualUrls();
-            manualProfileListBox.ItemsSource = profile.ManualProfileUrls;
-        }
+        #region ButtonFunctions
 
         private void NavigateToBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -82,6 +53,45 @@ namespace _4n2h0ny.Steam.GUI
             }
         }
 
+        #endregion ButtonFunctions
+
+        #region EventHandlerFunctions
+
+        private void MainWindow_AutomationRunning(object? sender, AutomationRunningEventArgs e)
+        {
+            AutomationRunning = e.Running;
+        }
+
+        private void WindowClosed(object sender, EventArgs e)
+        {
+            OutputDialogClosedEventArgs outputDialogClosedEventArgs = new()
+            {
+                Closed = true
+            };
+
+            OnOutputDialogClosed(outputDialogClosedEventArgs);
+        }
+
+        protected virtual void OnOutputDialogClosed(OutputDialogClosedEventArgs e)
+        {
+            OutputDialogClosed?.Invoke(this, e);
+        }
+
+        #endregion EventHandlerFunctions
+
+        #region UIFunctions
+
+        public void AppendLogTxtBox(string appendString)
+        {
+            logTxtBox.Text += appendString + "\n";
+        }
+
+        public void UpdateManualProfileListBox(Profile profile)
+        {
+            profile.ManualProfileUrls = SqliteDataAccess.GetAllManualUrls();
+            manualProfileListBox.ItemsSource = profile.ManualProfileUrls;
+        }
+
         public void UpdateStatisticsTxtBox(int currentIndex, int profileUrlsCount, int manualProfileCounter)
         {
             double progressPercentage = Math.Round((((double)currentIndex + 1) / (double)profileUrlsCount) * 100, 2);
@@ -89,5 +99,7 @@ namespace _4n2h0ny.Steam.GUI
             string manualProfileCounterString = $"Manual Profiles: {manualProfileCounter}";
             this.statisticsTxtBlock.Text = $"{commentProgressString}\n{manualProfileCounterString}";
         }
+
+        #endregion UIFunctions
     }
 }

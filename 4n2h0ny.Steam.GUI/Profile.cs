@@ -220,7 +220,8 @@ namespace _4n2h0ny.Steam.GUI
         {
             return ProfileUrls.Where(x => x.Url == url).ToList();
         }
-
+        
+        [Obsolete]
         private bool IsFriend(OutputDialog outputDialog)
         {
             try
