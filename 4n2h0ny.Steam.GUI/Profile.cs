@@ -53,7 +53,10 @@ namespace _4n2h0ny.Steam.GUI
                             profileDataString = profileDataString.Substring(startIndex, endIndex - startIndex + 1);
                         }
 
-                        CurrentProfileData = JsonConvert.DeserializeObject<ProfileDataModel>(profileDataString);
+                        if (!String.IsNullOrEmpty(profileDataString))
+                        {
+                            CurrentProfileData = JsonConvert.DeserializeObject<ProfileDataModel>(profileDataString);
+                        }                        
                     }
                 }
             }
@@ -85,7 +88,10 @@ namespace _4n2h0ny.Steam.GUI
                             profileDataString = profileDataString.Substring(startIndex, endIndex - startIndex + 1);
                         }
 
-                        mainProfileData = JsonConvert.DeserializeObject<ProfileDataModel>(profileDataString);
+                        if (!String.IsNullOrEmpty(profileDataString))
+                        {
+                            mainProfileData = JsonConvert.DeserializeObject<ProfileDataModel>(profileDataString);
+                        }                        
                     }
                 }
             }
@@ -203,7 +209,6 @@ namespace _4n2h0ny.Steam.GUI
 
                 taskBarProgressEventArgs.ProgressValue = ((double)i + 1) / (double)maxCommentPageIndex;
                 mainWindow.OnTaskbarProgressUpdated(taskBarProgressEventArgs);
-
                 await Task.Delay(1000);
             }
 

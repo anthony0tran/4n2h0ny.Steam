@@ -125,11 +125,6 @@ namespace _4n2h0ny.Steam.GUI
 
                     TaskbarItemInfo.ProgressState = TaskbarItemProgressState.None;
 
-                    if (Comment.NoFormCounter > 0)
-                    {
-                        Comment.NoFormCounter = 0;
-                    }
-
                     webDriverSingleton.DisposeDriver(outputDialog);
                     automationRunningEventArgs.Running = false;
                     OnAutomationRunning(automationRunningEventArgs);

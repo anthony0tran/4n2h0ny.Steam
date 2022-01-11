@@ -12,7 +12,7 @@ namespace _4n2h0ny.Steam.GUI
 {
     public static class Comment
     {
-        public static int NoFormCounter { get; set; }
+        //public static int ManualProfileCounter { get; set; }
         public static async Task CommentAllPages(MainWindow mainWindow, ChromeDriver driver, Profile profile, string commentTemplate, string defaultComment, OutputDialog outputDialog)
         {
             int profileUrlCounter = profile.ProfileUrls.Count;
@@ -42,6 +42,7 @@ namespace _4n2h0ny.Steam.GUI
 
                 taskBarProgressEventArgs.ProgressValue = ((double)i + 1) / (double)profile.ProfileUrls.Count;
                 mainWindow.OnTaskbarProgressUpdated(taskBarProgressEventArgs);
+                outputDialog.UpdateStatisticsTxtBox(i, profile.ProfileUrls.Count, profile.ManualProfileUrls.Count);
             }
         }
 
@@ -76,8 +77,7 @@ namespace _4n2h0ny.Steam.GUI
 
                 profile.ManualProfileUrls = SqliteDataAccess.GetAllManualUrls();
 
-                NoFormCounter++;
-                outputDialog.AppendLogTxtBox($"\n{NoFormCounter}: Could not find comment form: {profileData.Url}\n");
+                outputDialog.AppendLogTxtBox($"\n{profile.ManualProfileUrls.Count}: Could not find comment form: {profileData.Url}\n");
             }
 
             return false;
@@ -106,7 +106,7 @@ namespace _4n2h0ny.Steam.GUI
             }
 
             // SUBMITTING COMMENTS  
-            ClickCommentSubmitBtn(driver, currentProfileData, outputDialog);
+            //ClickCommentSubmitBtn(driver, currentProfileData, outputDialog);
         }
 
         private static void ClickCommentSubmitBtn(ChromeDriver driver, ProfileDataModel currentProfileData, OutputDialog outputDialog)

@@ -81,5 +81,13 @@ namespace _4n2h0ny.Steam.GUI
                 }
             }
         }
+
+        public void UpdateStatisticsTxtBox(int currentIndex, int profileUrlsCount, int manualProfileCounter)
+        {
+            double progressPercentage = Math.Round((((double)currentIndex + 1) / (double)profileUrlsCount) * 100, 2);
+            string commentProgressString = $"Progress : {currentIndex + 1}/{profileUrlsCount} ({progressPercentage}%)";
+            string manualProfileCounterString = $"Manual Profiles: {manualProfileCounter}";
+            this.statisticsTxtBlock.Text = $"{commentProgressString}\n{manualProfileCounterString}";
+        }
     }
 }

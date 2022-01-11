@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
-        Title="4n2h0ny logs" Height="400" Width="900"
+        Title="4n2h0ny logs" Height="600" Width="900"
         Closed="WindowClosed">
     <Window.DataContext>
         <Binding RelativeSource="{RelativeSource Self}" />
@@ -17,15 +17,18 @@
             <ColumnDefinition  Width="0.45*"/>
             <ColumnDefinition  Width="0.55*"/>
         </Grid.ColumnDefinitions>
+        <Label x:Name="logTxtBoxLbl" Content="Log messages" HorizontalAlignment="Left" Margin="5,0,10,0" VerticalAlignment="Top" Grid.Column="1"/>
         <TextBox x:Name="logTxtBox" 
                  TextWrapping="Wrap" 
                  Grid.Column="1"
                  IsReadOnly="True"
-                 Margin="10,10,10,10"/>
-        <ListBox x:Name="manualProfileListBox" Margin="10,10,10,10" />
+                 Margin="10,30,10,72"/>
+        <Label x:Name="manualProfileListBoxLbl" Content="Manual profiles" HorizontalAlignment="Left" Margin="5,0,10,0" Grid.Column="0" VerticalAlignment="Top"/>
+        <ListBox x:Name="manualProfileListBox" Margin="10,30,10,72" />
         <StackPanel VerticalAlignment="Bottom" Height="72">
             <Button x:Name="navigateToBtn" Content="NAVIGATE TO" Height="30" Margin="10,0,10,1" Background="#FF37EF5C" Click="NavigateToBtn_Click"/>
             <Button x:Name="deleteBtn" Content="DELETE" Height="30" Margin="10,1,10,0" Background="#FFFF4C4C" Click="DeleteBtn_Click"/>
         </StackPanel>
+        <TextBlock x:Name="statisticsTxtBlock" Grid.Column="1" HorizontalAlignment="Center" Margin="0,517,0,0" TextWrapping="Wrap" Text="No statistics available yet" VerticalAlignment="Top" Width="470" Height="57"/>
     </Grid>
 </Window>
