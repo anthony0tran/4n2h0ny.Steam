@@ -7,11 +7,11 @@
         mc:Ignorable="d"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
-        Title="4n2h0ny bot" Height="280" Width="420">
+        Title="4n2h0ny bot" Height="280" Width="450">
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo/>
     </Window.TaskbarItemInfo>
-    <Grid VerticalAlignment="Top" HorizontalAlignment="Center" ShowGridLines="False" Height="265" Width="420" >
+    <Grid VerticalAlignment="Top" HorizontalAlignment="Center" ShowGridLines="False" Height="265" Width="450" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition  Width="125"/>
             <ColumnDefinition  Width="1*"/>
@@ -27,13 +27,14 @@
         <Label x:Name="DefaultCommentLbl" Content="DefaultComment" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" FontFamily="Microsoft Sans Serif" Margin="10, 0, 0, 0"/>
         <Label x:Name="CommentTemplateLbl" Content="CommentTemplate" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Grid.Row="2" FontFamily="Microsoft Sans Serif" Margin="10, 0, 0, 0"/>
 
-        <TextBox x:Name="maxPageIndexTxtBox" Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Width="265" Margin="10,0,0,0" PreviewTextInput="NumberValidationTextBox"/>
-        <TextBox x:Name="defaultCommentTxtBox" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Width="265" Height="74" Margin="10,0,0,0"/>
-        <TextBox x:Name="commentTemplateTxtBox" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Width="265" Height="74" Margin="10,0,0,0"/>
+        <TextBox x:Name="maxPageIndexTxtBox" Grid.Column="1" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" Width="295" PreviewTextInput="NumberValidationTextBox"/>
+        <TextBox x:Name="defaultCommentTxtBox" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" Width="295" Height="74"/>
+        <TextBox x:Name="commentTemplateTxtBox" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" Width="295" Height="74"/>
 
         <Button x:Name="testBtn" Grid.Column="0" Content="TEST" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Height="30" Width="75" Margin="100,0,0,0" Click="TestBtn_Click" Grid.ColumnSpan="2"/>
         <Button x:Name="clearBtn" Grid.Column="0" Content="CLEAR" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Height="30" Width="75" Margin="20,0,0,0" Click="ClearBtn_Click"/>
         <Button x:Name="resetDbBtn" Grid.Column="1" Content="RESET DB" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Height="30" Width="75" Margin="55,0,0,0" Click="ResetDbBtn_Click"/>
-        <Button x:Name="startBtn" Grid.Column="1" Content="START" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="3" Height="30" Width="75" Margin="0,0,20,0" Click="StartBtn_Click" Background="#FF37EF5C" BorderBrush="#FF707070" FontWeight="Bold"/>
+        <Button x:Name="ExclutionListBtn" Grid.Column="1" Content="EXCLUTIONS" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Height="30" Width="75" Margin="135,0,0,0" Click="ExclutionListBtn_Click"/>
+        <Button x:Name="startBtn" Grid.Column="1" Content="START" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Height="30" Width="75" Margin="235,0,0,0" Click="StartBtn_Click" Background="#FF37EF5C" BorderBrush="#FF707070" FontWeight="Bold"/>
     </Grid>
 </Window>

@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Shell;
 using _4n2h0ny.Steam.GUI.EventArguments;
 using _4n2h0ny.Steam.GUI.Models;
+using _4n2h0ny.Steam.GUI.Views;
 
 namespace _4n2h0ny.Steam.GUI
 {
@@ -246,6 +247,12 @@ namespace _4n2h0ny.Steam.GUI
             maxPageIndexTxtBox.Text = Globals.MaxPageIndex.ToString();
             defaultCommentTxtBox.Text = Globals.DefaultCommentString.ToString();
             commentTemplateTxtBox.Text = Globals.CommentTemplate.ToString();
+        }
+
+        private void ExclutionListBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ExclusionListDialog exclutionListDialog = new();
+            exclutionListDialog.Show();
         }
     }
 }
