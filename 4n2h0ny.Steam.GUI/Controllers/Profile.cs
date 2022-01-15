@@ -34,6 +34,8 @@ namespace _4n2h0ny.Steam.GUI
             this.driver = driver;
 
             ProfileUrls = SqliteDataAccess.GetAllUrls();
+
+            ExcludedProfileUrls = SqliteDataAccess.GetAllExcludedUrls();
         }
 
         public ProfileDataModel GetCurrentProfileData(OutputDialog outputDialog)
@@ -189,8 +191,9 @@ namespace _4n2h0ny.Steam.GUI
                                 };
 
                                 List<SteamUrlModel> foundSteamUrls = GetSteamUrlByUrl(steamUrl.Url);
+                                List<SteamUrlModel> foundExcludedUrls = GetExcludedSteamUrlByUrl(steamUrl.Url);
                                 
-                                if (foundSteamUrls.Count == 0)
+                                if (foundSteamUrls.Count == 0 && foundExcludedUrls.Count == 0)
                                 {
                                     SqliteDataAccess.SaveUrl(steamUrl);
                                     ProfileUrls = SqliteDataAccess.GetAllUrls();
@@ -222,7 +225,12 @@ namespace _4n2h0ny.Steam.GUI
         {
             return ProfileUrls.Where(x => x.Url == url).ToList();
         }
-        
+
+        private List<SteamUrlModel> GetExcludedSteamUrlByUrl(string url)
+        {
+            return ExcludedProfileUrls.Where(x => x.Url == url).ToList();
+        }
+
         [Obsolete]
         private bool IsFriend(OutputDialog outputDialog)
         {

@@ -23,6 +23,16 @@ namespace _4n2h0ny.Steam.GUI
             UpdateManualProfileListBox(profile);
         }
 
+        private void ExcludeContextMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (manualProfileListBox.SelectedItem is SteamUrlModel selectedManualProfile)
+            {
+                SqliteDataAccess.SaveExcludedUrl(selectedManualProfile);
+                SqliteDataAccess.DeleteManualUrl(selectedManualProfile);
+                UpdateManualProfileListBox(profile);
+            }            
+        }
+
         #region ButtonFunctions
 
         private void NavigateToBtn_Click(object sender, RoutedEventArgs e)

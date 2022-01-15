@@ -24,7 +24,13 @@
                  IsReadOnly="True"
                  Margin="10,30,10,72"/>
         <Label x:Name="manualProfileListBoxLbl" Content="Manual profiles" HorizontalAlignment="Left" Margin="5,0,10,0" Grid.Column="0" VerticalAlignment="Top"/>
-        <ListBox x:Name="manualProfileListBox" Margin="10,30,10,72" />
+        <ListBox x:Name="manualProfileListBox" Margin="10,30,10,72">
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Name="ExcludeContextMenuItem" Header="Exclude" Click="ExcludeContextMenuItem_Click" />
+                </ContextMenu>
+            </ListBox.ContextMenu>
+        </ListBox>
         <StackPanel VerticalAlignment="Bottom" Height="72">
             <Button x:Name="navigateToBtn" Content="NAVIGATE TO" Height="30" Margin="10,0,10,1" Background="#FF37EF5C" Click="NavigateToBtn_Click"/>
             <Button x:Name="deleteBtn" Content="DELETE" Height="30" Margin="10,1,10,0" Background="#FFFF4C4C" Click="DeleteBtn_Click"/>

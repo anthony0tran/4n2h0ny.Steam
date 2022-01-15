@@ -4,7 +4,9 @@ namespace _4n2h0ny.Steam.GUI
 {
     public static class Globals
     {
-        public static readonly double version = 1.7;
+        public static readonly double version = 1.8;
+
+        public static readonly bool SubmittingCommentEnabled = false;
 
         public static readonly string ChromeDriverPath = Path.Combine(Directory.GetCurrentDirectory(), "Drivers");
 
