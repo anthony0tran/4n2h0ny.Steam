@@ -14,8 +14,8 @@
         </Grid.RowDefinitions>
         <ListBox x:Name="exclusionListBox" Margin="15,10,15,0" />
         <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" Grid.Row="1" Margin="15,0,15,0">
-            <Button x:Name="addExclutionProfileBtn" Content="ADD" Height="30" Grid.Column="0" Margin="0,0,5,5" Background="#FF37EF5C" Width="155"/>
-            <Button x:Name="deleteExclutionProfileBtn" Content="DELETE" Height="30" Margin="5,0,0,5" Background="#FFFF4C4C" Width="155"/>
+            <Button x:Name="deleteExclusionProfileBtn" Content="DELETE" Height="30" Margin="0,0,5,5" Background="#FFFF4C4C" Width="155" Click="DeleteExclusionProfileBtn_Click"/>
+            <Button x:Name="addExclusionProfileBtn" Content="ADD" Height="30" Grid.Column="0" Margin="5,0,0,5" Background="#FF37EF5C" Width="155" Click="AddExclusionProfileBtn_Click"/>            
         </StackPanel>
     </Grid>
 </Window>

@@ -18,7 +18,9 @@ namespace _4n2h0ny.Steam.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        Boolean outputWindowClosed = true;
+        private Boolean outputWindowClosed = true;
+
+        private bool AutomationRunningBool;
 
         public event EventHandler<TaskBarProgressEventArgs>? TaskBarProgressUpdated;
 
@@ -31,6 +33,13 @@ namespace _4n2h0ny.Steam.GUI
             Title = "4n2h0ny.Steam v" + Globals.version.ToString();
 
             SetDefaultTxtBoxValues();
+
+            AutomationRunning += MainWindow_AutomationRunning;
+        }
+
+        private void MainWindow_AutomationRunning(object? sender, AutomationRunningEventArgs e)
+        {
+            AutomationRunningBool = e.Running;
         }
 
         #region ButtonFunctions
@@ -44,6 +53,7 @@ namespace _4n2h0ny.Steam.GUI
                 if (webDriverSingleton.Driver != null)
                 {
                     Profile profile = new(webDriverSingleton.Driver);
+
                     OutputDialog outputDialog = new(profile, this);
                     outputDialog.OutputDialogClosed += OutputDialog_OutputDialogClosed;
                     outputDialog.Show();
@@ -133,6 +143,22 @@ namespace _4n2h0ny.Steam.GUI
         private void ResetDbBtn_Click(object sender, RoutedEventArgs e)
         {
             ResetDb();
+        }
+
+        private void ExclutionListBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (!AutomationRunningBool)
+            {
+                WebDriverSingleton webDriverSingleton = new();
+
+                if (webDriverSingleton.Driver != null)
+                {
+                    Profile profile = new(webDriverSingleton.Driver);
+
+                    ExclusionListDialog exclutionListDialog = new(profile);
+                    exclutionListDialog.Show();
+                }
+            }
         }
 
         #endregion ButtonFunctions
@@ -247,12 +273,6 @@ namespace _4n2h0ny.Steam.GUI
             maxPageIndexTxtBox.Text = Globals.MaxPageIndex.ToString();
             defaultCommentTxtBox.Text = Globals.DefaultCommentString.ToString();
             commentTemplateTxtBox.Text = Globals.CommentTemplate.ToString();
-        }
-
-        private void ExclutionListBtn_Click(object sender, RoutedEventArgs e)
-        {
-            ExclusionListDialog exclutionListDialog = new();
-            exclutionListDialog.Show();
         }
     }
 }

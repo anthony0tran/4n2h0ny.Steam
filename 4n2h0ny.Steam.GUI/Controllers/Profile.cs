@@ -20,6 +20,8 @@ namespace _4n2h0ny.Steam.GUI
 
         public ObservableCollection<SteamUrlModel> ManualProfileUrls { get; set; } = new();
 
+        public ObservableCollection<SteamUrlModel> ExcludedProfileUrls { get; set; } = new();
+
         // ProfileData Retrieve of the first steam page.
         private ProfileDataModel mainProfileData = new();
 
