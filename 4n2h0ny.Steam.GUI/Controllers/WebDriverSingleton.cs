@@ -1,5 +1,4 @@
 ﻿using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Support.UI;
 using System;
 using System.Windows;
 
@@ -18,7 +17,8 @@ namespace _4n2h0ny.Steam.GUI
 
                 ChromeOptions options = new()
                 {
-                    DebuggerAddress = Globals.DebuggingAddress
+                    DebuggerAddress = Globals.DebuggingAddress,
+                    PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Eager
                 };
 
                 Driver = new(chromeDriverService, options);
