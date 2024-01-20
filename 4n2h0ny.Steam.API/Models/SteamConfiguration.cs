@@ -3,5 +3,6 @@
     public record SteamConfiguration
     {
         public required string DefaultProfileUrl { get; init; }
+        public required string CommentPageUrl { get; init; }
     }
 }

@@ -6,11 +6,11 @@ namespace _4n2h0ny.Steam.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class OwnerProfileController : ControllerBase
+    public class ProfileController : ControllerBase
     {
         private readonly IProfileRepository _profileRepository;
 
-        public OwnerProfileController(IProfileRepository profileRepository)
+        public ProfileController(IProfileRepository profileRepository)
         {
             _profileRepository = profileRepository;
         }
