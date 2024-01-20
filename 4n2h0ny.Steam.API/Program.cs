@@ -1,3 +1,6 @@
+using _4n2h0ny.Steam.API.Models;
+using _4n2h0ny.Steam.API.Repositories.Profiles;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,6 +10,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.Configure<SteamConfiguration>(builder.Configuration.GetSection("SteamConfiguration"));
+builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

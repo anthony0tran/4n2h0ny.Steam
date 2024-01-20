@@ -1,4 +1,5 @@
 using _4n2h0ny.Steam.API.Models;
+using _4n2h0ny.Steam.API.Repositories.Profiles;
 using Microsoft.AspNetCore.Mvc;
 
 namespace _4n2h0ny.Steam.API.Controllers
@@ -7,13 +8,17 @@ namespace _4n2h0ny.Steam.API.Controllers
     [Route("[controller]")]
     public class OwnerProfileController : ControllerBase
     {
-        public OwnerProfileController()
+        private readonly IProfileRepository _profileRepository;
+
+        public OwnerProfileController(IProfileRepository profileRepository)
         {
+            _profileRepository = profileRepository;
         }
 
-        [HttpGet("{steamId}/commenters")]
-        public IEnumerable<Profile> GetCommenters(string steamId)
+        [HttpGet("commenters")]
+        public IEnumerable<Profile> GetCommenters(string? profileUrl = null)
         {
+            _profileRepository.GetCommenters(profileUrl);
             return new List<Profile>();
         }
     }
