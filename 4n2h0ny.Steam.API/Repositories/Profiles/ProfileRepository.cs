@@ -90,9 +90,7 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
             foreach (var header in commentHeaders)
             {
                 var href = header.FindElement(By.ClassName("commentthread_author_link")).GetAttribute("href");
-                var commentDate = header.FindElement(By.ClassName("commentthread_comment_timestamp")).GetAttribute("title");
-
-
+                var commentDate = header.FindElement(By.ClassName("commentthread_comment_timestamp")).GetAttribute("data-timestamp");
 
                 var newProfile = new Profile()
                 {
