@@ -31,48 +31,80 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
 
             var maxCommentPageIndex = GetMaxCommentPageIndex(driver);
 
-            if (maxCommentPageIndex.HasValue)
+            if (maxCommentPageIndex != null)
             {
-                IterateCommentPages(driver, maxCommentPageIndex);
+                GetUserProfilesFromCommentPage(driver);
+                // Get users from first page
+
+                // iterate commentPages and get users
+                var commentPages = GetCommentPages(maxCommentPageIndex);
             }
             else
             {
                 // Do something with single page
+                GetUserProfilesFromCommentPage(driver);
             }
 
             driver.Dispose();
             return new List<Profile>();
         }
 
-        private static void IterateCommentPages(FirefoxDriver driver, (int index, string pageUrl)? maxCommentPageIndex)
+        private static string[]? GetCommentPages(CommentPageIndex? maxCommentPageIndex)
         {
-            var pageCountIndex = maxCommentPageIndex.Value.pageUrl.IndexOf("ctp=");
-            var baseCommentPageUrl = maxCommentPageIndex.Value.pageUrl[..pageCountIndex];
-
-            foreach (var i in Enumerable.Range(1, maxCommentPageIndex.Value.index))
+            if (maxCommentPageIndex == null)
             {
-                // Go to page
-                var commentPageUrl = $"{baseCommentPageUrl}ctp={i}";
-                Thread.Sleep(2000);
-                driver.Navigate().GoToUrl(commentPageUrl);
-            };
+                return null;
+            }
+
+            var pageCountIndex = maxCommentPageIndex.PageUrl.IndexOf("ctp=");
+            var baseCommentPageUrl = maxCommentPageIndex.PageUrl[..pageCountIndex];
+
+            var resultList = new string[maxCommentPageIndex.Index];
+
+            return Enumerable.Range(2, maxCommentPageIndex.Index)
+                .Select(i => $"{baseCommentPageUrl}ctp={i}")
+                .ToArray();
         }
 
-        private static (int index, string pageUrl)? GetMaxCommentPageIndex(FirefoxDriver driver)
+        private static CommentPageIndex? GetMaxCommentPageIndex(FirefoxDriver driver)
         {
             var commentPageIndexList = driver.FindElements(By.XPath("//*[@class=\"commentthread_pagelinks\"]/a"))
-                            .Select(e => new CommentPageIndex(e.GetAttribute("innerHTML"), e.GetAttribute("href")))
+                            .Select(e => new CommentPageIndexString(e.GetAttribute("innerHTML"), e.GetAttribute("href")))
                             .Distinct()
                             .ToArray();
 
             if (int.TryParse(commentPageIndexList.Last().IndexString, out var highestIndex))
             {
-                return (highestIndex, commentPageIndexList.Last().PageUrl);
+                return new(highestIndex, commentPageIndexList.Last().PageUrl);
             }
 
             return null;
         }
 
-        private record CommentPageIndex(string IndexString, string PageUrl);
+        private static string[] GetUserProfilesFromCommentPage(FirefoxDriver driver)
+        {
+            var profiles = new List<Profile>();
+            var commentHeaders = driver.FindElements(By.XPath("//*[@class=\"commentthread_comment_author\"]"))
+                .ToArray();
+
+            foreach (var header in commentHeaders)
+            {
+                var href = header.FindElement(By.ClassName("commentthread_author_link")).GetAttribute("href");
+                var commentDate = header.FindElement(By.ClassName("commentthread_comment_timestamp")).GetAttribute("title");
+
+
+
+                var newProfile = new Profile()
+                {
+                    ProfileUrl = href,
+                    LastDateCommented = DateTime.Now
+                };
+            }
+
+            return [];
+        }
+
+        private record CommentPageIndexString(string IndexString, string PageUrl);
+        private record CommentPageIndex(int Index, string PageUrl);
     }
 }
