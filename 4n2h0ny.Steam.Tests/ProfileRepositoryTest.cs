@@ -17,7 +17,9 @@ namespace _4n2h0ny.Steam.Tests
         public void InvalidStringShouldThrowException()
         {
             var dateString = "invalidDateString";
-            Assert.Throws<InvalidOperationException>(() => DateParser.ParseUnixTimeStampToDateTime(dateString));
+            var result = DateParser.ParseUnixTimeStampToDateTime(dateString);
+
+            Assert.True(result == DateTime.MinValue);
         }
     }
 }

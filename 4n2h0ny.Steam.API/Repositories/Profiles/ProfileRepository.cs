@@ -1,4 +1,5 @@
-﻿using _4n2h0ny.Steam.API.Models;
+﻿using _4n2h0ny.Steam.API.Helpers;
+using _4n2h0ny.Steam.API.Models;
 using Microsoft.Extensions.Options;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
@@ -33,7 +34,7 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
 
             if (maxCommentPageIndex != null)
             {
-                GetUserProfilesFromCommentPage(driver);
+                var profiles = GetUserProfilesFromCommentPage(driver);
                 // Get users from first page
 
                 // iterate commentPages and get users
@@ -81,7 +82,7 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
             return null;
         }
 
-        private static string[] GetUserProfilesFromCommentPage(FirefoxDriver driver)
+        private static List<Profile> GetUserProfilesFromCommentPage(FirefoxDriver driver)
         {
             var profiles = new List<Profile>();
             var commentHeaders = driver.FindElements(By.XPath("//*[@class=\"commentthread_comment_author\"]"))
@@ -90,16 +91,24 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
             foreach (var header in commentHeaders)
             {
                 var href = header.FindElement(By.ClassName("commentthread_author_link")).GetAttribute("href");
-                var commentDate = header.FindElement(By.ClassName("commentthread_comment_timestamp")).GetAttribute("data-timestamp");
+
+                if (profiles.Any(p => p.ProfileUrl == href))
+                {
+                    continue;
+                }
+
+                var unixTimeStamp = header.FindElement(By.ClassName("commentthread_comment_timestamp")).GetAttribute("data-timestamp");
 
                 var newProfile = new Profile()
                 {
                     ProfileUrl = href,
-                    LastDateCommented = DateTime.Now
+                    LastDateCommented = DateParser.ParseUnixTimeStampToDateTime(unixTimeStamp),
                 };
+
+                profiles.Add(newProfile);
             }
 
-            return [];
+            return profiles;
         }
 
         private record CommentPageIndexString(string IndexString, string PageUrl);
