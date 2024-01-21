@@ -9,16 +9,16 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
     public class ProfileRepository : IProfileRepository
     {
         private readonly SteamConfiguration _steamConfiguration;
+        private readonly FirefoxDriver _driver;
 
         public ProfileRepository(IOptions<SteamConfiguration> steamConfigurations)
         {
             _steamConfiguration = steamConfigurations.Value;
+            _driver = WebDriverSingleton.Instance.Driver;
         }
 
         public ICollection<Profile> GetCommenters(string? profileUrl)
         {
-            var driver = new FirefoxDriver();
-
             if (profileUrl == null)
             {
                 profileUrl = $"{_steamConfiguration.DefaultProfileUrl}/{_steamConfiguration.CommentPageUrl}";
@@ -28,13 +28,13 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
                 profileUrl = $"{profileUrl}/{_steamConfiguration.DefaultProfileUrl}";
             }
 
-            driver.Navigate().GoToUrl(profileUrl);
+            _driver.Navigate().GoToUrl(profileUrl);
 
-            var maxCommentPageIndex = GetMaxCommentPageIndex(driver);
+            var maxCommentPageIndex = GetMaxCommentPageIndex(_driver);
 
             if (maxCommentPageIndex != null)
             {
-                var profiles = GetUserProfilesFromCommentPage(driver);
+                var profiles = GetUserProfilesFromCommentPage(_driver);
                 // Get users from first page
 
                 // iterate commentPages and get users
@@ -43,10 +43,9 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
             else
             {
                 // Do something with single page
-                GetUserProfilesFromCommentPage(driver);
+                GetUserProfilesFromCommentPage(_driver);
             }
 
-            driver.Dispose();
             return new List<Profile>();
         }
 
