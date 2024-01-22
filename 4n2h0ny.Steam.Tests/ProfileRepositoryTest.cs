@@ -1,4 +1,6 @@
 using _4n2h0ny.Steam.API.Helpers;
+using _4n2h0ny.Steam.API.Models;
+using _4n2h0ny.Steam.Tests.TestData;
 
 namespace _4n2h0ny.Steam.Tests
 {
@@ -20,6 +22,24 @@ namespace _4n2h0ny.Steam.Tests
             var result = DateParser.ParseUnixTimeStampToDateTime(dateString);
 
             Assert.True(result == DateTime.MinValue);
+        }
+
+        [Fact]
+        public void ProfileHashSetShouldNotAddDuplicates()
+        {
+            var hashset = new HashSet<Profile>();
+
+            var profile = Profiles.Default;
+            var profileIdentical = Profiles.Default;
+            var profileDifferentDate = Profiles.Default with { LastDateCommented = DateTime.Now.AddDays(1) };
+            var profileDifferentIsFriend = Profiles.Default with { IsFriend = false };
+
+            hashset.Add(profile);
+            hashset.Add(profileIdentical);
+            hashset.Add(profileDifferentDate);
+            hashset.Add(profileDifferentIsFriend);
+
+            Assert.Single(hashset);
         }
     }
 }
