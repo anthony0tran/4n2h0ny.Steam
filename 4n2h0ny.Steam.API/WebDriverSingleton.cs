@@ -5,6 +5,7 @@ namespace _4n2h0ny.Steam.API
     public sealed class WebDriverSingleton
     {
         public FirefoxDriver Driver { get; set; }
+
         private WebDriverSingleton()
         {
             var profile = new FirefoxProfileManager()

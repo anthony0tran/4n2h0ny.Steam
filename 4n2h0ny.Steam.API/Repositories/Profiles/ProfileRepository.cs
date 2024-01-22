@@ -19,6 +19,7 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
 
         public ICollection<Profile> GetCommenters(string? profileUrl)
         {
+            var profiles = new HashSet<Profile>();
             if (profileUrl == null)
             {
                 profileUrl = $"{_steamConfiguration.DefaultProfileUrl}/{_steamConfiguration.CommentPageUrl}";
@@ -34,19 +35,36 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
 
             if (maxCommentPageIndex != null)
             {
-                var profiles = GetUserProfilesFromCommentPage(_driver);
-                // Get users from first page
+                var initialFoundProfiles = GetUserProfilesFromCommentPage(_driver);
 
-                // iterate commentPages and get users
+                foreach (var foundProfile in initialFoundProfiles)
+                {
+                    profiles.Add(foundProfile);
+                }
+
                 var commentPages = GetCommentPages(maxCommentPageIndex);
+
+                if (commentPages == null)
+                {
+                    return profiles;
+                }
+
+                foreach (var commentPage in commentPages)
+                {
+                    _driver.Navigate().GoToUrl(commentPage);
+                    var foundProfilesNextPages = GetUserProfilesFromCommentPage(_driver);
+                    foreach (var foundProfile in foundProfilesNextPages)
+                    {
+                        profiles.Add(foundProfile);
+                    }
+                }
             }
             else
             {
-                // Do something with single page
                 GetUserProfilesFromCommentPage(_driver);
             }
 
-            return new List<Profile>();
+            return profiles;
         }
 
         private static string[]? GetCommentPages(CommentPageIndex? maxCommentPageIndex)
@@ -83,25 +101,27 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
 
         private static List<Profile> GetUserProfilesFromCommentPage(FirefoxDriver driver)
         {
-            var profiles = new List<Profile>();
-            var commentHeaders = driver.FindElements(By.XPath("//*[@class=\"commentthread_comment_author\"]"))
+            var profiles = new List<Profile>(); 
+            var comments = driver.FindElements(By.ClassName("commentthread_comment"))
                 .ToArray();
 
-            foreach (var header in commentHeaders)
+            foreach (var comment in comments)
             {
-                var href = header.FindElement(By.ClassName("commentthread_author_link")).GetAttribute("href");
+                var friend = comment.FindElements(By.ClassName("commentthread_comment_friendindicator")).ToArray();
+                var href = comment.FindElement(By.ClassName("commentthread_author_link")).GetAttribute("href");
 
                 if (profiles.Any(p => p.ProfileUrl == href))
                 {
                     continue;
                 }
 
-                var unixTimeStamp = header.FindElement(By.ClassName("commentthread_comment_timestamp")).GetAttribute("data-timestamp");
+                var unixTimeStamp = comment.FindElement(By.ClassName("commentthread_comment_timestamp")).GetAttribute("data-timestamp");
 
                 var newProfile = new Profile()
                 {
                     ProfileUrl = href,
                     LastDateCommented = DateParser.ParseUnixTimeStampToDateTime(unixTimeStamp),
+                    IsFriend = friend.Length > 0
                 };
 
                 profiles.Add(newProfile);
