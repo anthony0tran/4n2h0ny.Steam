@@ -1,3 +1,4 @@
+using _4n2h0ny.Steam.API;
 using _4n2h0ny.Steam.API.Models;
 using _4n2h0ny.Steam.API.Repositories.Profiles;
 
