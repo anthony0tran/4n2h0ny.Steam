@@ -22,5 +22,10 @@ namespace _4n2h0ny.Steam.API
         private static readonly Lazy<WebDriverSingleton> initialization = new(() => new WebDriverSingleton());
 
         public static WebDriverSingleton Instance { get { return initialization.Value; } }
+
+        public void Quit()
+        {
+            Instance.Driver.Quit();
+        }
     }
 }
