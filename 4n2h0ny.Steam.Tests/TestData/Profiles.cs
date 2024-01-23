@@ -6,7 +6,7 @@ namespace _4n2h0ny.Steam.Tests.TestData
     {
         public static Profile Default => new()
         {
-            ProfileUrl = "https://steamcommunity.com/id/4n2h0ny",
+            URI = "https://steamcommunity.com/id/4n2h0ny",
             LastDateCommented = DateTime.Now,
             IsFriend = true
         };

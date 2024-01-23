@@ -1,21 +1,25 @@
 ﻿using _4n2h0ny.Steam.API.Configurations;
 using _4n2h0ny.Steam.API.Helpers;
 using _4n2h0ny.Steam.API.Models;
+using _4n2h0ny.Steam.API.Repositories.Profiles;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 
-namespace _4n2h0ny.Steam.API.Repositories.Profiles
+namespace _4n2h0ny.Steam.API.Repositories
 {
     public class ProfileRepository : IProfileRepository
     {
         private readonly SteamConfiguration _steamConfiguration;
         private readonly FirefoxDriver _driver;
+        private readonly ProfileContext _profileContext;
 
-        public ProfileRepository(IOptions<SteamConfiguration> steamConfigurations)
+        public ProfileRepository(IOptions<SteamConfiguration> steamConfigurations, ProfileContext profileContext)
         {
             _steamConfiguration = steamConfigurations.Value;
             _driver = WebDriverSingleton.Instance.Driver;
+            _profileContext = profileContext;
         }
 
         public ICollection<Profile> GetCommenters(string? profileUrl)
@@ -27,7 +31,7 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
             }
             else
             {
-                profileUrl = $"{profileUrl}/{_steamConfiguration.DefaultProfileUrl}";
+                profileUrl = $"{profileUrl}/{_steamConfiguration.CommentPageUrl}";
             }
 
             _driver.Navigate().GoToUrl(profileUrl);
@@ -62,10 +66,38 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
             }
             else
             {
-                GetUserProfilesFromCommentPage(_driver);
+                var foundProfiles = GetUserProfilesFromCommentPage(_driver);
+                foreach (var foundProfile in foundProfiles)
+                {
+                    profiles.Add(foundProfile);
+                }
             }
 
             return profiles;
+        }
+
+        public async Task<ICollection<Profile>> AddOrUpdateProfile(ICollection<Profile> foundProfiles, CancellationToken cancellationToken)
+        {
+            var existingProfiles = await _profileContext.Profiles
+                .Where(p => foundProfiles.Select(fp => fp.URI).Contains(p.URI))
+                .ToListAsync(cancellationToken);
+
+            foreach (var profile in foundProfiles)
+            {
+                var existingProfile = existingProfiles.SingleOrDefault(p => p.URI == profile.URI);
+                if (existingProfile == null)
+                {
+                    continue;
+                }
+                existingProfile.IsFriend = profile.IsFriend;
+                existingProfile.LastDateCommented = profile.LastDateCommented;
+            }
+
+            var newProfiles = foundProfiles.Where(np => !existingProfiles.Select(p => p.URI).Contains(np.URI));
+
+            await _profileContext.AddRangeAsync(newProfiles, cancellationToken);
+            await _profileContext.SaveChangesAsync(cancellationToken);
+            return foundProfiles;
         }
 
         private static string[]? GetCommentPages(CommentPageIndex? maxCommentPageIndex)
@@ -92,6 +124,11 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
                             .Distinct()
                             .ToArray();
 
+            if (commentPageIndexList.Length == 0)
+            {
+                return null;
+            }
+
             if (int.TryParse(commentPageIndexList.Last().IndexString, out var highestIndex))
             {
                 return new(highestIndex, commentPageIndexList.Last().PageUrl);
@@ -102,7 +139,7 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
 
         private static List<Profile> GetUserProfilesFromCommentPage(FirefoxDriver driver)
         {
-            var profiles = new List<Profile>(); 
+            var profiles = new List<Profile>();
             var comments = driver.FindElements(By.ClassName("commentthread_comment"))
                 .ToArray();
 
@@ -111,7 +148,7 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
                 var friend = comment.FindElements(By.ClassName("commentthread_comment_friendindicator")).ToArray();
                 var href = comment.FindElement(By.ClassName("commentthread_author_link")).GetAttribute("href");
 
-                if (profiles.Any(p => p.ProfileUrl == href))
+                if (profiles.Any(p => p.URI == href))
                 {
                     continue;
                 }
@@ -120,7 +157,7 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
 
                 var newProfile = new Profile()
                 {
-                    ProfileUrl = href,
+                    URI = href,
                     LastDateCommented = DateParser.ParseUnixTimeStampToDateTime(unixTimeStamp),
                     IsFriend = friend.Length > 0
                 };
