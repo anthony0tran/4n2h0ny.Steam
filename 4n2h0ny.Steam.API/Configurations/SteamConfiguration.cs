@@ -1,4 +1,4 @@
-﻿namespace _4n2h0ny.Steam.API.Models
+﻿namespace _4n2h0ny.Steam.API.Configurations
 {
     public record SteamConfiguration
     {

@@ -2,6 +2,7 @@ namespace _4n2h0ny.Steam.API.Models
 {
     public sealed record Profile : IEquatable<Profile>
     {
+        public Guid Id { get; set; }
         public required string ProfileUrl { get; init; }
         public DateTime LastDateCommented { get; set; }
         public bool IsFriend { get; set; }

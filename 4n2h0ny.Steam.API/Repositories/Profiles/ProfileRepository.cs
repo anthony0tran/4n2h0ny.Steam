@@ -1,4 +1,5 @@
-﻿using _4n2h0ny.Steam.API.Helpers;
+﻿using _4n2h0ny.Steam.API.Configurations;
+using _4n2h0ny.Steam.API.Helpers;
 using _4n2h0ny.Steam.API.Models;
 using Microsoft.Extensions.Options;
 using OpenQA.Selenium;
