@@ -62,7 +62,7 @@ namespace _4n2h0ny.Steam.Tests
         }
 
         [Fact]
-        public async Task ShouldAddProfilesIfNotExists()
+        public async Task ShouldAddProfilesIfNotExistsAndUpdateExisting()
         {
             // Arrange
             _profileContext.Profiles.Add(Profiles.Default);
@@ -85,8 +85,59 @@ namespace _4n2h0ny.Steam.Tests
 
             // Assert
             var dbResults = _profileContext.Profiles.ToList();
+            Assert.Equal(2, result.Count);
             Assert.Equal(2, dbResults.Count);
             Assert.False(dbResults.Single(p => p.URI == Profiles.Default.URI).IsFriend);
+            _webDriverSingleton.Quit();
+        }
+
+        [Fact]
+        public async Task ShouldNotAddExisting()
+        {
+            // Arrange
+            _profileContext.Profiles.Add(Profiles.Default);
+            _profileContext.SaveChanges();
+
+            var profiles = new List<Profile>()
+            {
+                Profiles.Default
+            };
+
+            // Act
+            var result = await _profileRepository.AddOrUpdateProfile(profiles, Arg.Any<CancellationToken>());
+
+            // Assert
+            var dbResults = _profileContext.Profiles.ToList();
+            Assert.Single(result);
+            Assert.Single(dbResults);
+            _webDriverSingleton.Quit();
+        }
+
+        [Fact]
+        public async Task ShouldEditExisting()
+        {
+            // Arrange
+            _profileContext.Profiles.Add(Profiles.Default);
+            _profileContext.SaveChanges();
+
+            var profiles = new List<Profile>()
+            {
+                Profiles.Default with
+                {
+                    LastDateCommented = DateTime.UtcNow,
+                    IsFriend = false
+                }
+            };
+
+            // Act
+            var result = await _profileRepository.AddOrUpdateProfile(profiles, Arg.Any<CancellationToken>());
+
+            // Assert
+            var dbResults = _profileContext.Profiles.ToList();
+            Assert.Single(result);
+            Assert.Single(dbResults);
+            Assert.True(dbResults.Single().LastDateCommented == profiles.Single().LastDateCommented);
+            Assert.True(dbResults.Single().IsFriend == profiles.Single().IsFriend);
             _webDriverSingleton.Quit();
         }
 
