@@ -18,6 +18,8 @@ builder.Services.Configure<SteamConfiguration>(builder.Configuration.GetSection(
 builder.Services.AddDbContext<ProfileContext>();
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<ISteamService, SteamService>();
+builder.Services.AddScoped<ISteamRepository, SteamRepository>();
 
 var app = builder.Build();
 
