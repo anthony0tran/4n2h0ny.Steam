@@ -168,6 +168,11 @@ namespace _4n2h0ny.Steam.API.Repositories
             return profiles;
         }
 
+        public async Task<ICollection<Profile>> GetFriendCommenters(CancellationToken cancellationToken) =>
+            await _profileContext.Profiles
+                .Where(p => p.IsFriend)
+                .ToArrayAsync(cancellationToken);
+
         private record CommentPageIndexString(string IndexString, string PageUrl);
         private record CommentPageIndex(int Index, string PageUrl);
     }

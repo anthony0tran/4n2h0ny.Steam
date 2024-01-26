@@ -19,13 +19,21 @@ namespace _4n2h0ny.Steam.API.Controllers
         }
 
         [HttpGet("commenters")]
-        public IEnumerable<Profile> GetCommenters(string? profileUrl, CancellationToken cancellationToken)
+        public ICollection<Profile> GetCommenters(string? profileUrl, CancellationToken cancellationToken)
         {
             _profileService.GetCommenters(profileUrl, cancellationToken);
 
             _driver.Dispose();
 
             return new List<Profile>();
+        }
+
+        [HttpGet("friends")]
+        public async Task<ICollection<Profile>> GetFriendCommenters(CancellationToken cancellationToken)
+        {
+            _driver.Dispose();
+            var result = await _profileService.GetFriendCommenters(cancellationToken);
+            return result.ToArray();
         }
     }
 }

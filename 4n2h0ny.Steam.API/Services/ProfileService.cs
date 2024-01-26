@@ -27,5 +27,8 @@ namespace _4n2h0ny.Steam.API.Services
             var profiles = _profileRepository.GetCommenters(profileUrl);
             return await _profileRepository.AddOrUpdateProfile(profiles, cancellationToken);
         }
+
+        public async Task<ICollection<Profile>> GetFriendCommenters(CancellationToken cancellationToken) =>
+            await _profileRepository.GetFriendCommenters(cancellationToken);
     }
 }

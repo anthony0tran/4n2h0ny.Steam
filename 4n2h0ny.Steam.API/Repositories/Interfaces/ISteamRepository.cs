@@ -1,5 +1,4 @@
-﻿using _4n2h0ny.Steam.API.Models;
-namespace _4n2h0ny.Steam.API.Repositories.Profiles
+﻿namespace _4n2h0ny.Steam.API.Repositories.Profiles
 {
     public interface ISteamRepository
     {
