@@ -24,7 +24,7 @@ namespace _4n2h0ny.Steam.API.Services
             _driver = WebDriverSingleton.Instance.Driver;
         }
 
-        public async Task<ICollection<Profile>> GetCommenters(string? profileUrl, CancellationToken cancellationToken)
+        public async Task<ICollection<Profile>> GetCommenters(string? profileUrl, bool scrapeAll, CancellationToken cancellationToken)
         {
             var isLoggedIn = _steamService.CheckLogin(profileUrl);
 
@@ -33,7 +33,10 @@ namespace _4n2h0ny.Steam.API.Services
                 throw new InvalidOperationException("User is not logged in...");
             }
 
-            var lastFoundCommentDate = await _profileRepository.GetDateLatestComment(cancellationToken);
+            var lastFoundCommentDate = !scrapeAll 
+                ? await _profileRepository.GetDateLatestComment(cancellationToken) 
+                : null;
+
             var profiles = GetCommenters(profileUrl, lastFoundCommentDate);
             return await _profileRepository.AddOrUpdateProfile(profiles, cancellationToken);
         }
@@ -164,7 +167,7 @@ namespace _4n2h0ny.Steam.API.Services
 
                 var commentDate = DateParser.ParseUnixTimeStampToDateTime(unixTimeStamp);
 
-                if (commentDate <= lastFoundCommentDate)
+                if (lastFoundCommentDate != null && commentDate <= lastFoundCommentDate)
                 {
                     reachedPreviousFoundComment = true;
                     return profiles;

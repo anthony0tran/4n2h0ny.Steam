@@ -19,13 +19,11 @@ namespace _4n2h0ny.Steam.API.Controllers
         }
 
         [HttpGet("commenters")]
-        public ICollection<Profile> GetCommenters(string? profileUrl, CancellationToken cancellationToken)
+        public async Task<ICollection<Profile>> GetCommenters(string? profileUrl, CancellationToken cancellationToken, bool scrapeAll = false)
         {
-            _profileService.GetCommenters(profileUrl, cancellationToken);
-
+            var result = await _profileService.GetCommenters(profileUrl, scrapeAll, cancellationToken);
             _driver.Dispose();
-
-            return new List<Profile>();
+            return result.ToList();
         }
 
         [HttpGet("friends")]
@@ -43,7 +41,7 @@ namespace _4n2h0ny.Steam.API.Controllers
             return await _profileService.GetExcludedProfiles(cancellationToken);
         }
 
-        [HttpPut]
+        [HttpPut("[action]")]
         public async Task<Profile?> SetIsExcluded([FromQuery] IsExcludedRequest request)
         {
             _driver.Dispose();
