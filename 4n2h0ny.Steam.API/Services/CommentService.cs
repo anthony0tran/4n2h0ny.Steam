@@ -9,19 +9,33 @@ namespace _4n2h0ny.Steam.API.Services
     public class CommentService : ICommentService
     {
         private readonly IProfileService _profileService;
+        private readonly ISteamService _steamService;
         private readonly FirefoxDriver _driver;
         private readonly CommentConfiguration _configuration;
 
-        public CommentService(IProfileService profileService, IOptions<CommentConfiguration> options)
+        public CommentService(IProfileService profileService, IOptions<CommentConfiguration> options, ISteamService steamService)
         {
             _profileService = profileService;
             _driver = WebDriverSingleton.Instance.Driver;
             _configuration = options.Value;
+            _steamService = steamService;
         }
 
         public async Task CommentOnFriendCommenters(string comment, CancellationToken cancellationToken)
         {
             var profiles = await _profileService.GetFriendCommenters(cancellationToken);
+
+            if (profiles.Count == 0)
+            {
+                throw new InvalidOperationException("No profiles found to comment on.");
+            }
+
+            var isLoggedIn = _steamService.CheckLogin(profiles.First().URI);
+
+            if (!isLoggedIn)
+            {
+                throw new InvalidOperationException("Unable to comment. Not logged into steam");
+            }
 
             foreach (var profile in profiles)
             {
@@ -35,11 +49,15 @@ namespace _4n2h0ny.Steam.API.Services
             _driver.Navigate().GoToUrl(URI);
 
             // find commentbox
-            var commentThreadEntry = _driver.FindElement(By.ClassName("commentthread_entry"))
-                ?? throw new InvalidOperationException("Can't find commentThread entry");
+            var commentThreadEntry = _driver.FindElements(By.ClassName("commentthread_entry"));
 
-            var textArea = commentThreadEntry.FindElement(By.ClassName("commentthread_textarea"));
-            var postButton = commentThreadEntry.FindElement(By.ClassName("btn_green_white_innerfade"));
+            if (commentThreadEntry.Count == 0)
+            {
+                return;
+            }
+
+            var textArea = commentThreadEntry.First().FindElement(By.ClassName("commentthread_textarea"));
+            var postButton = commentThreadEntry.First().FindElement(By.ClassName("btn_green_white_innerfade"));
 
             // click commentbox
             textArea.Click();
