@@ -15,10 +15,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<SteamConfiguration>(builder.Configuration.GetSection("SteamConfiguration"));
+builder.Services.Configure<CommentConfiguration>(builder.Configuration.GetSection("CommentConfiguration"));
 builder.Services.AddDbContext<ProfileContext>();
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<ISteamService, SteamService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
 
 var app = builder.Build();
 
