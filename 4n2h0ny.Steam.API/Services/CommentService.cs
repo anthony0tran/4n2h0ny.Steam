@@ -45,10 +45,8 @@ namespace _4n2h0ny.Steam.API.Services
 
         private void CommentOnProfile(string URI, string comment)
         {
-            // go to profile
             _driver.Navigate().GoToUrl(URI);
 
-            // find commentbox
             var commentThreadEntry = _driver.FindElements(By.ClassName("commentthread_entry"));
 
             if (commentThreadEntry.Count == 0)
@@ -59,13 +57,10 @@ namespace _4n2h0ny.Steam.API.Services
             var textArea = commentThreadEntry.First().FindElement(By.ClassName("commentthread_textarea"));
             var postButton = commentThreadEntry.First().FindElement(By.ClassName("btn_green_white_innerfade"));
 
-            // click commentbox
             textArea.Click();
 
-            // comment
             textArea.SendKeys(comment);
 
-            // click post button
             if (_configuration.EnableCommenting)
             {
                 postButton.Click();

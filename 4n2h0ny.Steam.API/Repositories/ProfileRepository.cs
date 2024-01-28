@@ -54,6 +54,7 @@ namespace _4n2h0ny.Steam.API.Repositories
         public async Task<Profile?> SetIsExcluded(string URI, bool isExcluded, CancellationToken cancellationToken)
         {
             var profile = await _profileContext.Profiles
+                .IgnoreQueryFilters()
                 .SingleOrDefaultAsync(p => p.URI == URI, cancellationToken);
 
             if (profile == null)
