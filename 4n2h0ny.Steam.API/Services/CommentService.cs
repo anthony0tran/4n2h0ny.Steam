@@ -42,11 +42,11 @@ namespace _4n2h0ny.Steam.API.Services
 
             foreach (var profile in profilesToCommentOn)
             {
-                CommentOnProfile(profile.URI, comment, cancellationToken);
+                await CommentOnProfile(profile.URI, comment, cancellationToken);
             }
         }
 
-        private void CommentOnProfile(string URI, string comment, CancellationToken cancellationToken)
+        private async Task CommentOnProfile(string URI, string comment, CancellationToken cancellationToken)
         {
             _driver.Navigate().GoToUrl(URI);
 
@@ -54,6 +54,7 @@ namespace _4n2h0ny.Steam.API.Services
 
             if (commentThreadEntry.Count == 0)
             {
+                await _profileService.SetCommentAreaDisabled(URI, cancellationToken);
                 return;
             }
 
@@ -67,7 +68,7 @@ namespace _4n2h0ny.Steam.API.Services
             if (_configuration.EnableCommenting)
             {
                 postButton.Click();
-                _profileService.SetCommentedOn(URI, cancellationToken);
+                await _profileService.SetCommentedOn(URI, cancellationToken);
             }
         }
     }
