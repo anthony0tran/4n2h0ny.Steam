@@ -17,8 +17,8 @@ namespace _4n2h0ny.Steam.API.Controllers
             _driver = WebDriverSingleton.Instance.Driver;
         }
 
-        [HttpPost]
-        public async Task Comment(string comment, CancellationToken cancellationToken)
+        [HttpPost("friends")]
+        public async Task CommentAllFriendCommenters(string comment, CancellationToken cancellationToken)
         {
             await _commentService.CommentOnFriendCommenters(comment, cancellationToken);
             _driver.Dispose();

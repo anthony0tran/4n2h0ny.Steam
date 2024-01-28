@@ -7,7 +7,7 @@ namespace _4n2h0ny.Steam.Tests.TestData
         public static Profile Default => new()
         {
             URI = "https://steamcommunity.com/id/4n2h0ny",
-            LastDateCommented = DateTime.Now,
+            LatestCommentReceivedOn = DateTime.Now,
             IsFriend = true
         };
     }

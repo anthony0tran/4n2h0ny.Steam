@@ -29,7 +29,7 @@ namespace _4n2h0ny.Steam.API.Repositories
                     continue;
                 }
                 existingProfile.IsFriend = profile.IsFriend;
-                existingProfile.LastDateCommented = profile.LastDateCommented;
+                existingProfile.LatestCommentReceivedOn = profile.LatestCommentReceivedOn;
             }
 
             var newProfiles = foundProfiles.Where(np => !existingProfiles.Select(p => p.URI).Contains(np.URI));
@@ -46,9 +46,9 @@ namespace _4n2h0ny.Steam.API.Repositories
 
         public async Task<DateTime?> GetDateLatestComment(CancellationToken cancellationToken) =>
             await _profileContext.Profiles
-            .OrderByDescending(p => p.LastDateCommented)
+            .OrderByDescending(p => p.LatestCommentReceivedOn)
             .Take(1)
-            .Select(p => p.LastDateCommented)
+            .Select(p => p.LatestCommentReceivedOn)
             .SingleOrDefaultAsync(cancellationToken);
 
         public async Task<Profile?> SetIsExcluded(string URI, bool isExcluded, CancellationToken cancellationToken)

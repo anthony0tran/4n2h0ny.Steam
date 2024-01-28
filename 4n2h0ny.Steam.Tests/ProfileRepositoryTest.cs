@@ -6,6 +6,7 @@ using _4n2h0ny.Steam.API.Repositories.Profiles;
 using _4n2h0ny.Steam.Tests.TestData;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 
 namespace _4n2h0ny.Steam.Tests
@@ -15,12 +16,13 @@ namespace _4n2h0ny.Steam.Tests
         private readonly IProfileRepository _profileRepository;
         private readonly ProfileContext _profileContext;
         private readonly WebDriverSingleton _webDriverSingleton;
+        private readonly ILogger<ProfileRepository> _logger = Substitute.For<ILogger<ProfileRepository>>();
 
         public HelpersTest()
         {
             _webDriverSingleton = WebDriverSingleton.Instance;
             _profileContext = CreateContext();
-            _profileRepository = new ProfileRepository(_profileContext);
+            _profileRepository = new ProfileRepository(_profileContext, _logger);
         }
 
         [Fact]
@@ -48,7 +50,7 @@ namespace _4n2h0ny.Steam.Tests
 
             var profile = Profiles.Default;
             var profileIdentical = Profiles.Default;
-            var profileDifferentDate = Profiles.Default with { LastDateCommented = DateTime.Now.AddDays(1) };
+            var profileDifferentDate = Profiles.Default with { LatestCommentReceivedOn = DateTime.Now.AddDays(1) };
             var profileDifferentIsFriend = Profiles.Default with { IsFriend = false };
 
             hashset.Add(profile);
@@ -122,7 +124,7 @@ namespace _4n2h0ny.Steam.Tests
             {
                 Profiles.Default with
                 {
-                    LastDateCommented = DateTime.UtcNow,
+                    LatestCommentReceivedOn = DateTime.UtcNow,
                     IsFriend = false
                 }
             };
@@ -134,7 +136,7 @@ namespace _4n2h0ny.Steam.Tests
             var dbResults = _profileContext.Profiles.ToList();
             Assert.Single(result);
             Assert.Single(dbResults);
-            Assert.True(dbResults.Single().LastDateCommented == profiles.Single().LastDateCommented);
+            Assert.True(dbResults.Single().LatestCommentReceivedOn == profiles.Single().LatestCommentReceivedOn);
             Assert.True(dbResults.Single().IsFriend == profiles.Single().IsFriend);
             _webDriverSingleton.Quit();
         }

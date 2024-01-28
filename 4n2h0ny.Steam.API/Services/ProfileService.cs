@@ -176,7 +176,7 @@ namespace _4n2h0ny.Steam.API.Services
                 var newProfile = new Profile()
                 {
                     URI = href,
-                    LastDateCommented = commentDate,
+                    LatestCommentReceivedOn = commentDate,
                     IsFriend = friend.Length > 0
                 };
 
