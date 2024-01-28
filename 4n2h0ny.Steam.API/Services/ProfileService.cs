@@ -186,6 +186,12 @@ namespace _4n2h0ny.Steam.API.Services
         public async Task<ICollection<Profile>> GetFriendCommenters(CancellationToken cancellationToken) =>
             await _profileRepository.GetFriendCommenters(cancellationToken);
 
+        public async Task<Profile?> SetIsExcluded(IsExcludedRequest request) =>
+            await _profileRepository.SetIsExcluded(request.URI, request.IsExcluded, request.CancellationToken);
+
+        public async Task<ICollection<Profile>> GetExcludedProfiles(CancellationToken cancellationToken) =>
+            await _profileRepository.GetExcludedProfiles(cancellationToken);
+
         private record CommentPageIndexString(string IndexString, string PageUrl);
         private record CommentPageIndex(int Index, string PageUrl);
     }

@@ -35,5 +35,19 @@ namespace _4n2h0ny.Steam.API.Controllers
             var result = await _profileService.GetFriendCommenters(cancellationToken);
             return result.ToArray();
         }
+
+        [HttpGet("excluded")]
+        public async Task<ICollection<Profile>> GetExcludedProfiles(CancellationToken cancellationToken)
+        {
+            _driver.Dispose();
+            return await _profileService.GetExcludedProfiles(cancellationToken);
+        }
+
+        [HttpPut]
+        public async Task<Profile?> SetIsExcluded([FromQuery] IsExcludedRequest request)
+        {
+            _driver.Dispose();
+            return await _profileService.SetIsExcluded(request);
+        }
     }
 }
