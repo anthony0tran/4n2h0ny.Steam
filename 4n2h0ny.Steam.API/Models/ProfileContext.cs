@@ -33,6 +33,7 @@ namespace _4n2h0ny.Steam.API.Models
                 .IsUnique();
 
             builder.Entity<Profile>().HasQueryFilter(p => !p.IsExcluded);
+            builder.Entity<Profile>().HasQueryFilter(p => !p.CommentAreaDisabled);
         }
     }
 }

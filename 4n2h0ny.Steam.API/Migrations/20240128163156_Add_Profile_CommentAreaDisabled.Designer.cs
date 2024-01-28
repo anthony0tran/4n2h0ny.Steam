@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using _4n2h0ny.Steam.API.Models;
 
@@ -10,9 +11,11 @@ using _4n2h0ny.Steam.API.Models;
 namespace _4n2h0ny.Steam.API.Migrations
 {
     [DbContext(typeof(ProfileContext))]
-    partial class ProfileContextModelSnapshot : ModelSnapshot
+    [Migration("20240128163156_Add_Profile_CommentAreaDisabled")]
+    partial class Add_Profile_CommentAreaDisabled
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");

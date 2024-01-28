@@ -83,6 +83,20 @@ namespace _4n2h0ny.Steam.API.Repositories
             await _profileContext.SaveChangesAsync(cancellationToken);
         }
 
+        public async Task SetCommentAreaDisabled(string URI, CancellationToken cancellationToken)
+        {
+            var profile = await _profileContext.Profiles.SingleOrDefaultAsync(p => p.URI == URI, cancellationToken);
+
+            if (profile == null)
+            {
+                _logger.LogWarning("Could not set commentAreaDisabled. Profile with URI: {URI} not found", URI);
+                return;
+            }
+
+            profile.CommentAreaDisabled = true;
+            await _profileContext.SaveChangesAsync(cancellationToken);
+        }
+
         public async Task<ICollection<Profile>> GetExcludedProfiles(CancellationToken cancellationToken) =>
             await _profileContext.Profiles
                 .IgnoreQueryFilters()

@@ -198,6 +198,9 @@ namespace _4n2h0ny.Steam.API.Services
         public async Task SetCommentedOn(string URI, CancellationToken cancellationToken) =>
             await _profileRepository.SetCommentedOn(URI, cancellationToken);
 
+        public async Task SetCommentAreaDisabled(string URI, CancellationToken cancellationToken) =>
+            await _profileRepository.SetCommentAreaDisabled(URI, cancellationToken);
+
         private record CommentPageIndexString(string IndexString, string PageUrl);
         private record CommentPageIndex(int Index, string PageUrl);
     }
