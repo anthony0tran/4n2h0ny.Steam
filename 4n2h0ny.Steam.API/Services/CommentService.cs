@@ -37,7 +37,10 @@ namespace _4n2h0ny.Steam.API.Services
                 throw new InvalidOperationException("Unable to comment. Not logged into steam");
             }
 
-            foreach (var profile in profiles)
+            var profilesToCommentOn = profiles.Where(p => p.CommentedOn == null 
+            || p.CommentedOn <= DateTime.UtcNow.AddHours(-2));
+
+            foreach (var profile in profilesToCommentOn)
             {
                 CommentOnProfile(profile.URI, comment, cancellationToken);
             }
