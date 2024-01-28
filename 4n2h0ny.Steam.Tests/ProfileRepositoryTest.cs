@@ -1,5 +1,4 @@
 using _4n2h0ny.Steam.API;
-using _4n2h0ny.Steam.API.Configurations;
 using _4n2h0ny.Steam.API.Helpers;
 using _4n2h0ny.Steam.API.Models;
 using _4n2h0ny.Steam.API.Repositories;
@@ -7,7 +6,6 @@ using _4n2h0ny.Steam.API.Repositories.Profiles;
 using _4n2h0ny.Steam.Tests.TestData;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using NSubstitute;
 
 namespace _4n2h0ny.Steam.Tests
@@ -22,7 +20,7 @@ namespace _4n2h0ny.Steam.Tests
         {
             _webDriverSingleton = WebDriverSingleton.Instance;
             _profileContext = CreateContext();
-            _profileRepository = new ProfileRepository(Substitute.For<IOptions<SteamConfiguration>>(), _profileContext);
+            _profileRepository = new ProfileRepository(_profileContext);
         }
 
         [Fact]
