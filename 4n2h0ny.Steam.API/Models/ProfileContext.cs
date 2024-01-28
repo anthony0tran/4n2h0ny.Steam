@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace _4n2h0ny.Steam.API.Models
 {
@@ -32,6 +31,8 @@ namespace _4n2h0ny.Steam.API.Models
             builder.Entity<Profile>()
                 .HasIndex(p => p.URI)
                 .IsUnique();
+
+            builder.Entity<Profile>().HasQueryFilter(p => !p.IsExcluded);
         }
     }
 }
