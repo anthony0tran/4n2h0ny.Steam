@@ -1,19 +1,33 @@
-﻿using _4n2h0ny.Steam.API.Repositories.Profiles;
+﻿using _4n2h0ny.Steam.API.Configurations;
 using _4n2h0ny.Steam.API.Services.Interfaces;
+using Microsoft.Extensions.Options;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Firefox;
 
 namespace _4n2h0ny.Steam.API.Services
 {
     public class SteamService : ISteamService
     {
-        private readonly ISteamRepository _steamRepository;
-        public SteamService(ISteamRepository steamRepository)
+        private readonly SteamConfiguration _steamConfiguration;
+        private readonly FirefoxDriver _driver;
+        public SteamService(IOptions<SteamConfiguration> steamConfigurations)
         {
-            _steamRepository = steamRepository;
+            _steamConfiguration = steamConfigurations.Value;
+            _driver = WebDriverSingleton.Instance.Driver;
         }
 
         public bool CheckLogin(string? profileUrl)
         {
-            return _steamRepository.CheckLogin(profileUrl);
+            profileUrl ??= _steamConfiguration.DefaultProfileUrl;
+            _driver.Navigate().GoToUrl(profileUrl);
+
+            var avatarElement = _driver.FindElements(By.ClassName("user_avatar"));
+            if (avatarElement.Count == 0)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
