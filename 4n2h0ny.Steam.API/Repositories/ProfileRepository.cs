@@ -41,7 +41,7 @@ namespace _4n2h0ny.Steam.API.Repositories
 
         public async Task<ICollection<Profile>> GetFriendCommenters(CancellationToken cancellationToken) =>
             await _profileContext.Profiles
-                .Where(p => p.IsFriend)
+                .Where(p => p.IsFriend && !p.IsExcluded && !p.CommentAreaDisabled)
                 .ToArrayAsync(cancellationToken);
 
         public async Task<DateTime?> GetDateLatestComment(CancellationToken cancellationToken) =>
