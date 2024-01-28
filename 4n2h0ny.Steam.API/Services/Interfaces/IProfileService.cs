@@ -8,6 +8,7 @@ namespace _4n2h0ny.Steam.API.Services.Interfaces
         public Task<ICollection<Profile>> GetFriendCommenters(CancellationToken cancellationToken);
         public Task<Profile?> SetIsExcluded(IsExcludedRequest request);
         public Task<ICollection<Profile>> GetExcludedProfiles(CancellationToken cancellationToken);
+        public Task SetCommentedOn(string URI, CancellationToken cancellationToken);
     }
 
     public record IsExcludedRequest(string URI, bool IsExcluded, CancellationToken CancellationToken);

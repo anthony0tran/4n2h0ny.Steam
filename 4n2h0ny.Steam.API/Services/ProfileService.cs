@@ -195,6 +195,9 @@ namespace _4n2h0ny.Steam.API.Services
         public async Task<ICollection<Profile>> GetExcludedProfiles(CancellationToken cancellationToken) =>
             await _profileRepository.GetExcludedProfiles(cancellationToken);
 
+        public async Task SetCommentedOn(string URI, CancellationToken cancellationToken) =>
+            await _profileRepository.SetCommentedOn(URI, cancellationToken);
+
         private record CommentPageIndexString(string IndexString, string PageUrl);
         private record CommentPageIndex(int Index, string PageUrl);
     }
