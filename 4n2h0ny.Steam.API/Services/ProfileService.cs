@@ -12,8 +12,8 @@ namespace _4n2h0ny.Steam.API.Services
     public class ProfileService : IProfileService
     {
         private readonly IProfileRepository _profileRepository;
-        private readonly SteamConfiguration _steamConfiguration;
         private readonly ISteamService _steamService;
+        private readonly SteamConfiguration _steamConfiguration;
         private readonly FirefoxDriver _driver;
 
         public ProfileService(IOptions<SteamConfiguration> steamConfigurations, IProfileRepository profileRepository, ISteamService steamService)
@@ -33,13 +33,15 @@ namespace _4n2h0ny.Steam.API.Services
                 throw new InvalidOperationException("User is not logged in...");
             }
 
-            var profiles = GetCommenters(profileUrl);
+            var lastFoundCommentDate = await _profileRepository.GetDateLatestComment(cancellationToken);
+            var profiles = GetCommenters(profileUrl, lastFoundCommentDate);
             return await _profileRepository.AddOrUpdateProfile(profiles, cancellationToken);
         }
 
-        private ICollection<Profile> GetCommenters(string? profileUrl)
+        private HashSet<Profile> GetCommenters(string? profileUrl, DateTime? lastFoundCommentDate)
         {
             var profiles = new HashSet<Profile>();
+            var reachedPreviousFoundComment = false;
             if (profileUrl == null)
             {
                 profileUrl = $"{_steamConfiguration.DefaultProfileUrl}/{_steamConfiguration.CommentPageUrl}";
@@ -55,40 +57,52 @@ namespace _4n2h0ny.Steam.API.Services
 
             if (maxCommentPageIndex != null)
             {
-                var initialFoundProfiles = GetUserProfilesFromCommentPage(_driver);
+                string[]? commentPages = GetProfilesOnIntitialPage(lastFoundCommentDate, profiles, maxCommentPageIndex, reachedPreviousFoundComment);
 
-                foreach (var foundProfile in initialFoundProfiles)
-                {
-                    profiles.Add(foundProfile);
-                }
-
-                var commentPages = GetCommentPages(maxCommentPageIndex);
-
-                if (commentPages == null)
+                if (commentPages == null || reachedPreviousFoundComment)
                 {
                     return profiles;
                 }
 
                 foreach (var commentPage in commentPages)
                 {
-                    _driver.Navigate().GoToUrl(commentPage);
-                    var foundProfilesNextPages = GetUserProfilesFromCommentPage(_driver);
-                    foreach (var foundProfile in foundProfilesNextPages)
+                    if (reachedPreviousFoundComment)
                     {
-                        profiles.Add(foundProfile);
-                    }
+                        return profiles;
+                    };
+
+                    _driver.Navigate().GoToUrl(commentPage);
+                    GetProfilesOnCurrentPage(lastFoundCommentDate, profiles, reachedPreviousFoundComment);
                 }
             }
             else
             {
-                var foundProfiles = GetUserProfilesFromCommentPage(_driver);
-                foreach (var foundProfile in foundProfiles)
-                {
-                    profiles.Add(foundProfile);
-                }
+                GetProfilesOnCurrentPage(lastFoundCommentDate, profiles, reachedPreviousFoundComment);
             }
 
             return profiles;
+        }
+
+        private void GetProfilesOnCurrentPage(DateTime? lastFoundCommentDate, HashSet<Profile> profiles, bool reachedPreviousFoundComment)
+        {
+            var foundProfiles = GetUserProfilesFromCommentPage(_driver, lastFoundCommentDate, reachedPreviousFoundComment);
+            foreach (var foundProfile in foundProfiles)
+            {
+                profiles.Add(foundProfile);
+            }
+        }
+
+        private string[]? GetProfilesOnIntitialPage(DateTime? lastFoundCommentDate, HashSet<Profile> profiles, CommentPageIndex? maxCommentPageIndex, bool reachedPreviousFoundComment)
+        {
+            var initialFoundProfiles = GetUserProfilesFromCommentPage(_driver, lastFoundCommentDate, reachedPreviousFoundComment);
+
+            foreach (var foundProfile in initialFoundProfiles)
+            {
+                profiles.Add(foundProfile);
+            }
+
+            var commentPages = GetCommentPages(maxCommentPageIndex);
+            return commentPages;
         }
 
         private static string[]? GetCommentPages(CommentPageIndex? maxCommentPageIndex)
@@ -128,7 +142,7 @@ namespace _4n2h0ny.Steam.API.Services
             return null;
         }
 
-        private static List<Profile> GetUserProfilesFromCommentPage(FirefoxDriver driver)
+        private static List<Profile> GetUserProfilesFromCommentPage(FirefoxDriver driver, DateTime? lastFoundCommentDate, bool reachedPreviousFoundComment)
         {
             var profiles = new List<Profile>();
             var comments = driver.FindElements(By.ClassName("commentthread_comment"))
@@ -144,12 +158,22 @@ namespace _4n2h0ny.Steam.API.Services
                     continue;
                 }
 
-                var unixTimeStamp = comment.FindElement(By.ClassName("commentthread_comment_timestamp")).GetAttribute("data-timestamp");
+                var unixTimeStamp = comment
+                    .FindElement(By.ClassName("commentthread_comment_timestamp"))
+                    .GetAttribute("data-timestamp");
+
+                var commentDate = DateParser.ParseUnixTimeStampToDateTime(unixTimeStamp);
+
+                if (commentDate <= lastFoundCommentDate)
+                {
+                    reachedPreviousFoundComment = true;
+                    return profiles;
+                }
 
                 var newProfile = new Profile()
                 {
                     URI = href,
-                    LastDateCommented = DateParser.ParseUnixTimeStampToDateTime(unixTimeStamp),
+                    LastDateCommented = commentDate,
                     IsFriend = friend.Length > 0
                 };
 
