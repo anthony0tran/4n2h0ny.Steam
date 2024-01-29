@@ -177,7 +177,8 @@ namespace _4n2h0ny.Steam.API.Services
                 {
                     URI = href,
                     LatestCommentReceivedOn = commentDate,
-                    IsFriend = friend.Length > 0
+                    IsFriend = friend.Length > 0,
+                    FetchedOn = DateTime.UtcNow
                 };
 
                 profiles.Add(newProfile);

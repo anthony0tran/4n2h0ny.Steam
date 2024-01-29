@@ -9,6 +9,7 @@ namespace _4n2h0ny.Steam.API.Models
         public bool IsExcluded { get; set; }
         public DateTime? CommentedOn { get; set; }
         public bool CommentAreaDisabled { get; set; }
+        public DateTime? FetchedOn { get; set; }
 
         public override int GetHashCode()
         {
