@@ -1,7 +1,6 @@
 using _4n2h0ny.Steam.API.Models;
 using _4n2h0ny.Steam.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using OpenQA.Selenium.Firefox;
 
 namespace _4n2h0ny.Steam.API.Controllers
 {
