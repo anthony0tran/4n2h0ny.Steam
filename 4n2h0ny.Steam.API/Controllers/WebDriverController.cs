@@ -19,9 +19,14 @@ namespace _4n2h0ny.Steam.API.Controllers
             _driver.Quit();
 
         [HttpPost("[action]")]
-        public bool Instantiate() 
+        public bool Instantiate(string? URI = null) 
         {
             var instance = WebDriverSingleton.Instance;
+
+            if (!string.IsNullOrEmpty(URI)) 
+            {
+                instance.Driver.Navigate().GoToUrl(URI);
+            }
 
             if (instance.Driver != null)
             {
