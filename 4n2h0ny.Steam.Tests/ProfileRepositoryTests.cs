@@ -1,5 +1,3 @@
-using _4n2h0ny.Steam.API;
-using _4n2h0ny.Steam.API.Helpers;
 using _4n2h0ny.Steam.API.Models;
 using _4n2h0ny.Steam.API.Repositories;
 using _4n2h0ny.Steam.API.Repositories.Profiles;
@@ -11,34 +9,16 @@ using NSubstitute;
 
 namespace _4n2h0ny.Steam.Tests
 {
-    public class HelpersTest
+    public class ProfileRepositoryTests
     {
         private readonly IProfileRepository _profileRepository;
         private readonly ProfileContext _profileContext;
         private readonly ILogger<ProfileRepository> _logger = Substitute.For<ILogger<ProfileRepository>>();
 
-        public HelpersTest()
+        public ProfileRepositoryTests()
         {
             _profileContext = CreateContext();
             _profileRepository = new ProfileRepository(_profileContext, _logger);
-        }
-
-        [Fact]
-        public void DateStringShouldParseToDateTime()
-        {
-            var dateString = "1705856586";
-            var result = DateParser.ParseUnixTimeStampToDateTime(dateString);
-
-            Assert.True(result == new DateTime(2024, 1, 21, 17, 3, 6));
-        }
-
-        [Fact]
-        public void InvalidStringShouldThrowException()
-        {
-            var dateString = "invalidDateString";
-            var result = DateParser.ParseUnixTimeStampToDateTime(dateString);
-
-            Assert.True(result == DateTime.MinValue);
         }
 
         [Fact]
