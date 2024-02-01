@@ -15,12 +15,10 @@ namespace _4n2h0ny.Steam.Tests
     {
         private readonly IProfileRepository _profileRepository;
         private readonly ProfileContext _profileContext;
-        private readonly WebDriverSingleton _webDriverSingleton;
         private readonly ILogger<ProfileRepository> _logger = Substitute.For<ILogger<ProfileRepository>>();
 
         public HelpersTest()
         {
-            _webDriverSingleton = WebDriverSingleton.Instance;
             _profileContext = CreateContext();
             _profileRepository = new ProfileRepository(_profileContext, _logger);
         }
@@ -88,7 +86,6 @@ namespace _4n2h0ny.Steam.Tests
             Assert.Equal(2, result.Count);
             Assert.Equal(2, dbResults.Count);
             Assert.False(dbResults.Single(p => p.URI == Profiles.Default.URI).IsFriend);
-            _webDriverSingleton.Quit();
         }
 
         [Fact]
@@ -110,7 +107,6 @@ namespace _4n2h0ny.Steam.Tests
             var dbResults = _profileContext.Profiles.ToList();
             Assert.Single(result);
             Assert.Single(dbResults);
-            _webDriverSingleton.Quit();
         }
 
         [Fact]
@@ -138,7 +134,6 @@ namespace _4n2h0ny.Steam.Tests
             Assert.Single(dbResults);
             Assert.True(dbResults.Single().LatestCommentReceivedOn == profiles.Single().LatestCommentReceivedOn);
             Assert.True(dbResults.Single().IsFriend == profiles.Single().IsFriend);
-            _webDriverSingleton.Quit();
         }
 
         private static ProfileContext CreateContext()
