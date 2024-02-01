@@ -17,5 +17,9 @@ namespace _4n2h0ny.Steam.API.Controllers
         [HttpPost("friends")]
         public async Task CommentAllFriendCommenters(string comment, CancellationToken cancellationToken) => 
             await _commentService.CommentOnFriendCommenters(comment, cancellationToken);
+
+        [HttpPost("Test")]
+        public async Task PreviewComment(string comment, CancellationToken cancellationToken) =>
+            await _commentService.PreviewComment(comment, cancellationToken);
     }
 }

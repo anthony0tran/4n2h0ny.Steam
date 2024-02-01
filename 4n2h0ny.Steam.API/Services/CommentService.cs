@@ -11,14 +11,20 @@ namespace _4n2h0ny.Steam.API.Services
         private readonly IProfileService _profileService;
         private readonly ISteamService _steamService;
         private readonly FirefoxDriver _driver;
-        private readonly CommentConfiguration _configuration;
+        private readonly CommentConfiguration _commentConfiguration;
+        private readonly SteamConfiguration _steamConfiguration;
 
-        public CommentService(IProfileService profileService, IOptions<CommentConfiguration> options, ISteamService steamService)
+        public CommentService(
+            IOptions<CommentConfiguration> options,
+            IOptions<SteamConfiguration> steamConfiguration,
+            ISteamService steamService,
+            IProfileService profileService)
         {
             _profileService = profileService;
             _driver = WebDriverSingleton.Instance.Driver;
-            _configuration = options.Value;
+            _commentConfiguration = options.Value;
             _steamService = steamService;
+            _steamConfiguration = steamConfiguration.Value;
         }
 
         public async Task CommentOnFriendCommenters(string comment, CancellationToken cancellationToken)
@@ -37,7 +43,7 @@ namespace _4n2h0ny.Steam.API.Services
                 throw new InvalidOperationException("Unable to comment. Not logged into steam");
             }
 
-            var profilesToCommentOn = profiles.Where(p => p.CommentedOn == null 
+            var profilesToCommentOn = profiles.Where(p => p.CommentedOn == null
             || p.CommentedOn <= DateTime.UtcNow.AddHours(-2));
 
             foreach (var profile in profilesToCommentOn)
@@ -46,7 +52,19 @@ namespace _4n2h0ny.Steam.API.Services
             }
         }
 
-        private async Task CommentOnProfile(string URI, string comment, CancellationToken cancellationToken)
+        public async Task PreviewComment(string comment, CancellationToken cancellationToken)
+        {
+            var isLoggedIn = _steamService.CheckLogin(_steamConfiguration.DefaultProfileUrl);
+
+            if (!isLoggedIn)
+            {
+                throw new InvalidOperationException("Unable to comment. Not logged into steam");
+            }
+
+            await CommentOnProfile(_steamConfiguration.DefaultProfileUrl, comment, cancellationToken, true);
+        }
+
+        private async Task CommentOnProfile(string URI, string comment, CancellationToken cancellationToken, bool isPreview = false)
         {
             _driver.Navigate().GoToUrl(URI);
 
@@ -65,7 +83,7 @@ namespace _4n2h0ny.Steam.API.Services
 
             textArea.SendKeys(comment);
 
-            if (_configuration.EnableCommenting)
+            if (_commentConfiguration.EnableCommenting && !isPreview)
             {
                 postButton.Click();
                 await _profileService.SetCommentedOn(URI, cancellationToken);
