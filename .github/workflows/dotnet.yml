@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       working-directory: 4n2h0ny.Steam.API
+      tests-directory: 4n2h0ny.Steam.Tests
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
@@ -28,5 +29,5 @@ jobs:
       working-directory: ${{env.working-directory}}
       run: dotnet build --no-restore
     - name: Test
-      working-directory: ${{env.working-directory}}
+      working-directory: ${{env.tests-directory}}
       run: dotnet test --no-build --verbosity normal
