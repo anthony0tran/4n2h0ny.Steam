@@ -141,12 +141,6 @@ namespace _4n2h0ny.Steam.Tests
             _webDriverSingleton.Quit();
         }
 
-        [Fact]
-        public void Fail()
-        {
-            Assert.False(true);
-        }
-
         private static ProfileContext CreateContext()
         {
             var connection = new SqliteConnection("DataSource=:memory:");
