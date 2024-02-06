@@ -18,6 +18,7 @@ namespace _4n2h0ny.Steam.API.Repositories
         public async Task<ICollection<Profile>> AddOrUpdateProfile(ICollection<Profile> foundProfiles, CancellationToken cancellationToken)
         {
             var existingProfiles = await _profileContext.Profiles
+                .IgnoreQueryFilters()
                 .Where(p => foundProfiles.Select(fp => fp.URI).Contains(p.URI))
                 .ToListAsync(cancellationToken);
 

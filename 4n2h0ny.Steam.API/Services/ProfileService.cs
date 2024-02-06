@@ -120,7 +120,7 @@ namespace _4n2h0ny.Steam.API.Services
 
             var resultList = new string[maxCommentPageIndex.Index];
 
-            return Enumerable.Range(2, maxCommentPageIndex.Index)
+            return Enumerable.Range(2, maxCommentPageIndex.Index - 1)
                 .Select(i => $"{baseCommentPageUrl}ctp={i}")
                 .ToArray();
         }
