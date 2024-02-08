@@ -23,7 +23,6 @@ namespace _4n2h0ny.Steam.API.Models
             {
                 optionsBuilder.UseSqlite($"Data Source={DbPath}; Password={DbPassword};");
             }
-
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -32,8 +31,17 @@ namespace _4n2h0ny.Steam.API.Models
                 .HasIndex(p => p.URI)
                 .IsUnique();
 
+            builder.Entity<Profile>()
+                .HasOne(p => p.ProfileData)
+                .WithOne()
+                .HasForeignKey<Profile>(p => p.ProfileDataId);
+
+            builder.Entity<Profile>()
+                .Navigation(p => p.ProfileData)
+                .AutoInclude();
+
             builder.Entity<Profile>().HasQueryFilter(p => !p.IsExcluded);
-            builder.Entity<Profile>().HasQueryFilter(p => !p.CommentAreaDisabled);
+            builder.Entity<Profile>().HasQueryFilter(p => !p.ProfileData.CommentAreaDisabled);
         }
     }
 }
