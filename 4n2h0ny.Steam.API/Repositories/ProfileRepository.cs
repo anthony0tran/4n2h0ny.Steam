@@ -43,7 +43,7 @@ namespace _4n2h0ny.Steam.API.Repositories
 
         public async Task<ICollection<Profile>> GetFriendCommenters(CancellationToken cancellationToken) =>
             await _profileContext.Profiles
-                .Where(p => p.IsFriend && !p.IsExcluded && !p.CommentAreaDisabled)
+                .Where(p => p.IsFriend && !p.IsExcluded && !p.ProfileData.CommentAreaDisabled)
                 .ToArrayAsync(cancellationToken);
 
         public async Task<DateTime?> GetDateLatestComment(CancellationToken cancellationToken) =>
@@ -95,7 +95,7 @@ namespace _4n2h0ny.Steam.API.Repositories
                 return;
             }
 
-            profile.CommentAreaDisabled = true;
+            profile.ProfileData.CommentAreaDisabled = true;
             await _profileContext.SaveChangesAsync(cancellationToken);
         }
 
