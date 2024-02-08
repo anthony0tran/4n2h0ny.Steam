@@ -32,35 +32,13 @@ namespace _4n2h0ny.Steam.API.Migrations
                 {
                     table.PrimaryKey("PK_ProfileData", x => x.Id);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Profiles_ProfileDataId",
-                table: "Profiles",
-                column: "ProfileDataId",
-                unique: true);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Profiles_ProfileData_ProfileDataId",
-                table: "Profiles",
-                column: "ProfileDataId",
-                principalTable: "ProfileData",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Profiles_ProfileData_ProfileDataId",
-                table: "Profiles");
-
             migrationBuilder.DropTable(
                 name: "ProfileData");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Profiles_ProfileDataId",
-                table: "Profiles");
 
             migrationBuilder.DropColumn(
                 name: "ProfileDataId",

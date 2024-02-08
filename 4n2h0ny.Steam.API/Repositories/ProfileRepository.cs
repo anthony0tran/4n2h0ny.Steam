@@ -66,7 +66,7 @@ namespace _4n2h0ny.Steam.API.Repositories
             }
 
             profile.IsExcluded = isExcluded;
-            
+
             await _profileContext.SaveChangesAsync(cancellationToken);
             return profile;
         }

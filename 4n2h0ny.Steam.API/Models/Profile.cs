@@ -8,8 +8,6 @@ namespace _4n2h0ny.Steam.API.Models
         public bool IsFriend { get; set; }
         public bool IsExcluded { get; set; }
         public DateTime? CommentedOn { get; set; }
-        [Obsolete("Moved to ProfileData")]
-        public bool CommentAreaDisabled { get; set; }
         public DateTime? FetchedOn { get; set; }
         public Guid ProfileDataId { get; set; }
         public ProfileData ProfileData { get; set; } = new();
