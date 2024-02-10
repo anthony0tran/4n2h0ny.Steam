@@ -6,11 +6,11 @@ namespace _4n2h0ny.Steam.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ProfileController : ControllerBase
+    public class ScrapeController : ControllerBase
     {
         private readonly IProfileService _profileService;
 
-        public ProfileController(IProfileService profileRepository)
+        public ScrapeController(IProfileService profileRepository)
         {
             _profileService = profileRepository;
         }
@@ -32,6 +32,10 @@ namespace _4n2h0ny.Steam.API.Controllers
         [HttpGet("excluded")]
         public async Task<ICollection<Profile>> GetExcludedProfiles(CancellationToken cancellationToken) => 
             await _profileService.GetExcludedProfiles(cancellationToken);
+
+        [HttpPost("/profile/data")]
+        public async Task FetchProfileData(CancellationToken cancellationToken) =>
+            await _profileService.FetchProfileData(cancellationToken);
 
         [HttpPut("[action]")]
         public async Task<Profile?> SetIsExcluded([FromQuery] IsExcludedRequest request) =>

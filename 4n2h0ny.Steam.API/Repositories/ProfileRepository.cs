@@ -99,6 +99,11 @@ namespace _4n2h0ny.Steam.API.Repositories
             await _profileContext.SaveChangesAsync(cancellationToken);
         }
 
+        public async Task<ICollection<Profile>> GetAllProfilesIgnoreQueryFilters(CancellationToken cancellationToken) =>
+            await _profileContext.Profiles
+                .IgnoreQueryFilters()
+                .ToListAsync(cancellationToken);
+
         public async Task<ICollection<Profile>> GetExcludedProfiles(CancellationToken cancellationToken) =>
             await _profileContext.Profiles
                 .IgnoreQueryFilters()

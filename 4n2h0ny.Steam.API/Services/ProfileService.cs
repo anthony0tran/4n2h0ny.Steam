@@ -33,8 +33,8 @@ namespace _4n2h0ny.Steam.API.Services
                 throw new InvalidOperationException("User is not logged in...");
             }
 
-            var lastFoundCommentDate = !scrapeAll 
-                ? await _profileRepository.GetDateLatestComment(cancellationToken) 
+            var lastFoundCommentDate = !scrapeAll
+                ? await _profileRepository.GetDateLatestComment(cancellationToken)
                 : null;
 
             var profiles = GetCommenters(profileUrl, lastFoundCommentDate);
@@ -185,6 +185,16 @@ namespace _4n2h0ny.Steam.API.Services
             }
 
             return profiles;
+        }
+
+        public async Task FetchProfileData(CancellationToken cancellationToken)
+        {
+            var profiles = await _profileRepository.GetAllProfilesIgnoreQueryFilters(cancellationToken);
+
+            foreach (var profile in profiles)
+            {
+                
+            }
         }
 
         public async Task<ICollection<Profile>> GetFriendCommenters(CancellationToken cancellationToken) =>
