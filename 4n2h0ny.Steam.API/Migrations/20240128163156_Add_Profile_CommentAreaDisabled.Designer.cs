@@ -20,7 +20,7 @@ namespace _4n2h0ny.Steam.API.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
 
-            modelBuilder.Entity("_4n2h0ny.Steam.API.Models.Profile", b =>
+            modelBuilder.Entity("_4n2h0ny.Steam.API.Entities.Profile", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

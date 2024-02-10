@@ -20,7 +20,7 @@ namespace _4n2h0ny.Steam.API.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
 
-            modelBuilder.Entity("_4n2h0ny.Steam.API.Models.Profile", b =>
+            modelBuilder.Entity("_4n2h0ny.Steam.API.Entities.Profile", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -59,7 +59,7 @@ namespace _4n2h0ny.Steam.API.Migrations
                     b.ToTable("Profiles");
                 });
 
-            modelBuilder.Entity("_4n2h0ny.Steam.API.Models.ProfileData", b =>
+            modelBuilder.Entity("_4n2h0ny.Steam.API.Entities.ProfileData", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -82,11 +82,11 @@ namespace _4n2h0ny.Steam.API.Migrations
                     b.ToTable("ProfileData");
                 });
 
-            modelBuilder.Entity("_4n2h0ny.Steam.API.Models.Profile", b =>
+            modelBuilder.Entity("_4n2h0ny.Steam.API.Entities.Profile", b =>
                 {
-                    b.HasOne("_4n2h0ny.Steam.API.Models.ProfileData", "ProfileData")
+                    b.HasOne("_4n2h0ny.Steam.API.Entities.ProfileData", "ProfileData")
                         .WithOne()
-                        .HasForeignKey("_4n2h0ny.Steam.API.Models.Profile", "ProfileDataId")
+                        .HasForeignKey("_4n2h0ny.Steam.API.Entities.Profile", "ProfileDataId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
