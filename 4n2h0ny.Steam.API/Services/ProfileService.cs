@@ -18,9 +18,9 @@ namespace _4n2h0ny.Steam.API.Services
         private readonly ILogger<ProfileService> _logger;
 
         public ProfileService(
-            IOptions<SteamConfiguration> steamConfigurations, 
-            IProfileRepository profileRepository, 
-            ISteamService steamService, 
+            IOptions<SteamConfiguration> steamConfigurations,
+            IProfileRepository profileRepository,
+            ISteamService steamService,
             ILogger<ProfileService> logger)
         {
             _profileRepository = profileRepository;
@@ -200,7 +200,7 @@ namespace _4n2h0ny.Steam.API.Services
 
             // **TEST**
             var profiles = new List<Profile>();
-            var nichola = await _profileRepository.GetProfileByURI("https://steamcommunity.com/profiles/76561198802957358", cancellationToken) 
+            var nichola = await _profileRepository.GetProfileByURI("https://steamcommunity.com/profiles/76561198802957358", cancellationToken)
                 ?? throw new InvalidOperationException("Could not find Nichola");
             profiles.Add(nichola);
             // **TEST**
@@ -257,7 +257,20 @@ namespace _4n2h0ny.Steam.API.Services
             var data = scriptElement.GetAttribute("innerHTML");
 
             // get json from string and parse
-            var dto = ProfileDataParser.ParseProfileData(data);
+            var parseResult = ProfileDataParser.ParseProfileData(data);
+
+            if (parseResult == null)
+            {
+                _logger.LogWarning("Could parse profileData for profile with Id: {profileId}", profile.Id);
+                return profile.ProfileData;
+            }
+
+            if (long.TryParse(parseResult.SteamId, out var steamId))
+            {
+                profile.ProfileData.SteamId = steamId;
+            }
+
+            profile.ProfileData.PersonaName = parseResult.PersonaName;
 
             return profile.ProfileData;
         }
