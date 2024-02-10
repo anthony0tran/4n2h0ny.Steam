@@ -33,7 +33,7 @@ namespace _4n2h0ny.Steam.API.Controllers
         public async Task<ICollection<Profile>> GetExcludedProfiles(CancellationToken cancellationToken) => 
             await _profileService.GetExcludedProfiles(cancellationToken);
 
-        [HttpPost("/profile/data")]
+        [HttpPost("profile/data")]
         public async Task FetchProfileData(CancellationToken cancellationToken) =>
             await _profileService.FetchProfileData(cancellationToken);
 
