@@ -14,7 +14,7 @@ namespace _4n2h0ny.Steam.API.Helpers
 
             if (match.Success)
             {
-                var options = new JsonSerializerOptions
+                JsonSerializerOptions options = new()
                 {
                     PropertyNameCaseInsensitive = true
                 };
