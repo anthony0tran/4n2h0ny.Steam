@@ -109,5 +109,8 @@ namespace _4n2h0ny.Steam.API.Repositories
                 .IgnoreQueryFilters()
                 .Where(p => p.IsExcluded)
                 .ToListAsync(cancellationToken);
+
+        public async Task SaveChangesAsync(CancellationToken cancellationToken) =>
+            await _profileContext.SaveChangesAsync(cancellationToken);
     }
 }

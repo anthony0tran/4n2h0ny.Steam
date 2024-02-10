@@ -13,6 +13,7 @@
         public int? FriendCount { get; set; }
         public int? CommonFriendCount { get; set; }
         public int? TotalCommendsCount { get; set; }
+        public int? GameCount { get; set; }
         public bool CommentAreaDisabled { get; set; }
         public DateTime? LastFetchedOn { get; set; }
     }
