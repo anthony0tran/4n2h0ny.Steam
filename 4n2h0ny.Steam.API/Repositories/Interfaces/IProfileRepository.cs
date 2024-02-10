@@ -1,4 +1,4 @@
-﻿using _4n2h0ny.Steam.API.Models;
+﻿using _4n2h0ny.Steam.API.Entities;
 namespace _4n2h0ny.Steam.API.Repositories.Profiles
 {
     public interface IProfileRepository
@@ -12,5 +12,6 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
         public Task SetCommentAreaDisabled(string URI, CancellationToken cancellationToken);
         public Task<ICollection<Profile>> GetAllProfilesIgnoreQueryFilters(CancellationToken cancellationToken);
         public Task SaveChangesAsync(CancellationToken cancellationToken);
+        public Task<Profile?> GetProfileByURI(string URI, CancellationToken cancellationToken);
     }
 }

@@ -1,4 +1,4 @@
-﻿using _4n2h0ny.Steam.API.Models;
+﻿using _4n2h0ny.Steam.API.Entities;
 using _4n2h0ny.Steam.API.Repositories.Profiles;
 using Microsoft.EntityFrameworkCore;
 
@@ -112,5 +112,8 @@ namespace _4n2h0ny.Steam.API.Repositories
 
         public async Task SaveChangesAsync(CancellationToken cancellationToken) =>
             await _profileContext.SaveChangesAsync(cancellationToken);
+
+        public async Task<Profile?> GetProfileByURI(string URI, CancellationToken cancellationToken) =>
+            await _profileContext.Profiles.SingleOrDefaultAsync(p => p.URI == URI, cancellationToken);
     }
 }

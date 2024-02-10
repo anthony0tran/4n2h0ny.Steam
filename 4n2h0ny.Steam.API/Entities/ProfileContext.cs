@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace _4n2h0ny.Steam.API.Models
+namespace _4n2h0ny.Steam.API.Entities
 {
     public class ProfileContext : DbContext
     {
@@ -14,7 +14,7 @@ namespace _4n2h0ny.Steam.API.Models
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
             DbPath = Path.Join(path, "4n2h0ny.Steam", "4n2h0ny.db");
-            DbPassword = ""; // Replace password with value from secret manager
+            DbPassword = "Nichola!420"; // Replace password with value from secret manager
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -1,4 +1,4 @@
-using _4n2h0ny.Steam.API.Models;
+using _4n2h0ny.Steam.API.Entities;
 using _4n2h0ny.Steam.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

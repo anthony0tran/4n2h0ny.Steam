@@ -1,6 +1,6 @@
 ﻿using _4n2h0ny.Steam.API.Configurations;
 using _4n2h0ny.Steam.API.Helpers;
-using _4n2h0ny.Steam.API.Models;
+using _4n2h0ny.Steam.API.Entities;
 using _4n2h0ny.Steam.API.Repositories.Profiles;
 using _4n2h0ny.Steam.API.Services.Interfaces;
 using Microsoft.Extensions.Options;
@@ -15,13 +15,19 @@ namespace _4n2h0ny.Steam.API.Services
         private readonly ISteamService _steamService;
         private readonly SteamConfiguration _steamConfiguration;
         private readonly FirefoxDriver _driver;
+        private readonly ILogger<ProfileService> _logger;
 
-        public ProfileService(IOptions<SteamConfiguration> steamConfigurations, IProfileRepository profileRepository, ISteamService steamService)
+        public ProfileService(
+            IOptions<SteamConfiguration> steamConfigurations, 
+            IProfileRepository profileRepository, 
+            ISteamService steamService, 
+            ILogger<ProfileService> logger)
         {
             _profileRepository = profileRepository;
             _steamService = steamService;
             _steamConfiguration = steamConfigurations.Value;
             _driver = WebDriverSingleton.Instance.Driver;
+            _logger = logger;
         }
 
         public async Task<ICollection<Profile>> GetCommenters(string? profileUrl, bool scrapeAll, CancellationToken cancellationToken)
@@ -189,12 +195,71 @@ namespace _4n2h0ny.Steam.API.Services
 
         public async Task FetchProfileData(CancellationToken cancellationToken)
         {
-            var profiles = await _profileRepository.GetAllProfilesIgnoreQueryFilters(cancellationToken);
+            // TODO: remove testcode and uncomment this line
+            //var profiles = await _profileRepository.GetAllProfilesIgnoreQueryFilters(cancellationToken);
+
+            // **TEST**
+            var profiles = new List<Profile>();
+            var nichola = await _profileRepository.GetProfileByURI("https://steamcommunity.com/profiles/76561198802957358", cancellationToken) 
+                ?? throw new InvalidOperationException("Could not find Nichola");
+            profiles.Add(nichola);
+            // **TEST**
 
             foreach (var profile in profiles)
             {
-                
+                var data = ScrapeData(profile);
+                profile.ProfileData = data;
             }
+
+            await _profileRepository.SaveChangesAsync(cancellationToken);
+        }
+
+        private ProfileData ScrapeData(Profile profile)
+        {
+            if (profile.ProfileDataId == Guid.Empty)
+            {
+                profile.ProfileData = new();
+            }
+
+            if (profile.ProfileData == null)
+            {
+                throw new InvalidOperationException($"Data not loaded for profile. Id: {profile.Id}");
+            }
+
+            _driver.Navigate().GoToUrl(profile.URI);
+
+            ScrapeSteamIdAndPersonaName(profile);
+
+            return profile.ProfileData;
+        }
+
+        private ProfileData ScrapeSteamIdAndPersonaName(Profile profile)
+        {
+            var contentComponent = _driver.FindElements(By.Id("responsive_page_template_content"));
+
+            if (contentComponent.Count == 0)
+            {
+                _logger.LogWarning("Could not find responsive_page_template_content for profile with Id: {profileId}", profile.Id);
+                return profile.ProfileData;
+            }
+
+            var scriptElement = contentComponent
+                .First()
+                .FindElements(By.XPath(".//script"))
+                .FirstOrDefault();
+
+            if (scriptElement == null)
+            {
+                _logger.LogWarning("Could not find g_rgProfileData for profile with Id: {profileId}", profile.Id);
+                return profile.ProfileData;
+            }
+
+            var data = scriptElement.GetAttribute("innerHTML");
+
+            // get json from string and parse
+            var dto = ProfileDataParser.ParseProfileData(data);
+
+            return profile.ProfileData;
         }
 
         public async Task<ICollection<Profile>> GetFriendCommenters(CancellationToken cancellationToken) =>
