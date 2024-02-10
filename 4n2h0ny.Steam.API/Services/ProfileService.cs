@@ -229,6 +229,34 @@ namespace _4n2h0ny.Steam.API.Services
             _driver.Navigate().GoToUrl(profile.URI);
 
             ScrapeSteamIdAndPersonaName(profile);
+            ScrapeLevel(profile);
+
+            return profile.ProfileData;
+        }
+
+        private ProfileData ScrapeLevel(Profile profile)
+        {
+
+            var personaElementContainer = _driver.FindElements(By.CssSelector("div[class='persona_name persona_level']"));
+            if (personaElementContainer.Count == 0)
+            {
+                _logger.LogWarning("Could not find personaNameContainer for profile with Id: {profileId}", profile.Id);
+                return profile.ProfileData;
+            }
+
+            var playerLevelElement = personaElementContainer.First().FindElements(By.ClassName("friendPlayerLevelNum"));
+
+            if (playerLevelElement.Count == 0)
+            {
+                return profile.ProfileData;
+            }
+
+            var levelString = playerLevelElement.First().GetAttribute("innerHTML");
+
+            if (int.TryParse(levelString, out var level))
+            {
+                profile.ProfileData.Level = level;
+            }
 
             return profile.ProfileData;
         }
