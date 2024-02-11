@@ -3,6 +3,7 @@
     public enum CountType
     {
         Award = 0,
-        Badge = 1
+        Badge = 1,
+        Games = 2
     }
 }

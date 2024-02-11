@@ -252,18 +252,43 @@ namespace _4n2h0ny.Steam.API.Services
             var countContainers = _driver.FindElements(By.CssSelector("div[class='profile_count_link ellipsis']"));
             ScrapeAwardCount(profile, countContainers);
             ScrapeBadgeCount(profile, countContainers);
+            ScrapeGameCount(profile, countContainers);
         }
 
-        private void ScrapeBadgeCount(Profile profile, ReadOnlyCollection<IWebElement> countContainers)
+        private void ScrapeGameCount(Profile profile, ReadOnlyCollection<IWebElement> countContainers)
         {
-            var badgeCounterContainer = countContainers.Where(IsBadgeElement);
+            var gameCountContainer = countContainers.Where(IsGameElement);
 
-            if (badgeCounterContainer == null)
+            if (gameCountContainer == null)
             {
                 return;
             }
 
-            SetValue(profile, badgeCounterContainer, CountType.Badge);
+            SetValue(profile, gameCountContainer, CountType.Games);
+        }
+
+        private void ScrapeBadgeCount(Profile profile, ReadOnlyCollection<IWebElement> countContainers)
+        {
+            var badgeCountContainer = countContainers.Where(IsBadgeElement);
+
+            if (badgeCountContainer == null)
+            {
+                return;
+            }
+
+            SetValue(profile, badgeCountContainer, CountType.Badge);
+        }
+
+        private bool IsGameElement(IWebElement element)
+        {
+            var linkLabel = element.FindElements(By.ClassName("count_link_label")).FirstOrDefault();
+
+            if (linkLabel == null)
+            {
+                return false;
+            };
+
+            return linkLabel.GetAttribute("innerHTML") == "Games";
         }
 
         private bool IsBadgeElement(IWebElement element)
@@ -292,6 +317,11 @@ namespace _4n2h0ny.Steam.API.Services
 
         private static void SetValue(Profile profile, IEnumerable<IWebElement> container, CountType type)
         {
+            if (!container.Any())
+            {
+                return;
+            }
+
             var countElement = container.First().FindElements(By.ClassName("profile_count_link_total"));
 
             if (countElement.Count == 0)
@@ -307,6 +337,7 @@ namespace _4n2h0ny.Steam.API.Services
                 {
                     CountType.Award => profile.ProfileData.AwardCount = count,
                     CountType.Badge => profile.ProfileData.BadgeCount = count,
+                    CountType.Games => profile.ProfileData.GameCount = count,
                     _ => null
                 };
             }
