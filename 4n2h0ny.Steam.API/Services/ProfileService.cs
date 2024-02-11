@@ -230,13 +230,42 @@ namespace _4n2h0ny.Steam.API.Services
 
             ScrapeSteamIdAndPersonaName(profile);
             ScrapeLevel(profile);
+            ScrapeRealNameAndCountry(profile);
+
+            return profile.ProfileData;
+        }
+
+        private ProfileData ScrapeRealNameAndCountry(Profile profile)
+        {
+            var realNameHeader = _driver.FindElements(By.CssSelector("div[class='header_real_name ellipsis']"));
+            if (realNameHeader.Count == 0)
+            {
+                _logger.LogWarning("Could not find realNameHeader for profile with Id: {profileId}", profile.Id);
+                return profile.ProfileData;
+            }
+
+            var realNameElement = realNameHeader.First().FindElements(By.CssSelector("bdi"));
+
+            if (realNameElement.Count != 0)
+            {
+                var realName = realNameElement.First().GetAttribute("innerHTML");
+                profile.ProfileData.RealName = realName;
+            }
+
+            var countryInnerHtml = realNameHeader.First().GetAttribute("innerHTML");
+
+            var country = ProfileDataParser.ExtractCountry(countryInnerHtml);
+
+            if (!string.IsNullOrEmpty(country))
+            {
+                profile.ProfileData.Country = country;
+            }
 
             return profile.ProfileData;
         }
 
         private ProfileData ScrapeLevel(Profile profile)
         {
-
             var personaElementContainer = _driver.FindElements(By.CssSelector("div[class='persona_name persona_level']"));
             if (personaElementContainer.Count == 0)
             {

@@ -35,5 +35,15 @@ namespace _4n2h0ny.Steam.Tests
             Assert.Equal("<img src=\"https://community.cloudflare.steamstatic.com/economy/emoticon/happyfroggy\" alt=\":happyfroggy:\" class=\"emoticon\"><br><br> <a class=\"bb_link\" href=\"https://steamcommunity.com/id/4n2h0ny/\" target=\"_blank\" rel=\"\" > <img src=\"https://community.cloudflare.steamstatic.com/economy/emoticon/VLOVEIT\" alt=\":VLOVEIT:\" class=\"emoticon\"><img src=\"https://community.cloudflare.steamstatic.com/economy/emoticon/VLOVEIT\" alt=\":VLOVEIT:\" class=\"emoticon\"><img src=\"https://community.cloudflare.steamstatic.com/economy/emoticon/VLOVEIT\" alt=\":VLOVEIT:\" class=\"emoticon\"> </a> ", result.Summary);
             Assert.Equal("https://steamcommunity.com/profiles/76561198802957358/", result.Url);
         }
+
+        [Fact]
+        public void ShouldExtractCountryFromHeaderString()
+        {
+            string headerString = "\r\n\t\t\t\t\t\t<bdi>Nic</bdi>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t&nbsp;\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<img class=\"profile_flag\" src=\"https://community.cloudflare.steamstatic.com/public/images/countryflags/za.gif\">\r\n\t\t\t\t\t\t\t\t\t\t\t\tSouth Africa\t\t\t\t\t";
+            var result = ProfileDataParser.ExtractCountry(headerString);
+
+            Assert.NotNull(result);
+            Assert.Equal("South Africa", result);
+        }
     }
 }

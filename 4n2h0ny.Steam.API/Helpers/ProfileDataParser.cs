@@ -18,10 +18,22 @@ namespace _4n2h0ny.Steam.API.Helpers
                 {
                     PropertyNameCaseInsensitive = true
                 };
+
                 return JsonSerializer.Deserialize<ProfileDataParseResult>(match.Value, options);
             }
 
             return null;
+        }
+
+        public static string? ExtractCountry(string innerHTMLString)
+        {
+            var index = innerHTMLString.LastIndexOf('>');
+            var result = innerHTMLString[(index+1)..];
+            result = result.Replace("\r", string.Empty)
+                .Replace("\n", string.Empty)
+                .Replace("\t", string.Empty);
+
+            return result;
         }
     }
 }
