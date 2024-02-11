@@ -37,6 +37,20 @@ namespace _4n2h0ny.Steam.Tests
         }
 
         [Fact]
+        public void ShouldParseProfileDataWithDeletedLinkInSummary()
+        {
+            string profileDataString = "\r\n\t\tg_rgProfileData = {\"url\":\"https:\\/\\/steamcommunity.com\\/profiles\\/76561198802957358\\/\",\"steamid\":\"76561198802957358\",\"personaname\":\"animutrix\",\"summary\":\"<img src=\\\"https:\\/\\/community.cloudflare.steamstatic.com\\/economy\\/emoticon\\/happyfroggy\\\" alt=\\\":happyfroggy:\\\" class=\\\"emoticon\\\"><br><br> <a class=\\\"bb_link\\\" href=\\\"https:\\/\\/steamcommunity.com\\/id\\/4n2h0ny\\/\\\" target=\\\"_blank\\\" rel=\\\"\\\" > <img src=\\\"https:\\/\\/community.cloudflare.steamstatic.com\\/economy\\/emoticon\\/VLOVEIT\\\" alt=\\\":VLOVEIT:\\\" class=\\\"emoticon\\\"><img src=\\\"https:\\/\\/community.cloudflare.steamstatic.com\\/economy\\/emoticon\\/VLOVEIT\\\" alt=\\\":VLOVEIT:\\\" class=\\\"emoticon\\\"><img src=\\\"https:\\/\\/community.cloudflare.steamstatic.com\\/economy\\/emoticon\\/VLOVEIT\\\" alt=\\\":VLOVEIT:\\\" class=\\\"emoticon\\\"> <\\/a>{LINK REMOVED} \"};\r\n\t\tconst g_bViewingOwnProfile = 0;\r\n\t\t$J( function() {\r\n\t\t\twindow.Responsive_ReparentItemsInResponsiveMode && Responsive_ReparentItemsInResponsiveMode( '.responsive_groupfriends_element', $J('#responsive_groupfriends_element_ctn') );\r\n\t\t\t\r\n\t\t\tSetupAnimateOnHoverImages();\r\n\t\t});\r\n\t";
+
+            var result = ProfileDataParser.ParseProfileData(profileDataString);
+
+            Assert.NotNull(result);
+            Assert.Equal("animutrix", result.PersonaName);
+            Assert.Equal("76561198802957358", result.SteamId);
+            Assert.Equal("<img src=\"https://community.cloudflare.steamstatic.com/economy/emoticon/happyfroggy\" alt=\":happyfroggy:\" class=\"emoticon\"><br><br> <a class=\"bb_link\" href=\"https://steamcommunity.com/id/4n2h0ny/\" target=\"_blank\" rel=\"\" > <img src=\"https://community.cloudflare.steamstatic.com/economy/emoticon/VLOVEIT\" alt=\":VLOVEIT:\" class=\"emoticon\"><img src=\"https://community.cloudflare.steamstatic.com/economy/emoticon/VLOVEIT\" alt=\":VLOVEIT:\" class=\"emoticon\"><img src=\"https://community.cloudflare.steamstatic.com/economy/emoticon/VLOVEIT\" alt=\":VLOVEIT:\" class=\"emoticon\"> </a> ", result.Summary);
+            Assert.Equal("https://steamcommunity.com/profiles/76561198802957358/", result.Url);
+        }
+
+        [Fact]
         public void ShouldExtractCountryFromHeaderString()
         {
             string headerString = "\r\n\t\t\t\t\t\t<bdi>Nic</bdi>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t&nbsp;\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<img class=\"profile_flag\" src=\"https://community.cloudflare.steamstatic.com/public/images/countryflags/za.gif\">\r\n\t\t\t\t\t\t\t\t\t\t\t\tSouth Africa\t\t\t\t\t";

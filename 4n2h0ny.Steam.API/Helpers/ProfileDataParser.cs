@@ -9,7 +9,7 @@ namespace _4n2h0ny.Steam.API.Helpers
         public static ProfileDataParseResult? ParseProfileData(string profileDataString)
         {
             string pattern = @"\{(.*?)\}";
-
+            profileDataString = StripSummaryOfLinkRemoved(profileDataString);
             Match match = Regex.Match(profileDataString, pattern, RegexOptions.IgnoreCase);
 
             if (match.Success)
@@ -28,7 +28,7 @@ namespace _4n2h0ny.Steam.API.Helpers
         public static string? ExtractCountry(string innerHTMLString)
         {
             var index = innerHTMLString.LastIndexOf('>');
-            var result = innerHTMLString[(index+1)..];
+            var result = innerHTMLString[(index + 1)..];
             result = result.Replace("\r", string.Empty)
                 .Replace("\n", string.Empty)
                 .Replace("\t", string.Empty);
@@ -36,16 +36,19 @@ namespace _4n2h0ny.Steam.API.Helpers
             return result;
         }
 
-        public static string? StripEmptyCharacters(string innerHTMLString) => 
+        public static string StripEmptyCharacters(string innerHTMLString) =>
             innerHTMLString
                 .Replace("\r", string.Empty)
                 .Replace("\n", string.Empty)
                 .Replace("\t", string.Empty);
 
-        public static string? StripCommaFromNumber(string innerHTMLString) =>
+        public static string StripCommaFromNumber(string innerHTMLString) =>
             innerHTMLString.Replace(",", string.Empty);
 
-        public static string? StripFriendFromString(string innerHTMLString) =>
+        public static string StripFriendFromString(string innerHTMLString) =>
             innerHTMLString.Replace(" friends", string.Empty);
+
+        public static string StripSummaryOfLinkRemoved(string parseString) =>
+            parseString.Replace("{LINK REMOVED}", string.Empty);
     }
 }
