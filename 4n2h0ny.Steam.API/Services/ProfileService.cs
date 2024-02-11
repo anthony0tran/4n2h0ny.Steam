@@ -7,6 +7,8 @@ using Microsoft.Extensions.Options;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 using System.Collections.ObjectModel;
+using _4n2h0ny.Steam.API.Models;
+using System.ComponentModel;
 
 namespace _4n2h0ny.Steam.API.Services
 {
@@ -249,6 +251,31 @@ namespace _4n2h0ny.Steam.API.Services
 
             var countContainers = _driver.FindElements(By.CssSelector("div[class='profile_count_link ellipsis']"));
             ScrapeAwardCount(profile, countContainers);
+            ScrapeBadgeCount(profile, countContainers);
+        }
+
+        private void ScrapeBadgeCount(Profile profile, ReadOnlyCollection<IWebElement> countContainers)
+        {
+            var badgeCounterContainer = countContainers.Where(IsBadgeElement);
+
+            if (badgeCounterContainer == null)
+            {
+                return;
+            }
+
+            SetValue(profile, badgeCounterContainer, CountType.Badge);
+        }
+
+        private bool IsBadgeElement(IWebElement element)
+        {
+            var linkLabel = element.FindElements(By.ClassName("count_link_label")).FirstOrDefault();
+
+            if (linkLabel == null)
+            {
+                return false;
+            };
+
+            return linkLabel.GetAttribute("innerHTML") == "Badges";
         }
 
         private void ScrapeAwardCount(Profile profile, ReadOnlyCollection<IWebElement> countContainers)
@@ -260,18 +287,28 @@ namespace _4n2h0ny.Steam.API.Services
                 return;
             }
 
-            var awardCountElement = awardContainer.First().FindElements(By.ClassName("profile_count_link_total"));
+            SetValue(profile, awardContainer, CountType.Award);
+        }
 
-            if (awardCountElement.Count == 0)
+        private static void SetValue(Profile profile, IEnumerable<IWebElement> container, CountType type)
+        {
+            var countElement = container.First().FindElements(By.ClassName("profile_count_link_total"));
+
+            if (countElement.Count == 0)
             {
                 return;
             }
 
-            var awardCountString = awardCountElement.First().GetAttribute("innerHTML");
-            awardCountString = ProfileDataParser.StripEmptyCharacters(awardCountString);
-            if (int.TryParse(awardCountString, out var awardCount))
+            var countString = countElement.First().GetAttribute("innerHTML");
+            countString = ProfileDataParser.StripEmptyCharacters(countString);
+            if (int.TryParse(countString, out var count))
             {
-                profile.ProfileData.AwardCount = awardCount;
+                _ = type switch
+                {
+                    CountType.Award => profile.ProfileData.AwardCount = count,
+                    CountType.Badge => profile.ProfileData.BadgeCount = count,
+                    _ => null
+                };
             }
         }
 
