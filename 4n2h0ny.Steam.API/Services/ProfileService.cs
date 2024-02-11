@@ -198,15 +198,7 @@ namespace _4n2h0ny.Steam.API.Services
 
         public async Task FetchProfileData(CancellationToken cancellationToken)
         {
-            // TODO: remove testcode and uncomment this line
-            //var profiles = await _profileRepository.GetAllProfilesIgnoreQueryFilters(cancellationToken);
-
-            // **TEST**
-            var profiles = new List<Profile>();
-            var nichola = await _profileRepository.GetProfileByURI("https://steamcommunity.com/profiles/76561198802957358", cancellationToken)
-                ?? throw new InvalidOperationException("Could not find Nichola");
-            profiles.Add(nichola);
-            // **TEST**
+            var profiles = await _profileRepository.GetAllProfilesIgnoreQueryFilters(cancellationToken);
 
             foreach (var profile in profiles)
             {
@@ -236,8 +228,32 @@ namespace _4n2h0ny.Steam.API.Services
             ScrapeRealNameAndCountry(profile);
             ScrapeFriendCount(profile);
             ScrapeAwardBadgeAndGameCount(profile);
+            ScrapeTotalCommendCount(profile);
 
             return profile.ProfileData;
+        }
+
+        private void ScrapeTotalCommendCount(Profile profile)
+        {
+            var allCommentsContainer = _driver.FindElements(By.ClassName("commentthread_allcommentslink"));
+
+            if (allCommentsContainer.Count == 0)
+            {
+                return;
+            }
+
+            var allCommentsCountElements = allCommentsContainer.First().FindElements(By.CssSelector("span"));
+            if(allCommentsCountElements.Count == 0)
+            {
+                return;
+            }
+
+            var allCommentsCountString = allCommentsCountElements.First().GetAttribute("innerHTML");
+            allCommentsCountString = ProfileDataParser.StripCommaFromNumber(allCommentsCountString);
+            if (int.TryParse(allCommentsCountString, out var allCommentsCount))
+            {
+                profile.ProfileData.TotalCommendsCount = allCommentsCount;
+            }
         }
 
         private void ScrapeAwardBadgeAndGameCount(Profile profile)
@@ -392,7 +408,7 @@ namespace _4n2h0ny.Steam.API.Services
 
             var commonFriendCountString = whiteLinkContainer.First().GetAttribute("innerHTML");
 
-            commonFriendCountString = commonFriendCountString.Replace(" friends", "");
+            commonFriendCountString = ProfileDataParser.StripFriendFromString(commonFriendCountString);
 
             if (int.TryParse(commonFriendCountString, out var commonFriendCount))
             {

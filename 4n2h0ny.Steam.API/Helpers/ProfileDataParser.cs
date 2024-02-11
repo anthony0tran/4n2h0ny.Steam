@@ -41,5 +41,11 @@ namespace _4n2h0ny.Steam.API.Helpers
                 .Replace("\r", string.Empty)
                 .Replace("\n", string.Empty)
                 .Replace("\t", string.Empty);
+
+        public static string? StripCommaFromNumber(string innerHTMLString) =>
+            innerHTMLString.Replace(",", string.Empty);
+
+        public static string? StripFriendFromString(string innerHTMLString) =>
+            innerHTMLString.Replace(" friends", string.Empty);
     }
 }
