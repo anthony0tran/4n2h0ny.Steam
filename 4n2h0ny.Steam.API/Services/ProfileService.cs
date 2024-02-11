@@ -230,6 +230,8 @@ namespace _4n2h0ny.Steam.API.Services
             ScrapeAwardBadgeAndGameCount(profile);
             ScrapeTotalCommendCount(profile);
 
+            profile.ProfileData.LastFetchedOn = DateTime.UtcNow;
+
             return profile.ProfileData;
         }
 
