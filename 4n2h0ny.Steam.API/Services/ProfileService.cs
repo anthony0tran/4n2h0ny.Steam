@@ -231,17 +231,40 @@ namespace _4n2h0ny.Steam.API.Services
             ScrapeSteamIdAndPersonaName(profile);
             ScrapeLevel(profile);
             ScrapeRealNameAndCountry(profile);
+            ScrapeFriendCount(profile);
 
             return profile.ProfileData;
         }
 
-        private ProfileData ScrapeRealNameAndCountry(Profile profile)
+        private void ScrapeFriendCount(Profile profile)
+        {
+            var FriendElementContainer = _driver.FindElements(By.CssSelector("div[class='profile_friend_links profile_count_link_preview_ctn responsive_groupfriends_element']"));
+
+            if (FriendElementContainer.Count == 0)
+            {
+                _logger.LogWarning("Could not find FriendElementContainer for profile with Id: {profileId}", profile.Id);
+                return;
+            }
+
+            var friendCountElement = FriendElementContainer.First().FindElements(By.ClassName("profile_count_link_total"));
+            if (friendCountElement.Count != 0)
+            {
+                var friendCountString = friendCountElement.First().GetAttribute("innerHTML");
+
+                if (int.TryParse(friendCountString, out var friendCount))
+                {
+                    profile.ProfileData.FriendCount = friendCount;
+                }
+            }
+        }
+
+        private void ScrapeRealNameAndCountry(Profile profile)
         {
             var realNameHeader = _driver.FindElements(By.CssSelector("div[class='header_real_name ellipsis']"));
             if (realNameHeader.Count == 0)
             {
                 _logger.LogWarning("Could not find realNameHeader for profile with Id: {profileId}", profile.Id);
-                return profile.ProfileData;
+                return;
             }
 
             var realNameElement = realNameHeader.First().FindElements(By.CssSelector("bdi"));
@@ -260,24 +283,22 @@ namespace _4n2h0ny.Steam.API.Services
             {
                 profile.ProfileData.Country = country;
             }
-
-            return profile.ProfileData;
         }
 
-        private ProfileData ScrapeLevel(Profile profile)
+        private void ScrapeLevel(Profile profile)
         {
             var personaElementContainer = _driver.FindElements(By.CssSelector("div[class='persona_name persona_level']"));
             if (personaElementContainer.Count == 0)
             {
                 _logger.LogWarning("Could not find personaNameContainer for profile with Id: {profileId}", profile.Id);
-                return profile.ProfileData;
+                return;
             }
 
             var playerLevelElement = personaElementContainer.First().FindElements(By.ClassName("friendPlayerLevelNum"));
 
             if (playerLevelElement.Count == 0)
             {
-                return profile.ProfileData;
+                return;
             }
 
             var levelString = playerLevelElement.First().GetAttribute("innerHTML");
@@ -286,18 +307,16 @@ namespace _4n2h0ny.Steam.API.Services
             {
                 profile.ProfileData.Level = level;
             }
-
-            return profile.ProfileData;
         }
 
-        private ProfileData ScrapeSteamIdAndPersonaName(Profile profile)
+        private void ScrapeSteamIdAndPersonaName(Profile profile)
         {
             var contentComponent = _driver.FindElements(By.Id("responsive_page_template_content"));
 
             if (contentComponent.Count == 0)
             {
                 _logger.LogWarning("Could not find responsive_page_template_content for profile with Id: {profileId}", profile.Id);
-                return profile.ProfileData;
+                return;
             }
 
             var scriptElement = contentComponent
@@ -308,7 +327,7 @@ namespace _4n2h0ny.Steam.API.Services
             if (scriptElement == null)
             {
                 _logger.LogWarning("Could not find g_rgProfileData for profile with Id: {profileId}", profile.Id);
-                return profile.ProfileData;
+                return;
             }
 
             var data = scriptElement.GetAttribute("innerHTML");
@@ -319,7 +338,7 @@ namespace _4n2h0ny.Steam.API.Services
             if (parseResult == null)
             {
                 _logger.LogWarning("Could parse profileData for profile with Id: {profileId}", profile.Id);
-                return profile.ProfileData;
+                return;
             }
 
             if (long.TryParse(parseResult.SteamId, out var steamId))
@@ -328,8 +347,6 @@ namespace _4n2h0ny.Steam.API.Services
             }
 
             profile.ProfileData.PersonaName = parseResult.PersonaName;
-
-            return profile.ProfileData;
         }
 
         public async Task<ICollection<Profile>> GetFriendCommenters(CancellationToken cancellationToken) =>
