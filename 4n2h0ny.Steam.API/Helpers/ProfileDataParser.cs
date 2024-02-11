@@ -35,5 +35,11 @@ namespace _4n2h0ny.Steam.API.Helpers
 
             return result;
         }
+
+        public static string? StripEmptyCharacters(string innerHTMLString) => 
+            innerHTMLString
+                .Replace("\r", string.Empty)
+                .Replace("\n", string.Empty)
+                .Replace("\t", string.Empty);
     }
 }

@@ -6,6 +6,7 @@ using _4n2h0ny.Steam.API.Services.Interfaces;
 using Microsoft.Extensions.Options;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
+using System.Collections.ObjectModel;
 
 namespace _4n2h0ny.Steam.API.Services
 {
@@ -232,8 +233,58 @@ namespace _4n2h0ny.Steam.API.Services
             ScrapeLevel(profile);
             ScrapeRealNameAndCountry(profile);
             ScrapeFriendCount(profile);
+            ScrapeAwardBadgeAndGameCount(profile);
 
             return profile.ProfileData;
+        }
+
+        private void ScrapeAwardBadgeAndGameCount(Profile profile)
+        {
+            var linkContainer = _driver.FindElements(By.ClassName("responsive_count_link_area"));
+            if (linkContainer.Count == 0)
+            {
+                _logger.LogWarning("Could not find linkContainer for profile with Id: {profileId}", profile.Id);
+                return;
+            }
+
+            var countContainers = _driver.FindElements(By.CssSelector("div[class='profile_count_link ellipsis']"));
+            ScrapeAwardCount(profile, countContainers);
+        }
+
+        private void ScrapeAwardCount(Profile profile, ReadOnlyCollection<IWebElement> countContainers)
+        {
+            var awardContainer = countContainers.Where(IsAwardElement);
+
+            if (awardContainer == null)
+            {
+                return;
+            }
+
+            var awardCountElement = awardContainer.First().FindElements(By.ClassName("profile_count_link_total"));
+
+            if (awardCountElement.Count == 0)
+            {
+                return;
+            }
+
+            var awardCountString = awardCountElement.First().GetAttribute("innerHTML");
+            awardCountString = ProfileDataParser.StripEmptyCharacters(awardCountString);
+            if (int.TryParse(awardCountString, out var awardCount))
+            {
+                profile.ProfileData.AwardCount = awardCount;
+            }
+        }
+
+        private bool IsAwardElement(IWebElement element)
+        {
+            var linkLabel = element.FindElements(By.ClassName("count_link_label")).FirstOrDefault();
+
+            if (linkLabel == null)
+            {
+                return false;
+            };
+
+            return linkLabel.GetAttribute("innerHTML") == "Profile Awards";
         }
 
         private void ScrapeFriendCount(Profile profile)
@@ -255,6 +306,29 @@ namespace _4n2h0ny.Steam.API.Services
                 {
                     profile.ProfileData.FriendCount = friendCount;
                 }
+            }
+
+            var commonFriendCountElement = FriendElementContainer.First().FindElements(By.CssSelector("div[class='profile_in_common responsive_hidden']"));
+            if (commonFriendCountElement.Count == 0)
+            {
+                _logger.LogWarning("Could not find commonFriendCountElement for profile with Id: {profileId}", profile.Id);
+                return;
+            }
+
+            var whiteLinkContainer = commonFriendCountElement.First().FindElements(By.ClassName("whiteLink"));
+            if (whiteLinkContainer.Count == 0)
+            {
+                _logger.LogWarning("Could not find whiteLinkContainer for profile with Id: {profileId}", profile.Id);
+                return;
+            }
+
+            var commonFriendCountString = whiteLinkContainer.First().GetAttribute("innerHTML");
+
+            commonFriendCountString = commonFriendCountString.Replace(" friends", "");
+
+            if (int.TryParse(commonFriendCountString, out var commonFriendCount))
+            {
+                profile.ProfileData.CommonFriendCount = commonFriendCount;
             }
         }
 
