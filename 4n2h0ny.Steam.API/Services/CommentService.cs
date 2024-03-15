@@ -51,7 +51,7 @@ namespace _4n2h0ny.Steam.API.Services
                 await CommentOnProfile(profile.URI, comment, cancellationToken);
             }
 
-            return profilesToCommentOn.Count();
+            return profiles.Count;
         }
 
         public async Task PreviewComment(string comment, CancellationToken cancellationToken)
