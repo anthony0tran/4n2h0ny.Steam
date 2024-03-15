@@ -1,4 +1,5 @@
 using _4n2h0ny.Steam.API.Entities;
+using _4n2h0ny.Steam.API.Models;
 using _4n2h0ny.Steam.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,10 +17,14 @@ namespace _4n2h0ny.Steam.API.Controllers
         }
 
         [HttpGet("commenters")]
-        public async Task<ICollection<Profile>> GetCommenters(string? profileUrl, CancellationToken cancellationToken, bool scrapeAll = false)
+        public async Task<ScrapeCommentersResult> GetCommenters(string? profileUrl, CancellationToken cancellationToken, bool scrapeAll = false)
         {
             var result = await _profileService.GetCommenters(profileUrl, scrapeAll, cancellationToken);
-            return result.ToList();
+            return new()
+            {
+                CommentersCount = result.Count,
+                Commenters = result
+            };
         }
 
         [HttpPost("profile/data")]

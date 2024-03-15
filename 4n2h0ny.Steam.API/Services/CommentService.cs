@@ -27,7 +27,7 @@ namespace _4n2h0ny.Steam.API.Services
             _steamConfiguration = steamConfiguration.Value;
         }
 
-        public async Task CommentOnFriendCommenters(string comment, CancellationToken cancellationToken)
+        public async Task<int> CommentOnFriendCommenters(string comment, CancellationToken cancellationToken)
         {
             var profiles = await _profileService.ListFriendCommenters(cancellationToken);
 
@@ -50,6 +50,8 @@ namespace _4n2h0ny.Steam.API.Services
             {
                 await CommentOnProfile(profile.URI, comment, cancellationToken);
             }
+
+            return profilesToCommentOn.Count();
         }
 
         public async Task PreviewComment(string comment, CancellationToken cancellationToken)
