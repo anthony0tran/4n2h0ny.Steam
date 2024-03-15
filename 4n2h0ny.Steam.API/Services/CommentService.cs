@@ -46,12 +46,14 @@ namespace _4n2h0ny.Steam.API.Services
             var profilesToCommentOn = profiles.Where(p => p.CommentedOn == null
             || p.CommentedOn <= DateTime.UtcNow.AddHours(-2));
 
+            var profilesToCommentOnCount = profilesToCommentOn.Count();
+
             foreach (var profile in profilesToCommentOn)
             {
                 await CommentOnProfile(profile.URI, comment, cancellationToken);
             }
 
-            return profiles.Count;
+            return profilesToCommentOnCount;
         }
 
         public async Task PreviewComment(string comment, CancellationToken cancellationToken)
