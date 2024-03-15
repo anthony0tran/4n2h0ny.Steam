@@ -509,14 +509,14 @@ namespace _4n2h0ny.Steam.API.Services
             profile.ProfileData.PersonaName = parseResult.PersonaName;
         }
 
-        public async Task<ICollection<Profile>> GetFriendCommenters(CancellationToken cancellationToken) =>
-            await _profileRepository.GetFriendCommenters(cancellationToken);
+        public async Task<ICollection<Profile>> ListFriendCommenters(CancellationToken cancellationToken) =>
+            await _profileRepository.ListFriendCommenters(cancellationToken);
 
         public async Task<Profile?> SetIsExcluded(IsExcludedRequest request) =>
             await _profileRepository.SetIsExcluded(request.URI, request.IsExcluded, request.CancellationToken);
 
-        public async Task<ICollection<Profile>> GetExcludedProfiles(CancellationToken cancellationToken) =>
-            await _profileRepository.GetExcludedProfiles(cancellationToken);
+        public async Task<ICollection<Profile>> ListExcludedProfiles(CancellationToken cancellationToken) =>
+            await _profileRepository.ListExcludedProfiles(cancellationToken);
 
         public async Task SetCommentedOn(string URI, CancellationToken cancellationToken) =>
             await _profileRepository.SetCommentedOn(URI, cancellationToken);

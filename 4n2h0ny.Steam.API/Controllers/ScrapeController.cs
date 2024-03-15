@@ -22,23 +22,8 @@ namespace _4n2h0ny.Steam.API.Controllers
             return result.ToList();
         }
 
-        [HttpGet("friends")]
-        public async Task<ICollection<Profile>> GetFriendCommenters(CancellationToken cancellationToken)
-        {
-            var result = await _profileService.GetFriendCommenters(cancellationToken);
-            return result.ToArray();
-        }
-
-        [HttpGet("excluded")]
-        public async Task<ICollection<Profile>> GetExcludedProfiles(CancellationToken cancellationToken) => 
-            await _profileService.GetExcludedProfiles(cancellationToken);
-
         [HttpPost("profile/data")]
         public async Task FetchProfileData(CancellationToken cancellationToken) =>
             await _profileService.FetchProfileData(cancellationToken);
-
-        [HttpPut("[action]")]
-        public async Task<Profile?> SetIsExcluded([FromQuery] IsExcludedRequest request) =>
-            await _profileService.SetIsExcluded(request);
     }
 }

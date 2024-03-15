@@ -41,7 +41,7 @@ namespace _4n2h0ny.Steam.API.Repositories
             return foundProfiles;
         }
 
-        public async Task<ICollection<Profile>> GetFriendCommenters(CancellationToken cancellationToken) =>
+        public async Task<ICollection<Profile>> ListFriendCommenters(CancellationToken cancellationToken) =>
             await _profileContext.Profiles
                 .Where(p => p.IsFriend && !p.IsExcluded && !p.ProfileData.CommentAreaDisabled)
                 .Where(p => p.LatestCommentReceivedOn.Date >= DateTime.Today.AddMonths(-3))
@@ -105,7 +105,7 @@ namespace _4n2h0ny.Steam.API.Repositories
                 .IgnoreQueryFilters()
                 .ToListAsync(cancellationToken);
 
-        public async Task<ICollection<Profile>> GetExcludedProfiles(CancellationToken cancellationToken) =>
+        public async Task<ICollection<Profile>> ListExcludedProfiles(CancellationToken cancellationToken) =>
             await _profileContext.Profiles
                 .IgnoreQueryFilters()
                 .Where(p => p.IsExcluded)

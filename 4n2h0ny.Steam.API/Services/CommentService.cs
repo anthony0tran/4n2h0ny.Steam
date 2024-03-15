@@ -29,7 +29,7 @@ namespace _4n2h0ny.Steam.API.Services
 
         public async Task CommentOnFriendCommenters(string comment, CancellationToken cancellationToken)
         {
-            var profiles = await _profileService.GetFriendCommenters(cancellationToken);
+            var profiles = await _profileService.ListFriendCommenters(cancellationToken);
 
             if (profiles.Count == 0)
             {
