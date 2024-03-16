@@ -8,7 +8,6 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 using System.Collections.ObjectModel;
 using _4n2h0ny.Steam.API.Models;
-using System.ComponentModel;
 
 namespace _4n2h0ny.Steam.API.Services
 {
@@ -209,6 +208,21 @@ namespace _4n2h0ny.Steam.API.Services
             await _profileRepository.SaveChangesAsync(cancellationToken);
         }
 
+        public async Task FetchProfileData(string URI, CancellationToken cancellationToken)
+        {
+            var profile = await _profileRepository.GetProfileByURI(URI, cancellationToken);
+
+            if (profile == null)
+            {
+                return;
+            }
+
+            var data = ScrapeData(profile);
+            profile.ProfileData = data;
+
+            await _profileRepository.SaveChangesAsync(cancellationToken);
+        }
+
         private ProfileData ScrapeData(Profile profile)
         {
             if (profile.ProfileDataId == Guid.Empty)
@@ -245,7 +259,7 @@ namespace _4n2h0ny.Steam.API.Services
             }
 
             var allCommentsCountElements = allCommentsContainer.First().FindElements(By.CssSelector("span"));
-            if(allCommentsCountElements.Count == 0)
+            if (allCommentsCountElements.Count == 0)
             {
                 return;
             }

@@ -1,4 +1,3 @@
-using _4n2h0ny.Steam.API.Entities;
 using _4n2h0ny.Steam.API.Models;
 using _4n2h0ny.Steam.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +26,12 @@ namespace _4n2h0ny.Steam.API.Controllers
             };
         }
 
-        [HttpPost("profile/data")]
+        [HttpPost("data")]
         public async Task FetchProfileData(CancellationToken cancellationToken) =>
             await _profileService.FetchProfileData(cancellationToken);
+
+        [HttpPost("{URI}/data")]
+        public async Task FetchProfileData(string URI, CancellationToken cancellationToken) =>
+            await _profileService.FetchProfileData(URI, cancellationToken);
     }
 }
