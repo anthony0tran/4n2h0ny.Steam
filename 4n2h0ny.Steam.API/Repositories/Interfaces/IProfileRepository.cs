@@ -10,6 +10,7 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
         public Task<ICollection<Profile>> ListExcludedProfiles(CancellationToken cancellationToken);
         public Task SetCommentedOn(string URI, CancellationToken cancellationToken);
         public Task SetCommentAreaDisabled(string URI, CancellationToken cancellationToken);
+        public Task SetProfileNotFound(string URI, bool profileNotFound, CancellationToken cancellationToken);
         public Task<ICollection<Profile>> GetAllProfilesIgnoreQueryFilters(CancellationToken cancellationToken);
         public Task SaveChangesAsync(CancellationToken cancellationToken);
         public Task<Profile?> GetProfileByURI(string URI, CancellationToken cancellationToken);

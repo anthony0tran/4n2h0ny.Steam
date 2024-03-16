@@ -201,7 +201,7 @@ namespace _4n2h0ny.Steam.API.Services
 
             foreach (var profile in profiles)
             {
-                var data = ScrapeData(profile);
+                var data = ScrapeData(profile, cancellationToken);
                 profile.ProfileData = data;
             }
 
@@ -217,13 +217,13 @@ namespace _4n2h0ny.Steam.API.Services
                 return;
             }
 
-            var data = ScrapeData(profile);
+            var data = ScrapeData(profile, cancellationToken);
             profile.ProfileData = data;
 
             await _profileRepository.SaveChangesAsync(cancellationToken);
         }
 
-        private ProfileData ScrapeData(Profile profile)
+        private ProfileData ScrapeData(Profile profile, CancellationToken cancellationToken)
         {
             if (profile.ProfileDataId == Guid.Empty)
             {
@@ -237,6 +237,12 @@ namespace _4n2h0ny.Steam.API.Services
 
             _driver.Navigate().GoToUrl(profile.URI);
 
+            if (!CheckProfileCanBeFound())
+            {
+                _profileRepository.SetProfileNotFound(profile.URI, true, cancellationToken);
+                return profile.ProfileData;
+            }
+
             ScrapeSteamIdAndPersonaName(profile);
             ScrapeLevel(profile);
             ScrapeRealNameAndCountry(profile);
@@ -247,6 +253,31 @@ namespace _4n2h0ny.Steam.API.Services
             profile.ProfileData.LastFetchedOn = DateTime.UtcNow;
 
             return profile.ProfileData;
+        }
+
+        private bool CheckProfileCanBeFound()
+        {
+            var messageElement = _driver.FindElements(By.CssSelector("div[id='message']"));
+            if (messageElement.Count == 0)
+            {
+                return true;
+            }
+
+            var h3Element = messageElement.First().FindElements(By.CssSelector("h3"));
+
+            if (h3Element.Count == 0)
+            {
+                throw new InvalidOperationException("No H3 element found in the message element");
+            }
+
+            var message = h3Element.First().GetAttribute("innerHTML");
+
+            if (message != "The specified profile could not be found.")
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private void ScrapeTotalCommendCount(Profile profile)

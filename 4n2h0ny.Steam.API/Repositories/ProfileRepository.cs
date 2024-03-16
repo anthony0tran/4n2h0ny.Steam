@@ -116,5 +116,19 @@ namespace _4n2h0ny.Steam.API.Repositories
 
         public async Task<Profile?> GetProfileByURI(string URI, CancellationToken cancellationToken) =>
             await _profileContext.Profiles.SingleOrDefaultAsync(p => p.URI == URI, cancellationToken);
+
+        public async Task SetProfileNotFound(string URI, bool profileNotFound, CancellationToken cancellationToken)
+        {
+            var profile = await _profileContext.Profiles.SingleOrDefaultAsync(p => p.URI == URI, cancellationToken);
+
+            if (profile == null)
+            {
+                _logger.LogWarning("Could not set ProfileNotFound. Profile with URI: {URI} not found", URI);
+                return;
+            }
+
+            profile.ProfileNotFound = profileNotFound;
+            await _profileContext.SaveChangesAsync(cancellationToken);
+        }
     }
 }
