@@ -17,7 +17,7 @@ namespace _4n2h0ny.Steam.API.Controllers
             _profileService = profileRepository;
         }
 
-        [HttpGet("friends")]
+        [HttpPost("friends")]
         public async Task<ScrapedProfilesResult> ScrapeFriends(string? profileUrl, CancellationToken cancellationToken)
         {
             var result = await _profileService.ScrapeFriends(profileUrl, cancellationToken);
@@ -28,7 +28,7 @@ namespace _4n2h0ny.Steam.API.Controllers
             };
         }
 
-        [HttpGet("commenters")]
+        [HttpPost("commenters")]
         public async Task<ScrapedProfilesResult> ScrapeCommenters(string? profileUrl, CancellationToken cancellationToken, bool scrapeAll = false)
         {
             var result = await _profileService.ScrapeCommenters(profileUrl, scrapeAll, cancellationToken);

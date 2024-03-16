@@ -65,8 +65,11 @@ namespace _4n2h0ny.Steam.API.Services
 
         private HashSet<Profile> ScrapeFriends(string? profileUrl)
         {
+            var friendListURI = profileUrl != null 
+                ? $"{profileUrl}/friends/"
+                : $"{_steamConfiguration.DefaultProfileUrl}/friends/";
+            
             var profiles = new HashSet<Profile>();
-            var friendListURI = $"{profileUrl}/friends/";
 
             _driver.Navigate().GoToUrl(friendListURI);
 
@@ -81,8 +84,8 @@ namespace _4n2h0ny.Steam.API.Services
 
             foreach (var URI in URIList)
             {
-                profiles.Add(new() 
-                { 
+                profiles.Add(new()
+                {
                     URI = URI,
                     IsFriend = true,
                     FetchedOn = DateTime.UtcNow
