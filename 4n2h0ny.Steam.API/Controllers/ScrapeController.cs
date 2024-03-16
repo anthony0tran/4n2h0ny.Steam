@@ -20,7 +20,12 @@ namespace _4n2h0ny.Steam.API.Controllers
         [HttpGet("friends")]
         public async Task<ScrapedProfilesResult> ScrapeFriends(string? profileUrl, CancellationToken cancellationToken)
         {
-
+            var result = await _profileService.ScrapeFriends(profileUrl, cancellationToken);
+            return new()
+            {
+                ProfileCount = result.Count,
+                Profiles = result
+            };
         }
 
         [HttpGet("commenters")]
