@@ -11,6 +11,7 @@ namespace _4n2h0ny.Steam.API.Entities
         public DateTime? FetchedOn { get; set; }
         public Guid ProfileDataId { get; set; }
         public ProfileData ProfileData { get; set; } = new();
+        public bool ProfileNotFound { get; set; }
 
         public override int GetHashCode()
             => URI.GetHashCode();
