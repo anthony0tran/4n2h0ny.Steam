@@ -243,6 +243,12 @@ namespace _4n2h0ny.Steam.API.Services
                 return profile.ProfileData;
             }
 
+            if (CheckProfileIsPrivate())
+            {
+                _profileRepository.SetProfileIsPrivate(profile.URI, true, cancellationToken);
+                return profile.ProfileData;
+            }
+
             ScrapeSteamIdAndPersonaName(profile);
             ScrapeLevel(profile);
             ScrapeRealNameAndCountry(profile);
@@ -253,6 +259,24 @@ namespace _4n2h0ny.Steam.API.Services
             profile.ProfileData.LastFetchedOn = DateTime.UtcNow;
 
             return profile.ProfileData;
+        }
+
+        private bool CheckProfileIsPrivate()
+        {
+            var profilePrivateInfoElement = _driver.FindElements(By.CssSelector("div[class='profile_private_info']"));
+            if (profilePrivateInfoElement.Count == 0)
+            {
+                return false;
+            }
+
+            var profilePrivateInfo = profilePrivateInfoElement.First().GetAttribute("innerHTML");
+
+            if (profilePrivateInfo.Trim() == "This profile is private.")
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private bool CheckProfileCanBeFound()

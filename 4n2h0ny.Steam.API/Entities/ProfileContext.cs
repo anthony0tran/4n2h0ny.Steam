@@ -42,7 +42,7 @@ namespace _4n2h0ny.Steam.API.Entities
 
             builder.Entity<Profile>().HasQueryFilter(p => !p.IsExcluded);
             builder.Entity<Profile>().HasQueryFilter(p => !p.ProfileData.CommentAreaDisabled);
-            builder.Entity<Profile>().HasQueryFilter(p => !p.ProfileNotFound);
+            builder.Entity<Profile>().HasQueryFilter(p => !p.NotFound);
         }
     }
 }

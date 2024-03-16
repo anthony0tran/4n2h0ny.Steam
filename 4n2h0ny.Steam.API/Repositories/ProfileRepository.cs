@@ -127,7 +127,21 @@ namespace _4n2h0ny.Steam.API.Repositories
                 return;
             }
 
-            profile.ProfileNotFound = profileNotFound;
+            profile.NotFound = profileNotFound;
+            await _profileContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task SetProfileIsPrivate(string URI, bool isPrivate, CancellationToken cancellationToken)
+        {
+            var profile = await _profileContext.Profiles.SingleOrDefaultAsync(p => p.URI == URI, cancellationToken);
+
+            if (profile == null)
+            {
+                _logger.LogWarning("Could not set IsPrivate. Profile with URI: {URI} not found", URI);
+                return;
+            }
+
+            profile.IsPrivate = isPrivate;
             await _profileContext.SaveChangesAsync(cancellationToken);
         }
     }
