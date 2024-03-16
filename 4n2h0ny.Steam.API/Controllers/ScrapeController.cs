@@ -2,6 +2,7 @@ using _4n2h0ny.Steam.API.Helpers;
 using _4n2h0ny.Steam.API.Models;
 using _4n2h0ny.Steam.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using OpenQA.Selenium.DevTools.V119.DOM;
 
 namespace _4n2h0ny.Steam.API.Controllers
 {
@@ -16,14 +17,20 @@ namespace _4n2h0ny.Steam.API.Controllers
             _profileService = profileRepository;
         }
 
-        [HttpGet("commenters")]
-        public async Task<ScrapeCommentersResult> GetCommenters(string? profileUrl, CancellationToken cancellationToken, bool scrapeAll = false)
+        [HttpGet("friends")]
+        public async Task<ScrapedProfilesResult> ScrapeFriends(string? profileUrl, CancellationToken cancellationToken)
         {
-            var result = await _profileService.GetCommenters(profileUrl, scrapeAll, cancellationToken);
+
+        }
+
+        [HttpGet("commenters")]
+        public async Task<ScrapedProfilesResult> ScrapeCommenters(string? profileUrl, CancellationToken cancellationToken, bool scrapeAll = false)
+        {
+            var result = await _profileService.ScrapeCommenters(profileUrl, scrapeAll, cancellationToken);
             return new()
             {
-                CommentersCount = result.Count,
-                Commenters = result
+                ProfileCount = result.Count,
+                Profiles = result
             };
         }
 

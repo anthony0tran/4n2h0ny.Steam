@@ -32,7 +32,7 @@ namespace _4n2h0ny.Steam.API.Services
             _logger = logger;
         }
 
-        public async Task<ICollection<Profile>> GetCommenters(string? profileUrl, bool scrapeAll, CancellationToken cancellationToken)
+        public async Task<ICollection<Profile>> ScrapeCommenters(string? profileUrl, bool scrapeAll, CancellationToken cancellationToken)
         {
             var isLoggedIn = _steamService.CheckLogin(profileUrl);
 
@@ -47,6 +47,49 @@ namespace _4n2h0ny.Steam.API.Services
 
             var profiles = GetCommenters(profileUrl, lastFoundCommentDate);
             return await _profileRepository.AddOrUpdateProfile(profiles, cancellationToken);
+        }
+
+        public async Task<ICollection<Profile>> ScrapeFriends(string? profileUrl, CancellationToken cancellationToken)
+        {
+            var isLoggedIn = _steamService.CheckLogin(profileUrl);
+
+            if (!isLoggedIn)
+            {
+                throw new InvalidOperationException("User is not logged in...");
+            }
+
+
+            var profiles = ScrapeFriends(profileUrl);
+            return await _profileRepository.AddOrUpdateProfile(profiles, cancellationToken);
+        }
+
+        private HashSet<Profile> ScrapeFriends(string? profileUrl)
+        {
+            var profiles = new HashSet<Profile>();
+            var friendListURI = $"{profileUrl}/friends/";
+
+            _driver.Navigate().GoToUrl(friendListURI);
+
+            var friendHyperlinkElements = _driver.FindElements(By.CssSelector("a[class='selectable_overlay']"));
+            if (friendHyperlinkElements.Count == 0)
+            {
+                _logger.LogInformation("No friendHyperlinkElements found");
+                return profiles;
+            }
+
+            var URIList = friendHyperlinkElements.Select(e => e.GetAttribute("href"));
+
+            foreach (var URI in URIList)
+            {
+                profiles.Add(new() 
+                { 
+                    URI = URI,
+                    IsFriend = true,
+                    FetchedOn = DateTime.UtcNow
+                });
+            }
+
+            return profiles;
         }
 
         private HashSet<Profile> GetCommenters(string? profileUrl, DateTime? lastFoundCommentDate)
