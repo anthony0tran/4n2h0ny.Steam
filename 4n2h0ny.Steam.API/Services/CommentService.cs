@@ -56,7 +56,7 @@ namespace _4n2h0ny.Steam.API.Services
             return profilesToCommentOnCount;
         }
 
-        public async Task PreviewComment(string comment, CancellationToken cancellationToken)
+        public async Task PreviewComment(string URI, string comment, CancellationToken cancellationToken)
         {
             var isLoggedIn = _steamService.CheckLogin(_steamConfiguration.DefaultProfileUrl);
 
@@ -65,7 +65,11 @@ namespace _4n2h0ny.Steam.API.Services
                 throw new InvalidOperationException("Unable to comment. Not logged into steam");
             }
 
-            await CommentOnProfile(_steamConfiguration.DefaultProfileUrl, comment, cancellationToken, true);
+            var profileToCommentOnURI = string.IsNullOrEmpty(URI) 
+                ? _steamConfiguration.DefaultProfileUrl
+                : URI;
+
+            await CommentOnProfile(profileToCommentOnURI, comment, cancellationToken, true);
         }
 
         private async Task CommentOnProfile(string URI, string comment, CancellationToken cancellationToken, bool isPreview = false)

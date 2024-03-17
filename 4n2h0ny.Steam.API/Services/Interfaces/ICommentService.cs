@@ -3,6 +3,6 @@
     public interface ICommentService
     {
         public Task<int> CommentOnFriendCommenters(string comment, CancellationToken cancellationToken);
-        public Task PreviewComment(string comment, CancellationToken cancellationToken);
+        public Task PreviewComment(string URI, string comment, CancellationToken cancellationToken);
     }
 }

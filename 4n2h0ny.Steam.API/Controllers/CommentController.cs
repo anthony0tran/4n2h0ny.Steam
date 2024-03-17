@@ -24,7 +24,7 @@ namespace _4n2h0ny.Steam.API.Controllers
 
 
         [HttpPost("Test")]
-        public async Task PreviewComment(string comment, CancellationToken cancellationToken) =>
-            await _commentService.PreviewComment(comment, cancellationToken);
+        public async Task PreviewComment(string URI, string comment, CancellationToken cancellationToken) =>
+            await _commentService.PreviewComment(URI, comment, cancellationToken);
     }
 }
