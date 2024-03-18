@@ -106,7 +106,7 @@ namespace _4n2h0ny.Steam.API.Services
 
         private async Task<string> ProcessComment(string URI, string comment, CancellationToken cancellationToken)
         {
-            var hasValidTag = CommentHelper.CommentContainsValidTags(comment)
+            var hasValidTag = CommentHelper.CommentContainsValidTags(comment).Any()
                 && comment.Contains(Tags.NameTag);
 
             if (!hasValidTag)
@@ -118,7 +118,7 @@ namespace _4n2h0ny.Steam.API.Services
 
             if (profile == null)
             {
-                return comment;
+                return _commentConfiguration.DefaultComment;
             }
 
             var name = DetermineName(profile.ProfileData);
@@ -153,14 +153,14 @@ namespace _4n2h0ny.Steam.API.Services
                 return true;
             }
 
-            var tagsAreValid = CommentHelper.CommentContainsValidTags(comment);
+            var tags = CommentHelper.CommentContainsValidTags(comment).ToArray();
 
-            if (!tagsAreValid)
+            if (tags.Length == 0)
             {
                 return false;
             }
 
-            var commentContainKnownTags = comment.Contains("[name]");
+            var commentContainKnownTags = tags.Contains(Tags.NameTag);
 
             if (!commentContainKnownTags)
             {

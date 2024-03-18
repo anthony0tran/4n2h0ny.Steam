@@ -1,26 +1,25 @@
-﻿using System.Text.RegularExpressions;
+﻿using Microsoft.Extensions.FileSystemGlobbing;
+using System.Text.RegularExpressions;
 
 namespace _4n2h0ny.Steam.API.Helpers
 {
     public static class CommentHelper
     {
-        public static bool CommentContainsValidTags(string comment)
+        public static IEnumerable<string> CommentContainsValidTags(string comment)
         {
             if (CommentContainsNoTags(comment))
             {
-                return false;
+                yield return string.Empty;
             }
 
             string pattern = @"\[(?:[^\[\]]*(?:\[(?:[^\[\]]*)\])?[^\[\]]*)*\]";
 
-            Match match = Regex.Match(comment, pattern, RegexOptions.IgnoreCase);
+            MatchCollection matches = Regex.Matches(comment, pattern, RegexOptions.IgnoreCase);
 
-            if (match.Success)
+            foreach (Match match in matches.Cast<Match>())
             {
-                return true;
+                yield return match.Value;
             }
-
-            return false;
         }
 
         public static bool CommentContainsNoTags(string comment) =>

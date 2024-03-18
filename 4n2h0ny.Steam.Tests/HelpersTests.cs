@@ -66,7 +66,7 @@ namespace _4n2h0ny.Steam.Tests
             var message = "This a text without a tag";
             var result = CommentHelper.CommentContainsValidTags(message);
 
-            Assert.False(result);
+            Assert.False(result.Any());
         }
 
         [Theory]
@@ -76,19 +76,19 @@ namespace _4n2h0ny.Steam.Tests
         public void ShouldReturnFalseWhenBracketsAreInvalid(string message)
         {
             var result = CommentHelper.CommentContainsValidTags(message);
-            Assert.False(result);
+            Assert.False(result.Any());
         }
 
         [Theory]
-        [InlineData("This a text with a [text] tag")]
-        [InlineData("This text [first] has multiple [tags]")]
-        [InlineData("[The whole message is between brackets]")]
-        [InlineData("[]")]
-        [InlineData("Hello [name]!")]
-        public void ShouldReturnTrueWhenBracketsAreValid(string message)
+        [InlineData("This a text with a [text] tag", 1)]
+        [InlineData("This text [first] has multiple [tags]", 2)]
+        [InlineData("[The whole message is between brackets]", 1)]
+        [InlineData("[]", 1)]
+        [InlineData("Hello [name]!", 1)]
+        public void ShouldReturnTrueWhenBracketsAreValid(string message, int tagCount)
         {
             var result = CommentHelper.CommentContainsValidTags(message);
-            Assert.True(result);
+            Assert.True(result.Count() == tagCount);
         }
     }
 }
