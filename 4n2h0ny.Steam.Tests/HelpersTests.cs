@@ -59,5 +59,36 @@ namespace _4n2h0ny.Steam.Tests
             Assert.NotNull(result);
             Assert.Equal("South Africa", result);
         }
+
+        [Fact]
+        public void ShouldReturnFalseIfMessageDoesNotContainTag()
+        {
+            var message = "This a text without a tag";
+            var result = CommentHelper.ContainsTag(message);
+
+            Assert.False(result);
+        }
+
+        [Theory]
+        [InlineData("This a text with brackets in the wrong order ]text[. Like this")]
+        [InlineData("This is not []] valid")]
+        [InlineData("This is [[]] invalid")]
+        [InlineData("This one is valid [text]. this one is invalid ]text[")]
+        public void ShouldReturnFalseWhenBracketsAreInvalid(string message)
+        {
+            var result = CommentHelper.ContainsTag(message);
+            Assert.False(result);
+        }
+
+        [Theory]
+        [InlineData("This a text with a [text] tag")]
+        [InlineData("This text [first] has multiple [tags]")]
+        [InlineData("[The whole message is between brackets]")]
+        [InlineData("[]")]
+        public void ShouldReturnTrueWhenBracketsAreValid(string message)
+        {
+            var result = CommentHelper.ContainsTag(message);
+            Assert.True(result);
+        }
     }
 }

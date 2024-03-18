@@ -1,4 +1,5 @@
 ﻿using _4n2h0ny.Steam.API.Configurations;
+using _4n2h0ny.Steam.API.Helpers;
 using _4n2h0ny.Steam.API.Services.Interfaces;
 using Microsoft.Extensions.Options;
 using OpenQA.Selenium;
@@ -87,15 +88,54 @@ namespace _4n2h0ny.Steam.API.Services
             var textArea = commentThreadEntry.First().FindElement(By.ClassName("commentthread_textarea"));
             var postButton = commentThreadEntry.First().FindElement(By.ClassName("btn_green_white_innerfade"));
 
+            var processedComment = await ProcessComment(URI, comment, cancellationToken);
+
             textArea.Click();
 
-            textArea.SendKeys(comment);
+            textArea.SendKeys(processedComment);
 
             if (_commentConfiguration.EnableCommenting && !isPreview)
             {
                 postButton.Click();
                 await _profileService.SetCommentedOn(URI, cancellationToken);
             }
+        }
+
+        private async Task<string> ProcessComment(string URI, string comment, CancellationToken cancellationToken)
+        {
+            var hasValidTag = CommentHelper.ContainsTag(comment) 
+                && comment.Contains("[name]");
+
+            if (!hasValidTag)
+            {
+                return comment;
+            }
+
+            // get realName and personaName from URI
+            var profile = await _profileService.GetProfile(URI, cancellationToken);
+
+            // replace [name]
+
+            return string.Empty;
+        }
+
+        public bool ValidateComment(string comment)
+        {
+            var hasTag = CommentHelper.ContainsTag(comment);
+
+            if (!hasTag)
+            {
+                return true;
+            }
+
+            var tagsAreValid = comment.Contains("[name]");
+
+            if (!tagsAreValid)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

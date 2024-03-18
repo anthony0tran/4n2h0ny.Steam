@@ -2,7 +2,6 @@ using _4n2h0ny.Steam.API.Helpers;
 using _4n2h0ny.Steam.API.Models;
 using _4n2h0ny.Steam.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using OpenQA.Selenium.DevTools.V119.DOM;
 
 namespace _4n2h0ny.Steam.API.Controllers
 {

@@ -3,5 +3,6 @@
     public record CommentConfiguration
     {
         public required bool EnableCommenting { get; init; }
+        public required string DefaultComment { get; init; }
     }
 }

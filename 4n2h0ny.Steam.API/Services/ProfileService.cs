@@ -63,6 +63,9 @@ namespace _4n2h0ny.Steam.API.Services
             return await _profileRepository.AddOrUpdateProfile(profiles, cancellationToken);
         }
 
+        public async Task<Profile?> GetProfile(string URI, CancellationToken cancellation) =>
+            await _profileRepository.GetProfileByURI(URI, cancellation);
+
         private HashSet<Profile> ScrapeFriends(string? profileUrl)
         {
             var friendListURI = profileUrl != null 
