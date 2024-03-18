@@ -11,7 +11,7 @@ namespace _4n2h0ny.Steam.API.Helpers
                 return false;
             }
 
-            string pattern = @"\[[^\[\]]*?\](?=\s|$)";
+            string pattern = @"\[(?:[^\[\]]*(?:\[(?:[^\[\]]*)\])?[^\[\]]*)*\]";
 
             Match match = Regex.Match(comment, pattern, RegexOptions.IgnoreCase);
 

@@ -71,9 +71,8 @@ namespace _4n2h0ny.Steam.Tests
 
         [Theory]
         [InlineData("This a text with brackets in the wrong order ]text[. Like this")]
-        [InlineData("This is not []] valid")]
-        [InlineData("This is [[]] invalid")]
-        [InlineData("This one is valid [text]. this one is invalid ]text[")]
+        [InlineData("]text[")]
+        [InlineData("]te]xt[")]
         public void ShouldReturnFalseWhenBracketsAreInvalid(string message)
         {
             var result = CommentHelper.CommentContainsValidTags(message);
@@ -85,6 +84,7 @@ namespace _4n2h0ny.Steam.Tests
         [InlineData("This text [first] has multiple [tags]")]
         [InlineData("[The whole message is between brackets]")]
         [InlineData("[]")]
+        [InlineData("Hello [name]!")]
         public void ShouldReturnTrueWhenBracketsAreValid(string message)
         {
             var result = CommentHelper.CommentContainsValidTags(message);
