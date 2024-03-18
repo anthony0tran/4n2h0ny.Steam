@@ -26,12 +26,24 @@ namespace _4n2h0ny.Steam.API.Controllers
             }
 
             var commentedOnCount = await _commentService.CommentOnFriendCommenters(comment, cancellationToken);
+            
             return Ok(commentedOnCount);
         }
 
 
         [HttpPost("Test")]
-        public async Task PreviewComment(string URI, string comment, CancellationToken cancellationToken) =>
+        public async Task<IActionResult> PreviewComment(string URI, string comment, CancellationToken cancellationToken)
+        {
+            var messageIsValid = _commentService.ValidateComment(comment);
+
+            if (!messageIsValid)
+            {
+                return BadRequest("Message is invalid");
+            }
+
             await _commentService.PreviewComment(URI, comment, cancellationToken);
+
+            return Ok();
+        }
     }
 }

@@ -1,9 +1,12 @@
 ﻿using _4n2h0ny.Steam.API.Configurations;
+using _4n2h0ny.Steam.API.Entities;
 using _4n2h0ny.Steam.API.Helpers;
+using _4n2h0ny.Steam.API.Models;
 using _4n2h0ny.Steam.API.Services.Interfaces;
 using Microsoft.Extensions.Options;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Internal;
 
 namespace _4n2h0ny.Steam.API.Services
 {
@@ -66,7 +69,7 @@ namespace _4n2h0ny.Steam.API.Services
                 throw new InvalidOperationException("Unable to comment. Not logged into steam");
             }
 
-            var profileToCommentOnURI = string.IsNullOrEmpty(URI) 
+            var profileToCommentOnURI = string.IsNullOrEmpty(URI)
                 ? _steamConfiguration.DefaultProfileUrl
                 : URI;
 
@@ -103,20 +106,44 @@ namespace _4n2h0ny.Steam.API.Services
 
         private async Task<string> ProcessComment(string URI, string comment, CancellationToken cancellationToken)
         {
-            var hasValidTag = CommentHelper.CommentContainsValidTags(comment) 
-                && comment.Contains("[name]");
+            var hasValidTag = CommentHelper.CommentContainsValidTags(comment)
+                && comment.Contains(Tags.NameTag);
 
             if (!hasValidTag)
             {
                 return comment;
             }
 
-            // get realName and personaName from URI
             var profile = await _profileService.GetProfile(URI, cancellationToken);
 
-            // replace [name]
+            if (profile == null)
+            {
+                return comment;
+            }
 
-            return string.Empty;
+            var name = DetermineName(profile.ProfileData);
+
+            if (name == null)
+            {
+                return _commentConfiguration.DefaultComment;
+            }
+
+            return comment.Replace(Tags.NameTag, name);
+        }
+
+        public string? DetermineName(ProfileData profileData)
+        {
+            if (!string.IsNullOrWhiteSpace(profileData.PersonaName))
+            {
+                return profileData.PersonaName;
+            }
+
+            if (!string.IsNullOrWhiteSpace(profileData.RealName))
+            {
+                return profileData.RealName;
+            }
+
+            return null;
         }
 
         public bool ValidateComment(string comment)
