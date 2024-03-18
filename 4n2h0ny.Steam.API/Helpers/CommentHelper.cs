@@ -4,8 +4,13 @@ namespace _4n2h0ny.Steam.API.Helpers
 {
     public static class CommentHelper
     {
-        public static bool ContainsTag(string comment)
+        public static bool CommentContainsValidTags(string comment)
         {
+            if (CommentContainsNoTags(comment))
+            {
+                return false;
+            }
+
             string pattern = @"\[[^\[\]]*?\](?=\s|$)";
 
             Match match = Regex.Match(comment, pattern, RegexOptions.IgnoreCase);
@@ -17,5 +22,8 @@ namespace _4n2h0ny.Steam.API.Helpers
 
             return false;
         }
+
+        public static bool CommentContainsNoTags(string comment) =>
+            !comment.Contains('[') && !comment.Contains(']');
     }
 }

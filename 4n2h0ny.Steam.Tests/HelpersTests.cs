@@ -64,7 +64,7 @@ namespace _4n2h0ny.Steam.Tests
         public void ShouldReturnFalseIfMessageDoesNotContainTag()
         {
             var message = "This a text without a tag";
-            var result = CommentHelper.ContainsTag(message);
+            var result = CommentHelper.CommentContainsValidTags(message);
 
             Assert.False(result);
         }
@@ -76,7 +76,7 @@ namespace _4n2h0ny.Steam.Tests
         [InlineData("This one is valid [text]. this one is invalid ]text[")]
         public void ShouldReturnFalseWhenBracketsAreInvalid(string message)
         {
-            var result = CommentHelper.ContainsTag(message);
+            var result = CommentHelper.CommentContainsValidTags(message);
             Assert.False(result);
         }
 
@@ -87,7 +87,7 @@ namespace _4n2h0ny.Steam.Tests
         [InlineData("[]")]
         public void ShouldReturnTrueWhenBracketsAreValid(string message)
         {
-            var result = CommentHelper.ContainsTag(message);
+            var result = CommentHelper.CommentContainsValidTags(message);
             Assert.True(result);
         }
     }

@@ -103,7 +103,7 @@ namespace _4n2h0ny.Steam.API.Services
 
         private async Task<string> ProcessComment(string URI, string comment, CancellationToken cancellationToken)
         {
-            var hasValidTag = CommentHelper.ContainsTag(comment) 
+            var hasValidTag = CommentHelper.CommentContainsValidTags(comment) 
                 && comment.Contains("[name]");
 
             if (!hasValidTag)
@@ -121,16 +121,21 @@ namespace _4n2h0ny.Steam.API.Services
 
         public bool ValidateComment(string comment)
         {
-            var hasTag = CommentHelper.ContainsTag(comment);
-
-            if (!hasTag)
+            if (CommentHelper.CommentContainsNoTags(comment))
             {
                 return true;
             }
 
-            var tagsAreValid = comment.Contains("[name]");
+            var tagsAreValid = CommentHelper.CommentContainsValidTags(comment);
 
             if (!tagsAreValid)
+            {
+                return false;
+            }
+
+            var commentContainKnownTags = comment.Contains("[name]");
+
+            if (!commentContainKnownTags)
             {
                 return false;
             }
