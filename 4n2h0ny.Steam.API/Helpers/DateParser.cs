@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace _4n2h0ny.Steam.API.Helpers
+﻿namespace _4n2h0ny.Steam.API.Helpers
 {
     public static class DateParser
     {

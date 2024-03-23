@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.FileSystemGlobbing;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace _4n2h0ny.Steam.API.Helpers
 {
@@ -9,7 +8,7 @@ namespace _4n2h0ny.Steam.API.Helpers
         {
             if (CommentContainsNoTags(comment))
             {
-                yield return string.Empty;
+                yield break;
             }
 
             string pattern = @"\[(?:[^\[\]]*(?:\[(?:[^\[\]]*)\])?[^\[\]]*)*\]";
