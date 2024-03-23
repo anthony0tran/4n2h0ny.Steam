@@ -15,5 +15,6 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
         public Task<ICollection<Profile>> GetAllProfilesIgnoreQueryFilters(CancellationToken cancellationToken);
         public Task SaveChangesAsync(CancellationToken cancellationToken);
         public Task<Profile?> GetProfileByURI(string URI, CancellationToken cancellationToken);
+        public Task ResetIsFriends(CancellationToken cancellationToken);
     }
 }

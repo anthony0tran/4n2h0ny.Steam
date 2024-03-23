@@ -4,7 +4,7 @@ namespace _4n2h0ny.Steam.API.Services.Interfaces
 {
     public interface IProfileService
     {
-        public Task<ICollection<Profile>> ScrapeFriends(string? profileUrl, CancellationToken cancellationToken);
+        public Task<ICollection<Profile>> ScrapeFriends(string? profileUrl, bool syncFriends, CancellationToken cancellationToken);
         public Task<ICollection<Profile>> ScrapeCommenters(string? profileUrl, bool scrapeAll, CancellationToken cancellationToken);
         public Task<ICollection<Profile>> ListFriendCommenters(CancellationToken cancellationToken);
         public Task<Profile?> SetIsExcluded(IsExcludedRequest request);

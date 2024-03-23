@@ -144,5 +144,19 @@ namespace _4n2h0ny.Steam.API.Repositories
             profile.IsPrivate = isPrivate;
             await _profileContext.SaveChangesAsync(cancellationToken);
         }
+
+        public async Task ResetIsFriends(CancellationToken cancellationToken)
+        {
+            var friendsQueryable = _profileContext.Profiles
+                .IgnoreQueryFilters()
+                .Where(p => p.IsFriend);
+
+            foreach (var friend in friendsQueryable)
+            {
+                friend.IsFriend = false;
+            }
+
+            await _profileContext.SaveChangesAsync(cancellationToken);
+        }
     }
 }

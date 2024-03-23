@@ -49,7 +49,7 @@ namespace _4n2h0ny.Steam.API.Services
             return await _profileRepository.AddOrUpdateProfile(profiles, cancellationToken);
         }
 
-        public async Task<ICollection<Profile>> ScrapeFriends(string? profileUrl, CancellationToken cancellationToken)
+        public async Task<ICollection<Profile>> ScrapeFriends(string? profileUrl, bool syncFriends, CancellationToken cancellationToken)
         {
             var isLoggedIn = _steamService.CheckLogin(profileUrl);
 
@@ -58,6 +58,10 @@ namespace _4n2h0ny.Steam.API.Services
                 throw new InvalidOperationException("User is not logged in...");
             }
 
+            if (syncFriends)
+            {
+                await _profileRepository.ResetIsFriends(cancellationToken);
+            }
 
             var profiles = ScrapeFriends(profileUrl);
             return await _profileRepository.AddOrUpdateProfile(profiles, cancellationToken);
