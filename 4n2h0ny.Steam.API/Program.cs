@@ -1,5 +1,5 @@
 using _4n2h0ny.Steam.API.Configurations;
-using _4n2h0ny.Steam.API.Entities;
+using _4n2h0ny.Steam.API.Context;
 using _4n2h0ny.Steam.API.Repositories;
 using _4n2h0ny.Steam.API.Repositories.Profiles;
 using _4n2h0ny.Steam.API.Services;

@@ -1,4 +1,4 @@
-﻿namespace _4n2h0ny.Steam.API.Entities
+﻿namespace _4n2h0ny.Steam.API.Context.Entities
 {
     public sealed record ProfileData
     {
@@ -7,7 +7,7 @@
         public string? PersonaName { get; set; }
         public string? RealName { get; set; }
         public string? Country { get; set; }
-        public int? Level {  get; set; }
+        public int? Level { get; set; }
         public int? AwardCount { get; set; }
         public int? BadgeCount { get; set; }
         public int? FriendCount { get; set; }

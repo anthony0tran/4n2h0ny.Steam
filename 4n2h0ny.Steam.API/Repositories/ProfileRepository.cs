@@ -1,4 +1,5 @@
-﻿using _4n2h0ny.Steam.API.Entities;
+﻿using _4n2h0ny.Steam.API.Context;
+using _4n2h0ny.Steam.API.Context.Entities;
 using _4n2h0ny.Steam.API.Repositories.Profiles;
 using Microsoft.EntityFrameworkCore;
 

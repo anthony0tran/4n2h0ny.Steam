@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using _4n2h0ny.Steam.API.Context.Entities;
+using Microsoft.EntityFrameworkCore;
 
-namespace _4n2h0ny.Steam.API.Entities
+namespace _4n2h0ny.Steam.API.Context
 {
     public class ProfileContext : DbContext
     {

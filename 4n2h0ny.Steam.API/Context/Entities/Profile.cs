@@ -1,4 +1,4 @@
-namespace _4n2h0ny.Steam.API.Entities
+namespace _4n2h0ny.Steam.API.Context.Entities
 {
     public sealed record Profile : IEquatable<Profile>
     {

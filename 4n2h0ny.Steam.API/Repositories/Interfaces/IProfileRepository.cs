@@ -1,4 +1,5 @@
-﻿using _4n2h0ny.Steam.API.Entities;
+﻿using _4n2h0ny.Steam.API.Context.Entities;
+
 namespace _4n2h0ny.Steam.API.Repositories.Profiles
 {
     public interface IProfileRepository

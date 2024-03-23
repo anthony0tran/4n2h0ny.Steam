@@ -1,6 +1,5 @@
 ﻿using _4n2h0ny.Steam.API.Configurations;
 using _4n2h0ny.Steam.API.Helpers;
-using _4n2h0ny.Steam.API.Entities;
 using _4n2h0ny.Steam.API.Repositories.Profiles;
 using _4n2h0ny.Steam.API.Services.Interfaces;
 using Microsoft.Extensions.Options;
@@ -8,6 +7,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 using System.Collections.ObjectModel;
 using _4n2h0ny.Steam.API.Models;
+using _4n2h0ny.Steam.API.Context.Entities;
 
 namespace _4n2h0ny.Steam.API.Services
 {
