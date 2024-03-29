@@ -46,6 +46,8 @@ namespace _4n2h0ny.Steam.API.Repositories
             await _profileContext.Profiles
                 .Where(p => p.IsFriend && !p.IsExcluded && !p.ProfileData.CommentAreaDisabled)
                 .Where(p => p.LatestCommentReceivedOn.Date >= DateTime.Today.AddMonths(-3))
+                .Where(p => p.CommentedOn == null
+                || p.CommentedOn <= DateTime.UtcNow.AddHours(-2))
                 .ToArrayAsync(cancellationToken);
 
         public async Task<DateTime?> GetDateLatestComment(CancellationToken cancellationToken) =>
@@ -165,6 +167,8 @@ namespace _4n2h0ny.Steam.API.Repositories
             .Where(p => p.IsFriend && !p.IsExcluded && !p.ProfileData.CommentAreaDisabled)
             .Where(p => p.ProfileData.LatestDateCommentOnFetch > DateTime.UtcNow.AddDays(-31))
             .Where(p => p.ProfileData.CommentDelta > 10)
+            .Where(p => p.CommentedOn == null
+            || p.CommentedOn <= DateTime.UtcNow.AddHours(-2))
             .ToArrayAsync(cancellationToken);
     }
 }
