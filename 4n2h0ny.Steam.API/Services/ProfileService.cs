@@ -317,7 +317,7 @@ namespace _4n2h0ny.Steam.API.Services
 
         private void ScrapeLatestCommentTimeStamp(Profile profile)
         {
-            var commentElements = _driver.FindElements(By.CssSelector("div[class='commentthread_comment_timestamp']"));
+            var commentElements = _driver.FindElements(By.CssSelector("span[class='commentthread_comment_timestamp']"));
             
             if (commentElements.Count == 0)
             {
@@ -399,7 +399,7 @@ namespace _4n2h0ny.Steam.API.Services
             allCommentsCountString = ProfileDataParser.StripCommaFromNumber(allCommentsCountString);
             if (int.TryParse(allCommentsCountString, out var allCommentsCount))
             {
-                if (profile.ProfileData.LastFetchedOn != null)
+                if (profile.ProfileData.LastFetchedOn != null && DateTime.UtcNow >= profile.ProfileData.LastFetchedOn.Value.AddMinutes(10))
                 {
                     profile.ProfileData.StartDeltaDate = profile.ProfileData.LastFetchedOn;
                     profile.ProfileData.CommentDelta = allCommentsCount - profile.ProfileData.TotalCommendsCount ?? 0;
