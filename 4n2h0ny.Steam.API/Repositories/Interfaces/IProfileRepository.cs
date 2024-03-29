@@ -17,5 +17,6 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
         public Task SaveChangesAsync(CancellationToken cancellationToken);
         public Task<Profile?> GetProfileByURI(string URI, CancellationToken cancellationToken);
         public Task ResetIsFriends(CancellationToken cancellationToken);
+        public Task<ICollection<Profile>> GetFriendsWithActiveCommentThread(CancellationToken cancellationToken);
     }
 }

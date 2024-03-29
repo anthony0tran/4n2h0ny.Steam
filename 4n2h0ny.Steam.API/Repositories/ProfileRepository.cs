@@ -159,5 +159,12 @@ namespace _4n2h0ny.Steam.API.Repositories
 
             await _profileContext.SaveChangesAsync(cancellationToken);
         }
+
+        public async Task<ICollection<Profile>> GetFriendsWithActiveCommentThread(CancellationToken cancellationToken) =>
+            await _profileContext.Profiles
+            .Where(p => p.IsFriend && !p.IsExcluded && !p.ProfileData.CommentAreaDisabled)
+            .Where(p => p.ProfileData.LatestDateCommentOnFetch > DateTime.UtcNow.AddDays(-31))
+            .Where(p => p.ProfileData.CommentDelta > 10)
+            .ToArrayAsync(cancellationToken);
     }
 }

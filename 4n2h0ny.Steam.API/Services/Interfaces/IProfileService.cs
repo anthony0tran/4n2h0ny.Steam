@@ -13,7 +13,8 @@ namespace _4n2h0ny.Steam.API.Services.Interfaces
         public Task SetCommentAreaDisabled(string URI, CancellationToken cancellationToken);
         public Task FetchProfileData(CancellationToken cancellationToken);
         public Task FetchProfileData(string URI, CancellationToken cancellationToken);
-        Task<Profile?> GetProfile(string URI, CancellationToken cancellation);
+        public Task<Profile?> GetProfile(string URI, CancellationToken cancellation);
+        public Task<ICollection<Profile>> GetFriendsWithActiveCommentThread(CancellationToken cancellationToken);
     }
 
     public record IsExcludedRequest(string URI, bool IsExcluded, CancellationToken CancellationToken);

@@ -6,7 +6,6 @@ using _4n2h0ny.Steam.API.Services.Interfaces;
 using Microsoft.Extensions.Options;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
-using OpenQA.Selenium.Internal;
 
 namespace _4n2h0ny.Steam.API.Services
 {
@@ -34,6 +33,35 @@ namespace _4n2h0ny.Steam.API.Services
         public async Task<int> CommentOnFriendCommenters(string comment, CancellationToken cancellationToken)
         {
             var profiles = await _profileService.ListFriendCommenters(cancellationToken);
+
+            if (profiles.Count == 0)
+            {
+                throw new InvalidOperationException("No profiles found to comment on.");
+            }
+
+            var isLoggedIn = _steamService.CheckLogin(profiles.First().URI);
+
+            if (!isLoggedIn)
+            {
+                throw new InvalidOperationException("Unable to comment. Not logged into steam");
+            }
+
+            var profilesToCommentOn = profiles.Where(p => p.CommentedOn == null
+            || p.CommentedOn <= DateTime.UtcNow.AddHours(-2));
+
+            var profilesToCommentOnCount = profilesToCommentOn.Count();
+
+            foreach (var profile in profilesToCommentOn)
+            {
+                await CommentOnProfile(profile.URI, comment, cancellationToken);
+            }
+
+            return profilesToCommentOnCount;
+        }
+
+        public async Task<int> CommentOnFriendsWithActiveCommentThread(string comment, CancellationToken cancellationToken)
+        {
+            var profiles = await _profileService.GetFriendsWithActiveCommentThread(cancellationToken);
 
             if (profiles.Count == 0)
             {

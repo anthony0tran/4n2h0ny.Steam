@@ -14,6 +14,22 @@ namespace _4n2h0ny.Steam.API.Controllers
             _commentService = commentService;
         }
 
+        [HttpPost("friendsWithActiveCommentThread")]
+        [ProducesResponseType(typeof(int), 200)]
+        public async Task<IActionResult> CommentOnFriendsWithActiveCommentThread(string comment, CancellationToken cancellationToken)
+        {
+            var messageIsValid = _commentService.ValidateComment(comment);
+
+            if (!messageIsValid)
+            {
+                return BadRequest("Message is invalid");
+            }
+
+            var commentedOnCount = await _commentService.CommentOnFriendsWithActiveCommentThread(comment, cancellationToken);
+
+            return Ok(commentedOnCount);
+        }
+
         [HttpPost("friends")]
         [ProducesResponseType(typeof(int), 200)]
         public async Task<IActionResult> CommentAllFriendCommenters(string comment, CancellationToken cancellationToken)

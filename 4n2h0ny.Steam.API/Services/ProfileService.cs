@@ -660,6 +660,9 @@ namespace _4n2h0ny.Steam.API.Services
             profile.ProfileData.PersonaName = parseResult.PersonaName;
         }
 
+        public async Task<ICollection<Profile>> GetFriendsWithActiveCommentThread(CancellationToken cancellationToken) =>
+            await _profileRepository.GetFriendsWithActiveCommentThread(cancellationToken);
+
         public async Task<ICollection<Profile>> ListFriendCommenters(CancellationToken cancellationToken) =>
             await _profileRepository.ListFriendCommenters(cancellationToken);
 
