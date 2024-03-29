@@ -308,10 +308,33 @@ namespace _4n2h0ny.Steam.API.Services
             ScrapeFriendCount(profile);
             ScrapeAwardBadgeAndGameCount(profile);
             ScrapeTotalCommendCount(profile);
+            ScrapeLatestCommentTimeStamp(profile);
 
             profile.ProfileData.LastFetchedOn = DateTime.UtcNow;
 
             return profile.ProfileData;
+        }
+
+        private void ScrapeLatestCommentTimeStamp(Profile profile)
+        {
+            var commentElements = _driver.FindElements(By.CssSelector("div[class='commentthread_comment_timestamp']"));
+            
+            if (commentElements.Count == 0)
+            {
+                return;
+            }
+
+            var latestTimeStampString = commentElements
+                .Select(c => c.GetAttribute("data-timestamp"))
+                .Max();
+
+            if (string.IsNullOrEmpty(latestTimeStampString))
+            {
+                return;
+            }
+
+            var latestCommentDateTime = DateParser.ParseUnixTimeStampToDateTime(latestTimeStampString);
+            profile.ProfileData.LatestDateCommentOnFetch = latestCommentDateTime;
         }
 
         private bool CheckProfileIsPrivate()
@@ -376,6 +399,12 @@ namespace _4n2h0ny.Steam.API.Services
             allCommentsCountString = ProfileDataParser.StripCommaFromNumber(allCommentsCountString);
             if (int.TryParse(allCommentsCountString, out var allCommentsCount))
             {
+                if (profile.ProfileData.LastFetchedOn != null)
+                {
+                    profile.ProfileData.StartDeltaDate = profile.ProfileData.LastFetchedOn;
+                    profile.ProfileData.CommentDelta = allCommentsCount - profile.ProfileData.TotalCommendsCount ?? 0;
+                }
+
                 profile.ProfileData.TotalCommendsCount = allCommentsCount;
             }
         }

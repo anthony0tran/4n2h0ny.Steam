@@ -16,5 +16,8 @@
         public int? GameCount { get; set; }
         public bool CommentAreaDisabled { get; set; }
         public DateTime? LastFetchedOn { get; set; }
+        public DateTime? StartDeltaDate { get; set; }
+        public int CommentDelta { get; set; }
+        public DateTime? LatestDateCommentOnFetch { get; set; }
     }
 }
