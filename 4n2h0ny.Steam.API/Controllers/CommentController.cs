@@ -58,6 +58,7 @@ namespace _4n2h0ny.Steam.API.Controllers
 
 
         [HttpPost("Test")]
+        [ProducesResponseType(typeof(CommentResponse), 200)]
         public async Task<IActionResult> PreviewComment(string URI, string comment, CancellationToken cancellationToken)
         {
             var watch = Stopwatch.StartNew();
