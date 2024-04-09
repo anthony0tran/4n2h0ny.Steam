@@ -70,6 +70,26 @@ namespace _4n2h0ny.Steam.API.Controllers
             return Ok(watch.Elapsed);
         }
 
+        [HttpPost("profile/CommentAreaDisabled/data")]
+        [ProducesResponseType(typeof(ScrapedProfilesResult), 200)]
+        public async Task<IActionResult> FetchCommentAreaDisabledProfileData(CancellationToken cancellationToken)
+        {
+            var watch = Stopwatch.StartNew();
+
+            var result = await _profileService.FetchCommentAreaDisabledProfileData(cancellationToken);
+
+            watch.Stop();
+
+            var response = new ScrapedProfilesResult()
+            {
+                ProfileCount = result.Count,
+                ExecutionDuration = watch.Elapsed,
+                Profiles = result
+            };
+
+            return Ok(response);
+        }
+
         [HttpPost("{URI}/data")]
         [ProducesResponseType(typeof(TimeSpan), 200)]
         public async Task<IActionResult> FetchProfileData(string URI, CancellationToken cancellationToken)

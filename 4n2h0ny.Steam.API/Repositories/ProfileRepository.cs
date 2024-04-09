@@ -108,6 +108,12 @@ namespace _4n2h0ny.Steam.API.Repositories
                 .IgnoreQueryFilters()
                 .ToListAsync(cancellationToken);
 
+        public async Task<ICollection<Profile>> GetCommentAreaDisabledProfiles(CancellationToken cancellationToken) =>
+            await _profileContext.Profiles
+                .IgnoreQueryFilters()
+                .Where(p => p.ProfileData.CommentAreaDisabled == true)
+                .ToListAsync(cancellationToken);
+
         public async Task<ICollection<Profile>> ListExcludedProfiles(CancellationToken cancellationToken) =>
             await _profileContext.Profiles
                 .IgnoreQueryFilters()

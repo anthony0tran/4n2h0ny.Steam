@@ -315,6 +315,21 @@ namespace _4n2h0ny.Steam.API.Services
             return profile.ProfileData;
         }
 
+        public async Task<ICollection<Profile>> FetchCommentAreaDisabledProfileData(CancellationToken cancellationToken)
+        {
+            var profiles = await _profileRepository.GetCommentAreaDisabledProfiles(cancellationToken);
+
+            foreach (var profile in profiles)
+            {
+                var data = ScrapeData(profile, cancellationToken);
+                profile.ProfileData = data;
+            }
+
+            await _profileRepository.SaveChangesAsync(cancellationToken);
+
+            return profiles;
+        }
+
         private void ScrapeLatestCommentTimeStamp(Profile profile)
         {
             var commentElements = _driver.FindElements(By.CssSelector("span[class='commentthread_comment_timestamp']"));
