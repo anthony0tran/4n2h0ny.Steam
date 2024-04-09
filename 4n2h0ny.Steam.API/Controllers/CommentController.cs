@@ -1,5 +1,7 @@
+using _4n2h0ny.Steam.API.Models;
 using _4n2h0ny.Steam.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace _4n2h0ny.Steam.API.Controllers
 {
@@ -15,9 +17,11 @@ namespace _4n2h0ny.Steam.API.Controllers
         }
 
         [HttpPost("friendsWithActiveCommentThread")]
-        [ProducesResponseType(typeof(int), 200)]
+        [ProducesResponseType(typeof(CommentResponse), 200)]
         public async Task<IActionResult> CommentOnFriendsWithActiveCommentThread(string comment, CancellationToken cancellationToken)
         {
+            var watch = Stopwatch.StartNew();
+
             var messageIsValid = _commentService.ValidateComment(comment);
 
             if (!messageIsValid)
@@ -27,13 +31,17 @@ namespace _4n2h0ny.Steam.API.Controllers
 
             var commentedOnCount = await _commentService.CommentOnFriendsWithActiveCommentThread(comment, cancellationToken);
 
-            return Ok(commentedOnCount);
+            watch.Stop();
+
+            return Ok(new CommentResponse(commentedOnCount, watch.Elapsed));
         }
 
         [HttpPost("friends")]
-        [ProducesResponseType(typeof(int), 200)]
+        [ProducesResponseType(typeof(CommentResponse), 200)]
         public async Task<IActionResult> CommentAllFriendCommenters(string comment, CancellationToken cancellationToken)
         {
+            var watch = Stopwatch.StartNew();
+
             var messageIsValid = _commentService.ValidateComment(comment);
 
             if (!messageIsValid)
@@ -42,14 +50,18 @@ namespace _4n2h0ny.Steam.API.Controllers
             }
 
             var commentedOnCount = await _commentService.CommentOnFriendCommenters(comment, cancellationToken);
-            
-            return Ok(commentedOnCount);
+
+            watch.Stop();
+
+            return Ok(new CommentResponse(commentedOnCount, watch.Elapsed));
         }
 
 
         [HttpPost("Test")]
         public async Task<IActionResult> PreviewComment(string URI, string comment, CancellationToken cancellationToken)
         {
+            var watch = Stopwatch.StartNew();
+
             var messageIsValid = _commentService.ValidateComment(comment);
 
             if (!messageIsValid)
@@ -59,7 +71,9 @@ namespace _4n2h0ny.Steam.API.Controllers
 
             await _commentService.PreviewComment(URI, comment, cancellationToken);
 
-            return Ok();
+            watch.Stop();
+
+            return Ok(new CommentResponse(1, watch.Elapsed));
         }
     }
 }
