@@ -19,7 +19,7 @@ namespace _4n2h0ny.Steam.API.Controllers
 
         [HttpPost("friends")]
         [ProducesResponseType(typeof(ScrapedProfilesResult), 200)]
-        public async Task<ScrapedProfilesResult> ScrapeFriends(string? profileUrl, CancellationToken cancellationToken, bool syncFriends = true)
+        public async Task<IActionResult> ScrapeFriends(string? profileUrl, CancellationToken cancellationToken, bool syncFriends = true)
         {
             var watch = Stopwatch.StartNew();
 
