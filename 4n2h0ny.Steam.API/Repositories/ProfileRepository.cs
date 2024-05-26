@@ -31,7 +31,6 @@ namespace _4n2h0ny.Steam.API.Repositories
                     continue;
                 }
                 existingProfile.IsFriend = profile.IsFriend;
-                existingProfile.LatestCommentReceivedOn = profile.LatestCommentReceivedOn;
                 existingProfile.FetchedOn = profile.FetchedOn;
             }
 
