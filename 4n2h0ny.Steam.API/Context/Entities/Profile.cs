@@ -13,6 +13,7 @@ namespace _4n2h0ny.Steam.API.Context.Entities
         public ProfileData ProfileData { get; set; } = new();
         public bool NotFound { get; set; }
         public bool IsPrivate { get; set; }
+        public DateTime? FetchedIsFriendOn { get; set; }
         public override int GetHashCode()
             => URI.GetHashCode();
 
