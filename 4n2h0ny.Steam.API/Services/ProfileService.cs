@@ -72,10 +72,10 @@ namespace _4n2h0ny.Steam.API.Services
 
         private HashSet<Profile> ScrapeFriends(string? profileUrl)
         {
-            var friendListURI = profileUrl != null 
+            var friendListURI = profileUrl != null
                 ? $"{profileUrl}/friends/"
                 : $"{_steamConfiguration.DefaultProfileUrl}/friends/";
-            
+
             var profiles = new HashSet<Profile>();
 
             _driver.Navigate().GoToUrl(friendListURI);
@@ -95,6 +95,7 @@ namespace _4n2h0ny.Steam.API.Services
                 {
                     URI = URI,
                     IsFriend = true,
+                    FetchedIsFriendOn = DateTime.UtcNow,
                     FetchedOn = DateTime.UtcNow
                 });
             }
@@ -239,6 +240,9 @@ namespace _4n2h0ny.Steam.API.Services
                     URI = href,
                     LatestCommentReceivedOn = commentDate,
                     IsFriend = friend.Length > 0,
+                    FetchedIsFriendOn = friend.Length > 0
+                        ? DateTime.UtcNow
+                        : null,
                     FetchedOn = DateTime.UtcNow
                 };
 
@@ -333,7 +337,7 @@ namespace _4n2h0ny.Steam.API.Services
         private void ScrapeLatestCommentTimeStamp(Profile profile)
         {
             var commentElements = _driver.FindElements(By.CssSelector("span[class='commentthread_comment_timestamp']"));
-            
+
             if (commentElements.Count == 0)
             {
                 return;
