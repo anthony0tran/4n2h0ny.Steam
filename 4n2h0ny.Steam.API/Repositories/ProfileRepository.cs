@@ -33,6 +33,7 @@ namespace _4n2h0ny.Steam.API.Repositories
                 existingProfile.IsFriend = profile.IsFriend;
                 existingProfile.FetchedOn = profile.FetchedOn;
                 existingProfile.FetchedIsFriendOn = profile.FetchedIsFriendOn;
+                existingProfile.LatestCommentReceivedOn = profile.LatestCommentReceivedOn;
             }
 
             var newProfiles = foundProfiles.Where(np => !existingProfiles.Select(p => p.URI).Contains(np.URI));
