@@ -3,5 +3,7 @@
     public interface ISteamService
     {
         public bool CheckLogin(string? profileUrl);
+
+        public bool Login(string? profileUrl);
     }
 }

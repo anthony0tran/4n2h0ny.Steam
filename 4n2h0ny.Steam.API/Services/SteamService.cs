@@ -10,10 +10,12 @@ namespace _4n2h0ny.Steam.API.Services
     {
         private readonly SteamConfiguration _steamConfiguration;
         private readonly FirefoxDriver _driver;
-        public SteamService(IOptions<SteamConfiguration> steamConfigurations)
+        private readonly ILogger<SteamService> _logger;
+        public SteamService(IOptions<SteamConfiguration> steamConfigurations, ILogger<SteamService> logger)
         {
             _steamConfiguration = steamConfigurations.Value;
             _driver = WebDriverSingleton.Instance.Driver;
+            _logger = logger;
         }
 
         public bool CheckLogin(string? profileUrl)
@@ -28,6 +30,22 @@ namespace _4n2h0ny.Steam.API.Services
             }
 
             return true;
+        }
+
+        public bool Login(string? profileUrl)
+        {
+            try
+            {
+                profileUrl ??= _steamConfiguration.LoginProfileUrl;
+                _driver.Navigate().GoToUrl(profileUrl);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Could not login. Error: {errorMessage}", ex.Message);
+                return false;
+            }
         }
     }
 }
