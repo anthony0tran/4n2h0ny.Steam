@@ -5,5 +5,6 @@
         public required string DefaultProfileUrl { get; init; }
         public required string CommentPageUrl { get; init; }
         public required string FirefoxProfile { get; init; }
+        public required string LoginProfileUrl { get; init; }
     }
 }
