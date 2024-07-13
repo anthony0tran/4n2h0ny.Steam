@@ -2,6 +2,7 @@
 using _4n2h0ny.Steam.API.Context.Entities;
 using _4n2h0ny.Steam.API.Helpers;
 using _4n2h0ny.Steam.API.Models;
+using _4n2h0ny.Steam.API.Repositories.Interfaces;
 using _4n2h0ny.Steam.API.Services.Interfaces;
 using Microsoft.Extensions.Options;
 using OpenQA.Selenium;
@@ -11,6 +12,7 @@ namespace _4n2h0ny.Steam.API.Services
 {
     public class CommentService : ICommentService
     {
+        private readonly ICommentRepository _commentRepository;
         private readonly IProfileService _profileService;
         private readonly ISteamService _steamService;
         private readonly FirefoxDriver _driver;
@@ -21,17 +23,20 @@ namespace _4n2h0ny.Steam.API.Services
             IOptions<CommentConfiguration> options,
             IOptions<SteamConfiguration> steamConfiguration,
             ISteamService steamService,
-            IProfileService profileService)
+            IProfileService profileService,
+            ICommentRepository commentRepository)
         {
             _profileService = profileService;
             _driver = WebDriverSingleton.Instance.Driver;
             _commentConfiguration = options.Value;
             _steamService = steamService;
             _steamConfiguration = steamConfiguration.Value;
+            _commentRepository = commentRepository;
         }
 
         public async Task<int> CommentOnFriendCommenters(string comment, CancellationToken cancellationToken)
         {
+            var commentProcessStartedOn = DateTime.UtcNow;
             var profiles = await _profileService.ListFriendCommenters(cancellationToken);
 
             if (profiles.Count == 0)
@@ -56,11 +61,14 @@ namespace _4n2h0ny.Steam.API.Services
                 await CommentOnProfile(profile.URI, comment, cancellationToken);
             }
 
+            await _commentRepository.AddComment(comment, commentProcessStartedOn, profilesToCommentOn.ToArray(), cancellationToken);
+
             return profilesToCommentOnCount;
         }
 
         public async Task<int> CommentOnFriendsWithActiveCommentThread(string comment, CancellationToken cancellationToken)
         {
+            var commentProcessStartedOn = DateTime.UtcNow;
             var profiles = await _profileService.GetFriendsWithActiveCommentThread(cancellationToken);
 
             if (profiles.Count == 0)
@@ -84,6 +92,8 @@ namespace _4n2h0ny.Steam.API.Services
             {
                 await CommentOnProfile(profile.URI, comment, cancellationToken);
             }
+
+            await _commentRepository.AddComment(comment, commentProcessStartedOn, profilesToCommentOn.ToArray(), cancellationToken);
 
             return profilesToCommentOnCount;
         }

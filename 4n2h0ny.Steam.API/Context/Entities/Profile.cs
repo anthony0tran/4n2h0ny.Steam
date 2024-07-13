@@ -14,6 +14,7 @@ namespace _4n2h0ny.Steam.API.Context.Entities
         public bool NotFound { get; set; }
         public bool IsPrivate { get; set; }
         public DateTime? FetchedIsFriendOn { get; set; }
+        public ICollection<Comment> Comments { get; set; } = [];
         public override int GetHashCode()
             => URI.GetHashCode();
 

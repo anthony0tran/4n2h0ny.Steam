@@ -38,6 +38,10 @@ namespace _4n2h0ny.Steam.API.Context
                 .HasForeignKey<Profile>(p => p.ProfileDataId);
 
             builder.Entity<Profile>()
+                .HasMany(p => p.Comments)
+                .WithMany(c => c.Profiles);
+
+            builder.Entity<Profile>()
                 .Navigation(p => p.ProfileData)
                 .AutoInclude();
 

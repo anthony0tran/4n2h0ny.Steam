@@ -1,6 +1,7 @@
 using _4n2h0ny.Steam.API.Configurations;
 using _4n2h0ny.Steam.API.Context;
 using _4n2h0ny.Steam.API.Repositories;
+using _4n2h0ny.Steam.API.Repositories.Interfaces;
 using _4n2h0ny.Steam.API.Repositories.Profiles;
 using _4n2h0ny.Steam.API.Services;
 using _4n2h0ny.Steam.API.Services.Interfaces;
@@ -18,6 +19,7 @@ builder.Services.Configure<SteamConfiguration>(builder.Configuration.GetSection(
 builder.Services.Configure<CommentConfiguration>(builder.Configuration.GetSection("CommentConfiguration"));
 builder.Services.AddDbContext<ProfileContext>();
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<ISteamService, SteamService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
