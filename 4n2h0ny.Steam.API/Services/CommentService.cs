@@ -52,16 +52,16 @@ namespace _4n2h0ny.Steam.API.Services
             }
 
             var profilesToCommentOn = profiles.Where(p => p.CommentedOn == null
-            || p.CommentedOn <= DateTime.UtcNow.AddHours(-2));
+            || p.CommentedOn <= DateTime.UtcNow.AddHours(-2)).ToArray();
 
-            var profilesToCommentOnCount = profilesToCommentOn.Count();
+            var profilesToCommentOnCount = profilesToCommentOn.Length;
 
             foreach (var profile in profilesToCommentOn)
             {
                 await CommentOnProfile(profile.URI, comment, cancellationToken);
             }
 
-            await _commentRepository.AddComment(comment, commentProcessStartedOn, profilesToCommentOn.ToArray(), cancellationToken);
+            await _commentRepository.AddComment(comment, commentProcessStartedOn, profilesToCommentOn, cancellationToken);
 
             return profilesToCommentOnCount;
         }
@@ -84,16 +84,16 @@ namespace _4n2h0ny.Steam.API.Services
             }
 
             var profilesToCommentOn = profiles.Where(p => p.CommentedOn == null
-            || p.CommentedOn <= DateTime.UtcNow.AddHours(-2));
+            || p.CommentedOn <= DateTime.UtcNow.AddHours(-2)).ToArray();
 
-            var profilesToCommentOnCount = profilesToCommentOn.Count();
+            var profilesToCommentOnCount = profilesToCommentOn.Length;
 
             foreach (var profile in profilesToCommentOn)
             {
                 await CommentOnProfile(profile.URI, comment, cancellationToken);
             }
 
-            await _commentRepository.AddComment(comment, commentProcessStartedOn, profilesToCommentOn.ToArray(), cancellationToken);
+            await _commentRepository.AddComment(comment, commentProcessStartedOn, profilesToCommentOn, cancellationToken);
 
             return profilesToCommentOnCount;
         }
