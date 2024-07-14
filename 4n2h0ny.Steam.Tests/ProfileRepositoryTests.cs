@@ -63,9 +63,9 @@ namespace _4n2h0ny.Steam.Tests
             var result = await _profileRepository.AddOrUpdateProfile(profiles, Arg.Any<CancellationToken>());
 
             // Assert
-            var dbResults = _profileContext.Profiles.ToList();
+            var dbResults = _profileContext.Profiles.ToArray();
             Assert.Equal(2, result.Count);
-            Assert.Equal(2, dbResults.Count);
+            Assert.Equal(2, dbResults.Length);
             Assert.False(dbResults.Single(p => p.URI == Profiles.Default.URI).IsFriend);
         }
 
@@ -85,7 +85,7 @@ namespace _4n2h0ny.Steam.Tests
             var result = await _profileRepository.AddOrUpdateProfile(profiles, Arg.Any<CancellationToken>());
 
             // Assert
-            var dbResults = _profileContext.Profiles.ToList();
+            var dbResults = _profileContext.Profiles.ToArray();
             Assert.Single(result);
             Assert.Single(dbResults);
         }
@@ -110,7 +110,7 @@ namespace _4n2h0ny.Steam.Tests
             var result = await _profileRepository.AddOrUpdateProfile(profiles, Arg.Any<CancellationToken>());
 
             // Assert
-            var dbResults = _profileContext.Profiles.ToList();
+            var dbResults = _profileContext.Profiles.ToArray();
             Assert.Single(result);
             Assert.Single(dbResults);
             Assert.True(dbResults.Single().LatestCommentReceivedOn == profiles.Single().LatestCommentReceivedOn);
