@@ -42,14 +42,16 @@ namespace _4n2h0ny.Steam.API.Repositories
 
         public async Task<PredefinedComment> GetFirstPredefinedCommentInQueue(CancellationToken cancellationToken) =>
             await _profileContext.PredefinedComments
-                .OrderBy(pc => pc.Priority)
-                .OrderBy(pc => pc.LatestCommentedOn)
+                .OrderByDescending(pc => pc.Priority)
+                .ThenBy(pc => pc.LatestCommentedOn)
                 .FirstOrDefaultAsync(cancellationToken) 
                 ?? throw new InvalidOperationException("No predefinedComment found");
 
-        public async Task IncreasePredefinedCommentedCount(PredefinedComment predefinedComment, CancellationToken cancellationToken)
+        public async Task PredefinedCommentPostProcess(PredefinedComment predefinedComment, CancellationToken cancellationToken)
         {
+            predefinedComment.Priority = CommentPriority.Default;
             predefinedComment.CommentedCount++;
+            predefinedComment.LatestCommentedOn = DateTime.UtcNow;
             await _profileContext.SaveChangesAsync(cancellationToken);
         }
 

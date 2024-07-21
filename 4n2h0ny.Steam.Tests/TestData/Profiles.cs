@@ -2,7 +2,7 @@
 
 namespace _4n2h0ny.Steam.Tests.TestData
 {
-    public class Profiles
+    public static class Profiles
     {
         public static Profile Default => new()
         {

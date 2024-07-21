@@ -4,7 +4,7 @@
     {
         public Guid Id { get; init; }
         public required string CommentString { get; init; }
-        public DateTime? LatestCommentedOn { get; init; }
+        public DateTime? LatestCommentedOn { get; set; }
         public DateTime Created { get; private init; }
         public int CommentedCount { get; set; }
         public CommentPriority Priority { get; set; } = CommentPriority.Default;
@@ -12,8 +12,8 @@
 
     public enum CommentPriority
     {
+        Low = -1, // Same as excluding
         Default = 0,
-        Low = 1,
-        High =2
+        High = 1
     }
 }

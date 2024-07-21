@@ -220,7 +220,7 @@ namespace _4n2h0ny.Steam.API.Services
         public async Task<PredefinedComment> GetFirstPredefinedCommentInQueue(CancellationToken cancellationToken) =>
             await _commentRepository.GetFirstPredefinedCommentInQueue(cancellationToken);
 
-        public async Task IncreasePredefinedCommentedCount(PredefinedComment predefinedComment, CancellationToken cancellationToken) =>
-            await _commentRepository.IncreasePredefinedCommentedCount(predefinedComment, cancellationToken);
+        public async Task PredefinedCommentPostProcess(PredefinedComment predefinedComment, CancellationToken cancellationToken) =>
+            await _commentRepository.PredefinedCommentPostProcess(predefinedComment, cancellationToken);
     }
 }

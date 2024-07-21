@@ -23,6 +23,38 @@ namespace _4n2h0ny.Steam.Tests
         }
 
         [Fact]
+        public async Task ShouldGetCorrectPredefinedComment()
+        {
+            // Arrange
+
+            // priority low won't be executed
+            PredefinedComment[] expectedOrder = [
+                PredefinedComments.FirstWithHighPriority,
+                PredefinedComments.SecondWithHighPriority,
+                PredefinedComments.First,
+                PredefinedComments.Second
+            ];
+
+            _profileContext.AddRange(PredefinedComments.testPredefinedComments);
+            _profileContext.SaveChanges();
+
+            foreach (var expected in expectedOrder)
+            {
+                // Act
+                var result = await _commentRepository.GetFirstPredefinedCommentInQueue(CancellationToken.None);
+                await _commentRepository.PredefinedCommentPostProcess(result, CancellationToken.None);
+
+                // Assert
+                Assert.Equal(expected.CommentString, result.CommentString);
+            }
+
+            var predefinedComments = _profileContext.PredefinedComments.ToList();
+
+            Assert.All(predefinedComments, pc => Assert.NotEqual(CommentPriority.High, pc.Priority));
+            Assert.Equal(2, predefinedComments.Where(pc => pc.Priority == CommentPriority.Low).Count());
+        }
+
+        [Fact]
         public async Task ShouldAddComments()
         {
             // Arrange

@@ -33,7 +33,7 @@ namespace _4n2h0ny.Steam.API.Controllers
 
             var commentedOnCount = await _commentService.CommentOnFriendsWithActiveCommentThread(comment.CommentString, cancellationToken);
 
-            await _commentService.IncreasePredefinedCommentedCount(comment, cancellationToken);
+            await _commentService.PredefinedCommentPostProcess(comment, cancellationToken);
 
             watch.Stop();
 
@@ -57,7 +57,7 @@ namespace _4n2h0ny.Steam.API.Controllers
 
             var commentedOnCount = await _commentService.CommentOnFriendCommenters(comment.CommentString, cancellationToken);
 
-            await _commentService.IncreasePredefinedCommentedCount(comment, cancellationToken);
+            await _commentService.PredefinedCommentPostProcess(comment, cancellationToken);
 
             watch.Stop();
 
