@@ -19,7 +19,7 @@ namespace _4n2h0ny.Steam.API.Controllers
         public async Task<ICollection<Profile>> ListFriendCommenters(CancellationToken cancellationToken)
         {
             var result = await _profileService.ListFriendCommenters(cancellationToken);
-            return result.ToArray();
+            return [.. result];
         }
 
         [HttpGet("excluded")]

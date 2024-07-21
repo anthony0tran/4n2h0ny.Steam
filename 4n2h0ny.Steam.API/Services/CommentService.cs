@@ -207,5 +207,13 @@ namespace _4n2h0ny.Steam.API.Services
 
             return true;
         }
+
+        public async Task AddPredefinedComment(string commentString, CancellationToken cancellationToken)
+        {
+            await _commentRepository.AddPredefinedComment(commentString, cancellationToken);
+        }
+
+        public async Task<ICollection<PredefinedComment>> ListPredefinedComments(CancellationToken cancellationToken) =>
+            await _commentRepository.ListPredefinedComments(cancellationToken);
     }
 }

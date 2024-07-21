@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using _4n2h0ny.Steam.API.Context;
 
@@ -10,9 +11,11 @@ using _4n2h0ny.Steam.API.Context;
 namespace _4n2h0ny.Steam.API.Migrations
 {
     [DbContext(typeof(ProfileContext))]
-    partial class ProfileContextModelSnapshot : ModelSnapshot
+    [Migration("20240721113925_Add_PredefinedComment")]
+    partial class Add_PredefinedComment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.7");
@@ -52,7 +55,7 @@ namespace _4n2h0ny.Steam.API.Migrations
 
                     b.HasIndex("PredefinedCommentId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comment");
                 });
 
             modelBuilder.Entity("_4n2h0ny.Steam.API.Context.Entities.PredefinedComment", b =>
@@ -69,16 +72,14 @@ namespace _4n2h0ny.Steam.API.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("LatestCommentedOn")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("PredefinedComments");
+                    b.ToTable("PredefinedComment");
                 });
 
             modelBuilder.Entity("_4n2h0ny.Steam.API.Context.Entities.Profile", b =>

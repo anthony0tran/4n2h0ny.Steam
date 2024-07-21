@@ -1,6 +1,7 @@
 ﻿using _4n2h0ny.Steam.API.Context;
 using _4n2h0ny.Steam.API.Context.Entities;
 using _4n2h0ny.Steam.API.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace _4n2h0ny.Steam.API.Repositories
 {
@@ -27,5 +28,19 @@ namespace _4n2h0ny.Steam.API.Repositories
             await _profileContext.AddAsync(comment, cancellationToken);
             await _profileContext.SaveChangesAsync(cancellationToken);
         }
+
+        public async Task AddPredefinedComment(string commentString, CancellationToken cancellationToken)
+        {
+            var predefinedComment = new PredefinedComment()
+            {
+                CommentString = commentString
+            };
+
+            await _profileContext.AddAsync(predefinedComment);
+            await _profileContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<ICollection<PredefinedComment>> ListPredefinedComments(CancellationToken cancellationToken) => 
+            await _profileContext.PredefinedComments.ToListAsync(cancellationToken);
     }
 }

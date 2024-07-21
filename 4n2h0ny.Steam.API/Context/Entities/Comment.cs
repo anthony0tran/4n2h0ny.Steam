@@ -6,5 +6,6 @@
         public required string CommentString { get; init; }
         public DateTime CommentProcessStartedOn { get; init; }
         public ICollection<Profile> Profiles { get; set; } = [];
+        public PredefinedComment? PredefinedComment { get; set; }
     }
 }

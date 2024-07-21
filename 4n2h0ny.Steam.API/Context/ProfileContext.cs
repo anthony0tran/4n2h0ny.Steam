@@ -6,6 +6,9 @@ namespace _4n2h0ny.Steam.API.Context
     public class ProfileContext : DbContext
     {
         public DbSet<Profile> Profiles { get; set; }
+        public DbSet<PredefinedComment> PredefinedComments { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<ProfileData> ProfileData { get; set; }
 
         public string DbPath { get; set; }
         public string DbPassword { get; set; }
@@ -44,6 +47,10 @@ namespace _4n2h0ny.Steam.API.Context
             builder.Entity<Profile>()
                 .Navigation(p => p.ProfileData)
                 .AutoInclude();
+
+            builder.Entity<PredefinedComment>()
+                .Property(pc => pc.Created)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             builder.Entity<Profile>().HasQueryFilter(p => !p.IsExcluded);
             builder.Entity<Profile>().HasQueryFilter(p => !p.ProfileData.CommentAreaDisabled);
