@@ -2,6 +2,7 @@ using _4n2h0ny.Steam.API.Context.Entities;
 using _4n2h0ny.Steam.API.Models;
 using _4n2h0ny.Steam.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace _4n2h0ny.Steam.API.Controllers
 {
@@ -16,12 +17,40 @@ namespace _4n2h0ny.Steam.API.Controllers
             _commentService = commentService;
         }
 
+        [HttpGet("FirstPredefinedCommentInQueue")]
+        [ProducesResponseType(typeof(PredefinedComment), 200)]
+        public async Task<IActionResult> GetFirstPredefinedCommentInQueue(CancellationToken cancellationToken)
+        {
+            try
+            {
+                var result = await _commentService.GetFirstPredefinedCommentInQueue(cancellationToken);
+
+                if (result == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
+
         [HttpGet("List")]
         [ProducesResponseType(typeof(ICollection<PredefinedComment>), 200)]
         public async Task<IActionResult> ListPredefinedComments(CancellationToken cancellationToken)
         {
-            var result = await _commentService.ListPredefinedComments(cancellationToken);
-            return Ok(result);
+            try
+            {
+                var result = await _commentService.ListPredefinedComments(cancellationToken);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
         [HttpPost("Add")]
@@ -31,7 +60,7 @@ namespace _4n2h0ny.Steam.API.Controllers
             {
                 await _commentService.AddPredefinedComment(commentString, cancellationToken);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return Problem(ex.Message);
             }
@@ -51,7 +80,7 @@ namespace _4n2h0ny.Steam.API.Controllers
                 return Problem(ex.Message);
             }
 
-            return Ok();            
+            return Ok();
         }
     }
 }

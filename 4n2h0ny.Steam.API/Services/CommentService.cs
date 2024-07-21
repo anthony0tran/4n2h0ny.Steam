@@ -216,5 +216,11 @@ namespace _4n2h0ny.Steam.API.Services
 
         public async Task SetPriority(Guid predefinedCommentId, CommentPriority priority, CancellationToken cancellationToken) =>
             await _commentRepository.SetPriority(predefinedCommentId, priority, cancellationToken);
+
+        public async Task<PredefinedComment> GetFirstPredefinedCommentInQueue(CancellationToken cancellationToken) =>
+            await _commentRepository.GetFirstPredefinedCommentInQueue(cancellationToken);
+
+        public async Task IncreasePredefinedCommentedCount(PredefinedComment predefinedComment, CancellationToken cancellationToken) =>
+            await _commentRepository.IncreasePredefinedCommentedCount(predefinedComment, cancellationToken);
     }
 }

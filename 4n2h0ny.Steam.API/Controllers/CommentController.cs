@@ -16,6 +16,76 @@ namespace _4n2h0ny.Steam.API.Controllers
             _commentService = commentService;
         }
 
+        [HttpPost("predefined/friendsWithActiveCommentThread")]
+        [ProducesResponseType(typeof(CommentResponse), 200)]
+        public async Task<IActionResult> PredefinedCommentOnFriendsWithActiveCommentThread(CancellationToken cancellationToken)
+        {
+            var watch = Stopwatch.StartNew();
+
+            var comment = await _commentService.GetFirstPredefinedCommentInQueue(cancellationToken);
+
+            var messageIsValid = _commentService.ValidateComment(comment.CommentString);
+
+            if (!messageIsValid)
+            {
+                return BadRequest("Message is invalid");
+            }
+
+            var commentedOnCount = await _commentService.CommentOnFriendsWithActiveCommentThread(comment.CommentString, cancellationToken);
+
+            await _commentService.IncreasePredefinedCommentedCount(comment, cancellationToken);
+
+            watch.Stop();
+
+            return Ok(new CommentResponse(commentedOnCount, watch.Elapsed));
+        }
+
+        [HttpPost("predefined/friends")]
+        [ProducesResponseType(typeof(CommentResponse), 200)]
+        public async Task<IActionResult> PredefinedCommentAllFriendCommenters(CancellationToken cancellationToken)
+        {
+            var watch = Stopwatch.StartNew();
+
+            var comment = await _commentService.GetFirstPredefinedCommentInQueue(cancellationToken);
+
+            var messageIsValid = _commentService.ValidateComment(comment.CommentString);
+
+            if (!messageIsValid)
+            {
+                return BadRequest("Message is invalid");
+            }
+
+            var commentedOnCount = await _commentService.CommentOnFriendCommenters(comment.CommentString, cancellationToken);
+
+            await _commentService.IncreasePredefinedCommentedCount(comment, cancellationToken);
+
+            watch.Stop();
+
+            return Ok(new CommentResponse(commentedOnCount, watch.Elapsed));
+        }
+
+        [HttpPost("predefined/Test")]
+        [ProducesResponseType(typeof(CommentResponse), 200)]
+        public async Task<IActionResult> PreviewPredefinedComment(string URI, CancellationToken cancellationToken)
+        {
+            var watch = Stopwatch.StartNew();
+
+            var comment = await _commentService.GetFirstPredefinedCommentInQueue(cancellationToken);
+
+            var messageIsValid = _commentService.ValidateComment(comment.CommentString);
+
+            if (!messageIsValid)
+            {
+                return BadRequest("Message is invalid");
+            }
+
+            await _commentService.PreviewComment(URI, comment.CommentString, cancellationToken);
+
+            watch.Stop();
+
+            return Ok(new CommentResponse(1, watch.Elapsed));
+        }
+
         [HttpPost("friendsWithActiveCommentThread")]
         [ProducesResponseType(typeof(CommentResponse), 200)]
         public async Task<IActionResult> CommentOnFriendsWithActiveCommentThread(string comment, CancellationToken cancellationToken)
