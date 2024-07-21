@@ -29,11 +29,12 @@ namespace _4n2h0ny.Steam.API.Repositories
             await _profileContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task AddPredefinedComment(string commentString, CancellationToken cancellationToken)
+        public async Task AddPredefinedComment(string commentString, CommentPriority priority, CancellationToken cancellationToken)
         {
             var predefinedComment = new PredefinedComment()
             {
-                CommentString = commentString
+                CommentString = commentString,
+                Priority = priority
             };
 
             await _profileContext.AddAsync(predefinedComment);

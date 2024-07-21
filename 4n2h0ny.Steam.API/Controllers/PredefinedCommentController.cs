@@ -54,11 +54,11 @@ namespace _4n2h0ny.Steam.API.Controllers
         }
 
         [HttpPost("Add")]
-        public async Task<IActionResult> AddPredefinedComment(string commentString, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddPredefinedComment(string commentString, CancellationToken cancellationToken, CommentPriority priority = CommentPriority.Default)
         {
             try
             {
-                await _commentService.AddPredefinedComment(commentString, cancellationToken);
+                await _commentService.AddPredefinedComment(commentString, priority, cancellationToken);
             }
             catch (Exception ex)
             {
