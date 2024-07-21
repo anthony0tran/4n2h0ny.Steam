@@ -42,5 +42,15 @@ namespace _4n2h0ny.Steam.API.Repositories
 
         public async Task<ICollection<PredefinedComment>> ListPredefinedComments(CancellationToken cancellationToken) => 
             await _profileContext.PredefinedComments.ToListAsync(cancellationToken);
+
+        public async Task SetPriority(Guid predefinedCommentId, CommentPriority priority, CancellationToken cancellationToken)
+        {
+            var predefinedComment = await _profileContext.PredefinedComments.FirstOrDefaultAsync(pc => pc.Id == predefinedCommentId, cancellationToken) 
+                ?? throw new InvalidOperationException($"No predefinedComment found with Id: {predefinedCommentId}");
+
+            predefinedComment.Priority = priority;
+
+            await _profileContext.SaveChangesAsync(cancellationToken);
+        }
     }
 }

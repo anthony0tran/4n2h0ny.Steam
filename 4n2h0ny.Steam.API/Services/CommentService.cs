@@ -208,12 +208,13 @@ namespace _4n2h0ny.Steam.API.Services
             return true;
         }
 
-        public async Task AddPredefinedComment(string commentString, CancellationToken cancellationToken)
-        {
+        public async Task AddPredefinedComment(string commentString, CancellationToken cancellationToken) =>
             await _commentRepository.AddPredefinedComment(commentString, cancellationToken);
-        }
 
         public async Task<ICollection<PredefinedComment>> ListPredefinedComments(CancellationToken cancellationToken) =>
             await _commentRepository.ListPredefinedComments(cancellationToken);
+
+        public async Task SetPriority(Guid predefinedCommentId, CommentPriority priority, CancellationToken cancellationToken) =>
+            await _commentRepository.SetPriority(predefinedCommentId, priority, cancellationToken);
     }
 }

@@ -38,5 +38,20 @@ namespace _4n2h0ny.Steam.API.Controllers
 
             return Ok();
         }
+
+        [HttpPut("{predefinedCommentId}/priority")]
+        public async Task<IActionResult> SetPriority(Guid predefinedCommentId, CommentPriority priority, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _commentService.SetPriority(predefinedCommentId, priority, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+
+            return Ok();            
+        }
     }
 }

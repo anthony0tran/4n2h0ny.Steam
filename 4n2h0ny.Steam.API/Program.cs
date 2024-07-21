@@ -5,13 +5,14 @@ using _4n2h0ny.Steam.API.Repositories.Interfaces;
 using _4n2h0ny.Steam.API.Repositories.Profiles;
 using _4n2h0ny.Steam.API.Services;
 using _4n2h0ny.Steam.API.Services.Interfaces;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
