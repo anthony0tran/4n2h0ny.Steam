@@ -31,7 +31,7 @@ namespace _4n2h0ny.Steam.API.Controllers
             {
                 ProfileCount = result.Count,
                 ExecutionDuration = watch.Elapsed,
-                Profiles = result
+                ProfileURIs = result.Select(r => r.URI).ToArray()
             };
 
             return Ok(response);
@@ -51,7 +51,7 @@ namespace _4n2h0ny.Steam.API.Controllers
             {
                 ProfileCount = result.Count,
                 ExecutionDuration = watch.Elapsed,
-                Profiles = result
+                ProfileURIs = result.Select(r => r.URI).ToArray()
             };
 
             return Ok(response);
@@ -84,7 +84,7 @@ namespace _4n2h0ny.Steam.API.Controllers
             {
                 ProfileCount = result.Count,
                 ExecutionDuration = watch.Elapsed,
-                Profiles = result
+                ProfileURIs = result.Select(r => r.URI).ToArray()
             };
 
             return Ok(response);
