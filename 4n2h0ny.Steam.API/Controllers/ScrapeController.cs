@@ -103,5 +103,18 @@ namespace _4n2h0ny.Steam.API.Controllers
 
             return Ok(watch.Elapsed);
         }
+
+        [HttpPost("profile/receivedComments")]
+        [ProducesResponseType(typeof(TimeSpan), 200)]
+        public async Task<IActionResult> FetchReceivedComments(string URI, CancellationToken cancellationToken)
+        {
+            var watch = Stopwatch.StartNew();
+
+            await _profileService.ScrapeReceivedComments(URI, cancellationToken);
+
+            watch.Stop();
+
+            return Ok(watch.Elapsed);
+        }
     }
 }

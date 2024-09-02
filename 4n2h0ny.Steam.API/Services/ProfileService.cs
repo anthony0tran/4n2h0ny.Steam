@@ -32,6 +32,46 @@ namespace _4n2h0ny.Steam.API.Services
             _logger = logger;
         }
 
+        public async Task<ICollection<ReceivedComment>> ScrapeReceivedComments(string URI, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(URI))
+            {
+                URI = $"{_steamConfiguration.DefaultProfileUrl}/{_steamConfiguration.CommentPageUrl}";
+            }
+            else
+            {
+                URI = $"{URI}/{_steamConfiguration.CommentPageUrl}";
+            }
+
+            var isLoggedIn = _steamService.CheckLogin(URI);
+
+            if (!isLoggedIn)
+            {
+                throw new InvalidOperationException("User is not logged in...");
+            }
+
+            _driver.Navigate().GoToUrl(URI);
+
+            var maxCommentPageIndex = GetMaxCommentPageIndex(_driver);
+
+            if (maxCommentPageIndex != null)
+            {
+                var commentPages = GetCommentPages(maxCommentPageIndex);
+
+                // loop scrape
+                foreach (var commentPage in commentPages!)
+                {
+
+                }
+            }
+            else
+            {
+                // scrape once
+            }
+
+            return [];
+        }
+
         public async Task<ICollection<Profile>> ScrapeCommenters(string? profileUrl, bool scrapeAll, CancellationToken cancellationToken)
         {
             var isLoggedIn = _steamService.CheckLogin(profileUrl);
