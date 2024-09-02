@@ -9,7 +9,7 @@ namespace _4n2h0ny.Steam.API.Context
         public DbSet<PredefinedComment> PredefinedComments { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<ProfileData> ProfileData { get; set; }
-
+        public DbSet<ReceivedComment> ReceivedComments { get; set; }
         public string DbPath { get; set; }
         public string DbPassword { get; set; }
 
