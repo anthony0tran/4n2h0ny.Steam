@@ -32,7 +32,7 @@ namespace _4n2h0ny.Steam.API.Services
             _logger = logger;
         }
 
-        public async Task<ICollection<ReceivedComment>> ScrapeReceivedComments(string URI, CancellationToken cancellationToken)
+        public async Task<ICollection<ReceivedComment>> ScrapeReceivedComments(string? URI, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(URI))
             {
@@ -43,16 +43,11 @@ namespace _4n2h0ny.Steam.API.Services
                 URI = $"{URI}/{_steamConfiguration.CommentPageUrl}";
             }
 
-            var isLoggedIn = _steamService.CheckLogin(URI);
-
-            if (!isLoggedIn)
-            {
-                throw new InvalidOperationException("User is not logged in...");
-            }
-
             _driver.Navigate().GoToUrl(URI);
 
             var maxCommentPageIndex = GetMaxCommentPageIndex(_driver);
+
+            ScrapeCommentsOnPage();
 
             if (maxCommentPageIndex != null)
             {
@@ -61,15 +56,52 @@ namespace _4n2h0ny.Steam.API.Services
                 // loop scrape
                 foreach (var commentPage in commentPages!)
                 {
-
+                    _driver.Navigate().GoToUrl(commentPage);
+                    ScrapeCommentsOnPage();
                 }
-            }
-            else
-            {
-                // scrape once
             }
 
             return [];
+        }
+
+        private ICollection<ReceivedComment> ScrapeCommentsOnPage()
+        {
+            var commentContainer = _driver.FindElements(By.CssSelector("div[class='commentthread_comments']"));
+
+            if (commentContainer.Count == 0)
+            {
+                throw new InvalidOperationException("commentthread_comments element not found");
+            }
+
+            var commentElements = commentContainer.First().FindElements(By.CssSelector("div[class='commentthread_comment']"));
+
+            foreach (var commentElement in commentElements)
+            {
+                // getOrCreate profile
+
+
+                var receivedComment = new ReceivedComment()
+                {
+                    Profile = ,
+                    ReceivedOn = GetReceivedOn(commentElement)
+                };
+                GetReceivedOn(commentElement);
+            }
+
+            return [];
+        }
+
+        private static DateTime GetReceivedOn(IWebElement commentElement)
+        {
+            var timespanElement = commentElement.FindElements(By.CssSelector("span[class='commentthread_comment_timestamp']"));
+
+            if (timespanElement.Count == 0)
+            {
+                return DateTime.MinValue;
+            }
+
+            var commentedOnTimeStamp = timespanElement.First().GetAttribute("data-timestamp");            
+            return DateParser.ParseUnixTimeStampToDateTime(commentedOnTimeStamp);
         }
 
         public async Task<ICollection<Profile>> ScrapeCommenters(string? profileUrl, bool scrapeAll, CancellationToken cancellationToken)

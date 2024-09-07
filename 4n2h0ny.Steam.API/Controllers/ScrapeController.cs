@@ -106,7 +106,7 @@ namespace _4n2h0ny.Steam.API.Controllers
 
         [HttpPost("profile/receivedComments")]
         [ProducesResponseType(typeof(TimeSpan), 200)]
-        public async Task<IActionResult> FetchReceivedComments(string URI, CancellationToken cancellationToken)
+        public async Task<IActionResult> FetchReceivedComments(string? URI, CancellationToken cancellationToken)
         {
             var watch = Stopwatch.StartNew();
 
