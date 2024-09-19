@@ -16,7 +16,7 @@
     </PackageReference>
     <PackageReference Include="Selenium.Support" Version="4.24.0" />
     <PackageReference Include="Selenium.WebDriver" Version="4.24.0" />
-    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlcipher" Version="2.1.9" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlcipher" Version="2.1.10" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.3" />
   </ItemGroup>
 
