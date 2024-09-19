@@ -16,6 +16,24 @@ namespace _4n2h0ny.Steam.API.Repositories
             _logger = logger;
         }
 
+        public async Task<ReceivedComment?> GetLatestReceivedComment(CancellationToken cancellationToken) => 
+            await _profileContext.ReceivedComments
+                .OrderByDescending(rc => rc.ReceivedOn)
+                .FirstOrDefaultAsync(cancellationToken);
+
+        public async Task<ICollection<ReceivedComment>> AddReceivedComments(ICollection<ReceivedComment> foundReceivedComments, CancellationToken cancellationToken)
+        {
+            var latestComment = await _profileContext.ReceivedComments
+                .OrderByDescending(rc => rc.ReceivedOn)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            var latestFoundComments = foundReceivedComments.Where(fc => latestComment == null || fc.ReceivedOn > latestComment.ReceivedOn);
+
+            await _profileContext.AddRangeAsync(latestFoundComments, cancellationToken);
+            await _profileContext.SaveChangesAsync(cancellationToken);
+            return latestFoundComments.ToArray();
+        }
+
         public async Task<ICollection<Profile>> AddOrUpdateProfile(ICollection<Profile> foundProfiles, CancellationToken cancellationToken)
         {
             var existingProfiles = await _profileContext.Profiles

@@ -8,6 +8,7 @@ using OpenQA.Selenium.Firefox;
 using System.Collections.ObjectModel;
 using _4n2h0ny.Steam.API.Models;
 using _4n2h0ny.Steam.API.Context.Entities;
+using _4n2h0ny.Steam.API.Repositories;
 
 namespace _4n2h0ny.Steam.API.Services
 {
@@ -18,6 +19,7 @@ namespace _4n2h0ny.Steam.API.Services
         private readonly SteamConfiguration _steamConfiguration;
         private readonly FirefoxDriver _driver;
         private readonly ILogger<ProfileService> _logger;
+        private readonly int _maxCommentsOnPage = 50;
 
         public ProfileService(
             IOptions<SteamConfiguration> steamConfigurations,
@@ -46,49 +48,77 @@ namespace _4n2h0ny.Steam.API.Services
             _driver.Navigate().GoToUrl(URI);
 
             var maxCommentPageIndex = GetMaxCommentPageIndex(_driver);
-
-            ScrapeCommentsOnPage();
+            var foundReceivedComments = new List<ReceivedComment>();
+            var latestReceivedComment = await _profileRepository.GetLatestReceivedComment(cancellationToken);
+            foundReceivedComments.AddRange(await ScrapeCommentsOnPage(latestReceivedComment?.ReceivedOn, cancellationToken));
 
             if (maxCommentPageIndex != null)
             {
                 var commentPages = GetCommentPages(maxCommentPageIndex);
 
-                // loop scrape
-                foreach (var commentPage in commentPages!)
+                if (commentPages is null)
+                {
+                    return [];
+                }
+
+                foreach (var commentPage in commentPages)
                 {
                     _driver.Navigate().GoToUrl(commentPage);
-                    ScrapeCommentsOnPage();
+                    var receivedComments = await ScrapeCommentsOnPage(latestReceivedComment?.ReceivedOn, cancellationToken);
+                    
+                    foundReceivedComments.AddRange(receivedComments);
+
+                    if (receivedComments.Count != _maxCommentsOnPage)
+                    {
+                        break;
+                    }
                 }
             }
 
-            return [];
+            return foundReceivedComments;
         }
 
-        private ICollection<ReceivedComment> ScrapeCommentsOnPage()
+        private async Task<ICollection<ReceivedComment>> ScrapeCommentsOnPage(DateTime? latestReceivedCommentDate, CancellationToken cancellationToken)
         {
-            var commentContainer = _driver.FindElements(By.CssSelector("div[class='commentthread_comments']"));
+            var foundReceivedComments = new List<ReceivedComment>();
 
-            if (commentContainer.Count == 0)
-            {
-                throw new InvalidOperationException("commentthread_comments element not found");
-            }
+            var commentContainer = _driver.FindElements(By.CssSelector("div[class='commentthread_comments']")).FirstOrDefault()
+                ?? throw new InvalidOperationException("commentthread_comments element not found");
 
-            var commentElements = commentContainer.First().FindElements(By.CssSelector("div[class='commentthread_comment']"));
+            var commentElements = commentContainer.FindElements(By.CssSelector("div[class='commentthread_comment responsive_body_text   ']"));
 
             foreach (var commentElement in commentElements)
             {
-                // getOrCreate profile
+                var commentTextElement = commentElement.FindElements(By.CssSelector("div[class='commentthread_comment_text']")).FirstOrDefault()
+                    ?? throw new InvalidOperationException("commentthread_comment_text element not found");
 
+                var authorLink = commentElement.FindElements(By.CssSelector("a[class='hoverunderline commentthread_author_link']")).FirstOrDefault()
+                    ?? throw new InvalidOperationException("commentthread_author_link element not found");
 
-                var receivedComment = new ReceivedComment()
+                var profile = await _profileRepository.GetProfileByURI(authorLink.GetAttribute("href"), cancellationToken);
+
+                if (profile == null)
                 {
-                    Profile = ,
-                    ReceivedOn = GetReceivedOn(commentElement)
-                };
-                GetReceivedOn(commentElement);
+                    profile = new Profile { URI = authorLink.GetAttribute("href") };
+                    await _profileRepository.AddOrUpdateProfile([profile], cancellationToken);
+                }
+
+                var receivedOnDate = GetReceivedOn(commentElement);
+
+                if (receivedOnDate >= latestReceivedCommentDate)
+                {
+                    break;
+                }
+
+                foundReceivedComments.Add(new ReceivedComment()
+                {
+                    Profile = profile,
+                    CommentString = commentElement.GetAttribute("innerHTML"),
+                    ReceivedOn = receivedOnDate
+                });
             }
 
-            return [];
+            return foundReceivedComments;
         }
 
         private static DateTime GetReceivedOn(IWebElement commentElement)
@@ -100,7 +130,7 @@ namespace _4n2h0ny.Steam.API.Services
                 return DateTime.MinValue;
             }
 
-            var commentedOnTimeStamp = timespanElement.First().GetAttribute("data-timestamp");            
+            var commentedOnTimeStamp = timespanElement.First().GetAttribute("data-timestamp");
             return DateParser.ParseUnixTimeStampToDateTime(commentedOnTimeStamp);
         }
 
