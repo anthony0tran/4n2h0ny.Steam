@@ -75,7 +75,7 @@ namespace _4n2h0ny.Steam.API.Services
                 }
             }
 
-            return foundReceivedComments;
+            return await _profileRepository.AddReceivedComments(foundReceivedComments, cancellationToken);
         }
 
         private async Task<ICollection<ReceivedComment>> ScrapeCommentsOnPage(DateTime? latestReceivedCommentDate, CancellationToken cancellationToken)
@@ -95,7 +95,7 @@ namespace _4n2h0ny.Steam.API.Services
                 var authorLink = commentElement.FindElements(By.CssSelector("a[class='hoverunderline commentthread_author_link']")).FirstOrDefault()
                     ?? throw new InvalidOperationException("commentthread_author_link element not found");
 
-                var profile = await _profileRepository.GetProfileByURI(authorLink.GetAttribute("href"), cancellationToken);
+                var profile = await _profileRepository.GetProfileByURIIgnoreFilters(authorLink.GetAttribute("href"), cancellationToken);
 
                 if (profile == null)
                 {
