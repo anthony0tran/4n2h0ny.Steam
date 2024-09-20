@@ -113,7 +113,7 @@ namespace _4n2h0ny.Steam.API.Services
                 foundReceivedComments.Add(new ReceivedComment()
                 {
                     Profile = profile,
-                    CommentString = commentElement.GetAttribute("innerHTML"),
+                    CommentString = commentTextElement.GetAttribute("innerHTML"),
                     ReceivedOn = receivedOnDate
                 });
             }
