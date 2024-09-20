@@ -16,6 +16,17 @@ namespace _4n2h0ny.Steam.API.Repositories
             _logger = logger;
         }
 
+        public async Task SyncProfileLatestCommentReceivedOn(Profile profile, DateTime latestCommentReceivedOn, CancellationToken cancellationToken)
+        {
+            if (profile.LatestCommentReceivedOn >= latestCommentReceivedOn)
+            {
+                return;
+            }
+
+            profile.LatestCommentReceivedOn = latestCommentReceivedOn;
+            await _profileContext.SaveChangesAsync(cancellationToken);
+        }
+
         public async Task<ReceivedComment?> GetLatestReceivedComment(CancellationToken cancellationToken) => 
             await _profileContext.ReceivedComments
                 .OrderByDescending(rc => rc.ReceivedOn)

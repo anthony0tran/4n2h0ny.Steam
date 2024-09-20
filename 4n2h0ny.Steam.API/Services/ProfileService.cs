@@ -8,7 +8,6 @@ using OpenQA.Selenium.Firefox;
 using System.Collections.ObjectModel;
 using _4n2h0ny.Steam.API.Models;
 using _4n2h0ny.Steam.API.Context.Entities;
-using _4n2h0ny.Steam.API.Repositories;
 
 namespace _4n2h0ny.Steam.API.Services
 {
@@ -104,6 +103,8 @@ namespace _4n2h0ny.Steam.API.Services
                 }
 
                 var receivedOnDate = GetReceivedOn(commentElement);
+
+                await _profileRepository.SyncProfileLatestCommentReceivedOn(profile, receivedOnDate, cancellationToken);
 
                 if (receivedOnDate >= latestReceivedCommentDate)
                 {

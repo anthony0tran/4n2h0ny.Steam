@@ -22,5 +22,6 @@ namespace _4n2h0ny.Steam.API.Repositories.Profiles
         public Task<ReceivedComment?> GetLatestReceivedComment(CancellationToken cancellationToken);
         public Task<ICollection<ReceivedComment>> AddReceivedComments(ICollection<ReceivedComment> foundReceivedComments, CancellationToken cancellationToken);
         public Task<Profile?> GetProfileByURIIgnoreFilters(string URI, CancellationToken cancellationToken);
+        public Task SyncProfileLatestCommentReceivedOn(Profile profile, DateTime latestCommentReceivedOn, CancellationToken cancellationToken);
     }
 }
