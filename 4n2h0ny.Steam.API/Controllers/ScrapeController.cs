@@ -37,6 +37,7 @@ namespace _4n2h0ny.Steam.API.Controllers
             return Ok(response);
         }
 
+        [Obsolete("This endpoint is obsolete. Please use FetchReceivedComments instead.")]
         [HttpPost("commenters")]
         [ProducesResponseType(typeof(ScrapedProfilesResult), 200)]
         public async Task<IActionResult> ScrapeCommenters(string? profileUrl, CancellationToken cancellationToken, bool scrapeAll = false)
@@ -110,11 +111,17 @@ namespace _4n2h0ny.Steam.API.Controllers
         {
             var watch = Stopwatch.StartNew();
 
-            await _profileService.ScrapeReceivedComments(URI, cancellationToken);
+            var receivedComments = await _profileService.ScrapeReceivedComments(URI, cancellationToken);
 
             watch.Stop();
 
-            return Ok(watch.Elapsed);
+            var response = new ReceivedCommentsResult() 
+            { 
+                ExecutionDuration = watch.Elapsed,
+                CommentCount = receivedComments.Count
+            };
+
+            return Ok(response);
         }
     }
 }
