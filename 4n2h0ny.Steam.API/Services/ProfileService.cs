@@ -106,7 +106,7 @@ namespace _4n2h0ny.Steam.API.Services
 
                 await _profileRepository.SyncProfileLatestCommentReceivedOn(profile, receivedOnDate, cancellationToken);
 
-                if (receivedOnDate >= latestReceivedCommentDate)
+                if (receivedOnDate <= latestReceivedCommentDate)
                 {
                     break;
                 }
