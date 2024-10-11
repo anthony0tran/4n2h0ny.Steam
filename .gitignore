@@ -10,6 +10,7 @@
 *.userosscache
 *.sln.docstates
 *.sln
+*.idea
 4n2h0ny.Steam.Console/chromeProfile/
 4n2h0ny.Steam.GUI/chromeProfile/
 4n2h0ny.Steam.Console/START.bat
