@@ -33,7 +33,8 @@ namespace _4n2h0ny.Steam.API.Services
             _logger = logger;
         }
 
-        public async Task<ICollection<ReceivedComment>> ScrapeReceivedComments(string? URI, CancellationToken cancellationToken)
+        public async Task<ICollection<ReceivedComment>> ScrapeReceivedComments(string? URI,
+            CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(URI))
             {
@@ -49,7 +50,8 @@ namespace _4n2h0ny.Steam.API.Services
             var maxCommentPageIndex = GetMaxCommentPageIndex(_driver);
             var foundReceivedComments = new List<ReceivedComment>();
             var latestReceivedComment = await _profileRepository.GetLatestReceivedComment(cancellationToken);
-            foundReceivedComments.AddRange(await ScrapeCommentsOnPage(latestReceivedComment?.ReceivedOn, cancellationToken));
+            foundReceivedComments.AddRange(await ScrapeCommentsOnPage(latestReceivedComment?.ReceivedOn,
+                cancellationToken));
 
             if (maxCommentPageIndex != null)
             {
@@ -63,8 +65,9 @@ namespace _4n2h0ny.Steam.API.Services
                 foreach (var commentPage in commentPages)
                 {
                     _driver.Navigate().GoToUrl(commentPage);
-                    var receivedComments = await ScrapeCommentsOnPage(latestReceivedComment?.ReceivedOn, cancellationToken);
-                    
+                    var receivedComments =
+                        await ScrapeCommentsOnPage(latestReceivedComment?.ReceivedOn, cancellationToken);
+
                     foundReceivedComments.AddRange(receivedComments);
 
                     if (receivedComments.Count != _maxCommentsOnPage)
@@ -77,24 +80,36 @@ namespace _4n2h0ny.Steam.API.Services
             return await _profileRepository.AddReceivedComments(foundReceivedComments, cancellationToken);
         }
 
-        private async Task<ICollection<ReceivedComment>> ScrapeCommentsOnPage(DateTime? latestReceivedCommentDate, CancellationToken cancellationToken)
+        private async Task<ICollection<ReceivedComment>> ScrapeCommentsOnPage(DateTime? latestReceivedCommentDate,
+            CancellationToken cancellationToken)
         {
             var foundReceivedComments = new List<ReceivedComment>();
 
-            var commentContainer = _driver.FindElements(By.CssSelector("div[class='commentthread_comments']")).FirstOrDefault()
-                ?? throw new InvalidOperationException("commentthread_comments element not found");
+            var commentContainer = _driver.FindElements(By.CssSelector("div[class='commentthread_comments']"))
+                                       .FirstOrDefault()
+                                   ?? throw new InvalidOperationException("commentthread_comments element not found");
 
-            var commentElements = commentContainer.FindElements(By.CssSelector("div[class='commentthread_comment responsive_body_text   ']"));
+            var commentElements =
+                commentContainer.FindElements(
+                    By.CssSelector("div[class='commentthread_comment responsive_body_text   ']"));
 
             foreach (var commentElement in commentElements)
             {
-                var commentTextElement = commentElement.FindElements(By.CssSelector("div[class='commentthread_comment_text']")).FirstOrDefault()
-                    ?? throw new InvalidOperationException("commentthread_comment_text element not found");
+                var commentTextElement = commentElement
+                                             .FindElements(By.CssSelector("div[class='commentthread_comment_text']"))
+                                             .FirstOrDefault()
+                                         ?? throw new InvalidOperationException(
+                                             "commentthread_comment_text element not found");
 
-                var authorLink = commentElement.FindElements(By.CssSelector("a[class='hoverunderline commentthread_author_link']")).FirstOrDefault()
-                    ?? throw new InvalidOperationException("commentthread_author_link element not found");
+                var authorLink = commentElement
+                                     .FindElements(
+                                         By.CssSelector("a[class='hoverunderline commentthread_author_link']"))
+                                     .FirstOrDefault()
+                                 ?? throw new InvalidOperationException("commentthread_author_link element not found");
 
-                var profile = await _profileRepository.GetProfileByURIIgnoreFilters(authorLink.GetAttribute("href"), cancellationToken);
+                var profile =
+                    await _profileRepository.GetProfileByURIIgnoreFilters(authorLink.GetAttribute("href"),
+                        cancellationToken);
 
                 if (profile == null)
                 {
@@ -124,7 +139,8 @@ namespace _4n2h0ny.Steam.API.Services
 
         private static DateTime GetReceivedOn(IWebElement commentElement)
         {
-            var timespanElement = commentElement.FindElements(By.CssSelector("span[class='commentthread_comment_timestamp']"));
+            var timespanElement =
+                commentElement.FindElements(By.CssSelector("span[class='commentthread_comment_timestamp']"));
 
             if (timespanElement.Count == 0)
             {
@@ -135,7 +151,8 @@ namespace _4n2h0ny.Steam.API.Services
             return DateParser.ParseUnixTimeStampToDateTime(commentedOnTimeStamp);
         }
 
-        public async Task<ICollection<Profile>> ScrapeCommenters(string? profileUrl, bool scrapeAll, CancellationToken cancellationToken)
+        public async Task<ICollection<Profile>> ScrapeCommenters(string? profileUrl, bool scrapeAll,
+            CancellationToken cancellationToken)
         {
             var isLoggedIn = _steamService.CheckLogin(profileUrl);
 
@@ -152,7 +169,8 @@ namespace _4n2h0ny.Steam.API.Services
             return await _profileRepository.AddOrUpdateProfile(profiles, cancellationToken);
         }
 
-        public async Task<ICollection<Profile>> ScrapeFriends(string? profileUrl, bool syncFriends, CancellationToken cancellationToken)
+        public async Task<ICollection<Profile>> ScrapeFriends(string? profileUrl, bool syncFriends,
+            CancellationToken cancellationToken)
         {
             var isLoggedIn = _steamService.CheckLogin(profileUrl);
 
@@ -225,7 +243,8 @@ namespace _4n2h0ny.Steam.API.Services
 
             if (maxCommentPageIndex != null)
             {
-                string[]? commentPages = GetProfilesOnIntitialPage(lastFoundCommentDate, profiles, maxCommentPageIndex, ref reachedPreviousFoundComment);
+                string[]? commentPages = GetProfilesOnIntitialPage(lastFoundCommentDate, profiles, maxCommentPageIndex,
+                    ref reachedPreviousFoundComment);
 
                 if (commentPages == null || reachedPreviousFoundComment)
                 {
@@ -237,7 +256,9 @@ namespace _4n2h0ny.Steam.API.Services
                     if (reachedPreviousFoundComment)
                     {
                         return profiles;
-                    };
+                    }
+
+                    ;
 
                     _driver.Navigate().GoToUrl(commentPage);
                     GetProfilesOnCurrentPage(lastFoundCommentDate, profiles, ref reachedPreviousFoundComment);
@@ -251,18 +272,22 @@ namespace _4n2h0ny.Steam.API.Services
             return profiles;
         }
 
-        private void GetProfilesOnCurrentPage(DateTime? lastFoundCommentDate, HashSet<Profile> profiles, ref bool reachedPreviousFoundComment)
+        private void GetProfilesOnCurrentPage(DateTime? lastFoundCommentDate, HashSet<Profile> profiles,
+            ref bool reachedPreviousFoundComment)
         {
-            var foundProfiles = GetUserProfilesFromCommentPage(_driver, lastFoundCommentDate, ref reachedPreviousFoundComment);
+            var foundProfiles =
+                GetUserProfilesFromCommentPage(_driver, lastFoundCommentDate, ref reachedPreviousFoundComment);
             foreach (var foundProfile in foundProfiles)
             {
                 profiles.Add(foundProfile);
             }
         }
 
-        private string[]? GetProfilesOnIntitialPage(DateTime? lastFoundCommentDate, HashSet<Profile> profiles, CommentPageIndex? maxCommentPageIndex, ref bool reachedPreviousFoundComment)
+        private string[]? GetProfilesOnIntitialPage(DateTime? lastFoundCommentDate, HashSet<Profile> profiles,
+            CommentPageIndex? maxCommentPageIndex, ref bool reachedPreviousFoundComment)
         {
-            var initialFoundProfiles = GetUserProfilesFromCommentPage(_driver, lastFoundCommentDate, ref reachedPreviousFoundComment);
+            var initialFoundProfiles =
+                GetUserProfilesFromCommentPage(_driver, lastFoundCommentDate, ref reachedPreviousFoundComment);
 
             foreach (var foundProfile in initialFoundProfiles)
             {
@@ -293,9 +318,9 @@ namespace _4n2h0ny.Steam.API.Services
         private static CommentPageIndex? GetMaxCommentPageIndex(FirefoxDriver driver)
         {
             var commentPageIndexList = driver.FindElements(By.XPath("//*[@class=\"commentthread_pagelinks\"]/a"))
-                            .Select(e => new CommentPageIndexString(e.GetAttribute("innerHTML"), e.GetAttribute("href")))
-                            .Distinct()
-                            .ToArray();
+                .Select(e => new CommentPageIndexString(e.GetAttribute("innerHTML"), e.GetAttribute("href")))
+                .Distinct()
+                .ToArray();
 
             if (commentPageIndexList.Length == 0)
             {
@@ -310,7 +335,8 @@ namespace _4n2h0ny.Steam.API.Services
             return null;
         }
 
-        private static List<Profile> GetUserProfilesFromCommentPage(FirefoxDriver driver, DateTime? lastFoundCommentDate, ref bool reachedPreviousFoundComment)
+        private static List<Profile> GetUserProfilesFromCommentPage(FirefoxDriver driver,
+            DateTime? lastFoundCommentDate, ref bool reachedPreviousFoundComment)
         {
             var profiles = new List<Profile>();
             var comments = driver.FindElements(By.ClassName("commentthread_comment"))
@@ -489,7 +515,20 @@ namespace _4n2h0ny.Steam.API.Services
 
             if (h3Element.Count == 0)
             {
-                throw new InvalidOperationException("No H3 element found in the message element");
+                _driver.Navigate().Refresh();
+
+                messageElement = _driver.FindElements(By.CssSelector("div[id='message']"));
+                if (messageElement.Count == 0)
+                {
+                    return true;
+                }
+
+                h3Element = messageElement.First().FindElements(By.CssSelector("h3"));
+
+                if (h3Element.Count == 0)
+                {
+                    return false;
+                }
             }
 
             var message = h3Element.First().GetAttribute("innerHTML");
@@ -521,7 +560,8 @@ namespace _4n2h0ny.Steam.API.Services
             allCommentsCountString = ProfileDataParser.StripCommaFromNumber(allCommentsCountString);
             if (int.TryParse(allCommentsCountString, out var allCommentsCount))
             {
-                if (profile.ProfileData.LastFetchedOn != null && DateTime.UtcNow >= profile.ProfileData.LastFetchedOn.Value.AddMinutes(10))
+                if (profile.ProfileData.LastFetchedOn != null &&
+                    DateTime.UtcNow >= profile.ProfileData.LastFetchedOn.Value.AddMinutes(10))
                 {
                     profile.ProfileData.StartDeltaDate = profile.ProfileData.LastFetchedOn;
                     profile.ProfileData.CommentDelta = allCommentsCount - profile.ProfileData.TotalCommendsCount ?? 0;
@@ -577,7 +617,9 @@ namespace _4n2h0ny.Steam.API.Services
             if (linkLabel == null)
             {
                 return false;
-            };
+            }
+
+            ;
 
             return linkLabel.GetAttribute("innerHTML") == "Games";
         }
@@ -589,7 +631,9 @@ namespace _4n2h0ny.Steam.API.Services
             if (linkLabel == null)
             {
                 return false;
-            };
+            }
+
+            ;
 
             return linkLabel.GetAttribute("innerHTML") == "Badges";
         }
@@ -641,22 +685,27 @@ namespace _4n2h0ny.Steam.API.Services
             if (linkLabel == null)
             {
                 return false;
-            };
+            }
+
+            ;
 
             return linkLabel.GetAttribute("innerHTML") == "Profile Awards";
         }
 
         private void ScrapeFriendCount(Profile profile)
         {
-            var FriendElementContainer = _driver.FindElements(By.CssSelector("div[class='profile_friend_links profile_count_link_preview_ctn responsive_groupfriends_element']"));
+            var FriendElementContainer = _driver.FindElements(By.CssSelector(
+                "div[class='profile_friend_links profile_count_link_preview_ctn responsive_groupfriends_element']"));
 
             if (FriendElementContainer.Count == 0)
             {
-                _logger.LogWarning("Could not find FriendElementContainer for profile with Id: {profileId}", profile.Id);
+                _logger.LogWarning("Could not find FriendElementContainer for profile with Id: {profileId}",
+                    profile.Id);
                 return;
             }
 
-            var friendCountElement = FriendElementContainer.First().FindElements(By.ClassName("profile_count_link_total"));
+            var friendCountElement =
+                FriendElementContainer.First().FindElements(By.ClassName("profile_count_link_total"));
             if (friendCountElement.Count != 0)
             {
                 var friendCountString = friendCountElement.First().GetAttribute("innerHTML");
@@ -667,10 +716,12 @@ namespace _4n2h0ny.Steam.API.Services
                 }
             }
 
-            var commonFriendCountElement = FriendElementContainer.First().FindElements(By.CssSelector("div[class='profile_in_common responsive_hidden']"));
+            var commonFriendCountElement = FriendElementContainer.First()
+                .FindElements(By.CssSelector("div[class='profile_in_common responsive_hidden']"));
             if (commonFriendCountElement.Count == 0)
             {
-                _logger.LogWarning("Could not find commonFriendCountElement for profile with Id: {profileId}", profile.Id);
+                _logger.LogWarning("Could not find commonFriendCountElement for profile with Id: {profileId}",
+                    profile.Id);
                 return;
             }
 
@@ -720,7 +771,8 @@ namespace _4n2h0ny.Steam.API.Services
 
         private void ScrapeLevel(Profile profile)
         {
-            var personaElementContainer = _driver.FindElements(By.CssSelector("div[class='persona_name persona_level']"));
+            var personaElementContainer =
+                _driver.FindElements(By.CssSelector("div[class='persona_name persona_level']"));
             if (personaElementContainer.Count == 0)
             {
                 _logger.LogWarning("Could not find personaNameContainer for profile with Id: {profileId}", profile.Id);
@@ -748,7 +800,8 @@ namespace _4n2h0ny.Steam.API.Services
 
             if (contentComponent.Count == 0)
             {
-                _logger.LogWarning("Could not find responsive_page_template_content for profile with Id: {profileId}", profile.Id);
+                _logger.LogWarning("Could not find responsive_page_template_content for profile with Id: {profileId}",
+                    profile.Id);
                 return;
             }
 
@@ -782,7 +835,8 @@ namespace _4n2h0ny.Steam.API.Services
             profile.ProfileData.PersonaName = parseResult.PersonaName;
         }
 
-        public async Task<ICollection<Profile>> GetFriendsWithActiveCommentThread(CancellationToken cancellationToken) =>
+        public async Task<ICollection<Profile>>
+            GetFriendsWithActiveCommentThread(CancellationToken cancellationToken) =>
             await _profileRepository.GetFriendsWithActiveCommentThread(cancellationToken);
 
         public async Task<ICollection<Profile>> ListFriendCommenters(CancellationToken cancellationToken) =>
@@ -801,6 +855,7 @@ namespace _4n2h0ny.Steam.API.Services
             await _profileRepository.SetCommentAreaDisabled(URI, cancellationToken);
 
         private record CommentPageIndexString(string IndexString, string PageUrl);
+
         private record CommentPageIndex(int Index, string PageUrl);
     }
 }
