@@ -8,6 +8,7 @@ namespace _4n2h0ny.Steam.Tests.TestData
         {
             URI = "https://steamcommunity.com/id/4n2h0ny",
             LatestCommentReceivedOn = DateTime.Now,
+            FetchedOn = DateTime.Now.AddDays(-10),
             IsFriend = true
         };
     }

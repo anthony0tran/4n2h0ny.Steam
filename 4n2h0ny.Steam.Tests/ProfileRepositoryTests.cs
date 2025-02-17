@@ -101,7 +101,7 @@ namespace _4n2h0ny.Steam.Tests
             {
                 Profiles.Default with
                 {
-                    LatestCommentReceivedOn = DateTime.UtcNow,
+                    FetchedOn = DateTime.UtcNow,
                     IsFriend = false
                 }
             };
@@ -113,7 +113,7 @@ namespace _4n2h0ny.Steam.Tests
             var dbResults = _profileContext.Profiles.ToArray();
             Assert.Single(result);
             Assert.Single(dbResults);
-            Assert.True(dbResults.Single().LatestCommentReceivedOn == profiles.Single().LatestCommentReceivedOn);
+            Assert.True(dbResults.Single().FetchedOn == profiles.Single().FetchedOn);
             Assert.True(dbResults.Single().IsFriend == profiles.Single().IsFriend);
         }
 
